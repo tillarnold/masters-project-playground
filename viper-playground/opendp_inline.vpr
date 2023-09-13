@@ -1,0 +1,243 @@
+
+
+
+
+domain Function[A, B] {
+  function eval(fn: Function[A,B], arg: A): B
+}
+
+  function total_clamp_as_function(min: Int, max: Int) : Function[Int, Int]
+    requires min <= max
+    ensures forall i : Int :: eval(result, i) == total_clamp(i,min, max)
+
+
+
+  function total_clamp_as_multiset_function(min: Int, max: Int) : Function[Multiset[Int], Multiset[Int]]
+    requires min <= max
+    ensures forall el : Int, s : Multiset[Int] :: el in eval(result, s) == total_clamp(i,min, max)
+
+
+/// This is supposed to map the int -> int function over a multiset
+/// in the same way that the rust function in OpenDP does
+/// value.iter().map(row_function).collect()
+function apply_rows(f: Function[Int,Int]) : Function[Multiset[Int], Multiset[Int]] 
+    ensures forall s : Multiset[Int] ::|eval(result, s)| == |s|
+    //ensures forall el : Int, s : Multiset[Int] ::  ((el in s) <= (eval(f, el)) in eval(result, s))
+    ensures forall el : Int, s : Multiset[Int] ::  ((el in s) <= (eval(f, el) in eval(result, s)))
+
+domain Function2[A, A2, B] {
+  function eval2(fn2: Function2[A,A2, B], arg1: A, arg2: A2): B
+
+}
+
+
+
+field t_input_domain: Ref;
+field t_output_domain: Ref;
+field t_input_metric: Ref;
+field t_output_metric: Ref;
+field t_function: Function[Multiset[Int], Multiset[Int]];
+field t_stability_map: Function[Int, Int]; // input_metric -> output_metric
+
+
+field d_member: Function[Multiset[Int], Bool];
+
+field m_calculate_distance: Function2[Multiset[Int], Multiset[Int], Int];
+
+field tup_first : Ref;
+field tup_second : Ref;
+
+
+predicate Transformation(t: Ref) {
+    acc(t.t_input_domain) &&
+    acc(t.t_output_domain) &&
+    
+    acc(t.t_function) &&
+    acc(t.t_stability_map) &&
+    
+    acc(t.t_input_metric) &&
+    acc(t.t_output_metric) &&
+
+    Domain(t.t_input_domain) &&
+    Domain(t.t_output_domain) &&
+
+    Metric(t.t_input_metric) &&
+    Metric(t.t_output_metric) 
+}
+
+predicate Domain(d: Ref) {
+    acc(d.d_member)
+}
+
+predicate Metric(m: Ref) {
+    acc(m.m_calculate_distance) 
+}
+
+predicate appropriate_output_domain(t: Ref) {
+    Transformation(t) &&
+    unfolding Transformation(t) in (
+    unfolding Domain(t.t_input_domain) in (
+    unfolding Domain(t.t_output_domain) in
+
+    (forall  el : Multiset[Int]  :: 
+    
+    eval(t.t_input_domain.d_member,el) ==>
+        
+        eval(t.t_output_domain.d_member,eval(t.t_function, el))
+    
+    
+    ) ))
+
+}
+
+
+
+function sym_dif(u: Multiset[Int], v: Multiset[Int]) : Multiset[Int] {
+    (v setminus u) union (u setminus v  )
+}
+
+
+function are_close_under(u: Multiset[Int], v: Multiset[Int], d: Int, M: Ref) : Bool
+    requires Metric(M)
+{
+   // unfolding Metric(M) in eval2(M.m_calculate_distance, u, v) <= d
+    |sym_dif(u,v)| <= d
+}
+
+predicate stability_guarantee(t: Ref) {
+    Transformation(t) &&
+    unfolding Transformation(t) in (
+    unfolding Domain(t.t_input_domain) in (
+    unfolding Domain(t.t_output_domain) in
+    (forall  u : Multiset[Int], v : Multiset[Int], d_in : Int, d_out: Int  ::  
+        
+        (eval(t.t_input_domain.d_member, u) && eval(t.t_input_domain.d_member, v) 
+        && are_close_under(u,v, d_in, t.t_input_metric) 
+        && eval(t.t_stability_map, d_in) <= d_out)
+
+        ==> (
+            are_close_under(eval(t.t_function, u), eval(t.t_function, v), d_out, t.t_output_metric) 
+        )
+ 
+    )))
+
+}
+
+
+predicate Transformation_valid(t: Ref) {
+    appropriate_output_domain(t) && stability_guarantee(t)
+}
+
+// 498   │ pub fn make_row_by_row_fallible<DI, DO, M>(
+//  499   │     input_domain: DI,
+//  500   │     input_metric: M,
+//  501   │     output_row_domain: DO::ElementDomain,
+//  502   │     row_function: impl 'static
+//  503   │         + Fn(
+//  504   │             &<DI::ElementDomain as Domain>::Carrier,
+//  505   │         ) -> Fallible<<DO::ElementDomain as Domain>::Carrier>,
+//  506   │ ) -> Fallible<Transformation<DI, DO, M, M>>
+//  507   │ where
+//  508   │     DI: RowByRowDomain<DO>,
+//  509   │     DO: DatasetDomain,
+//  510   │     M: DatasetMetric<Distance = IntDistance>,
+//  511   │     (DI, M): MetricSpace,
+//  512   │     (DO, M): MetricSpace,
+//  513   │ {
+//  514   │     let output_domain = input_domain.translate(output_row_domain);
+//  515   │     Transformation::new(
+//  516   │         input_domain,
+//  517   │         output_domain,
+//  518   │         Function::new_fallible(move |arg: &DI::Carrier| DI::apply_rows(arg, &row_function)),
+//  519   │         input_metric.clone(),
+//  520   │         input_metric,
+//  521   │         StabilityMap::new_from_constant(1),
+//  522   │     )
+//  523   │ }
+
+
+
+
+//   79   │     fn total_clamp(self, min: Self, max: Self) -> Fallible<Self> {
+//   80   │         if min > max {
+//   81   │             return Err(Error {
+//   82   │                 variant: ErrorVariant::FailedFunction,
+//   83   │                 message: Some("min cannot be greater than max".to_string()),
+//   84   │                 // backtrace: std::backtrace::Backtrace::capture(),
+//   85   │             });
+//   86   │         }
+//   87   │         Ok(if let Ordering::Less = self.total_cmp(&min)? {
+//   88   │             min
+//   89   │         } else if let Ordering::Greater = self.total_cmp(&max)? {
+//   90   │             max
+//   91   │         } else {
+//   92   │             self
+//   93   │         })
+//   94   │     }
+
+
+
+function total_clamp(self: Int, min: Int, max: Int)  : Int
+    requires min <= max
+    ensures result <= max
+    ensures result >= min
+    ensures (self <= max && self >= min) ==> result == self
+{
+    (self > max)?
+        max
+    
+    : (self < min) ? 
+        min :
+    
+    
+        self
+
+}
+
+
+//  626   │ pub fn make_clamp<TA: 'static + Clone + TotalOrd + CheckAtom, M: DatasetMetric>(
+//  627   │     input_domain: VectorDomain<AtomDomain<TA>>,
+//  628   │     input_metric: M,
+//  629   │     bounds: (TA, TA),
+//  630   │ ) -> Fallible<Transformation<VectorDomain<AtomDomain<TA>>, VectorDomain<AtomDomain<TA>>, M, M>>
+//  631   │ where
+//  632   │     (VectorDomain<AtomDomain<TA>>, M): MetricSpace,
+//  633   │ {
+//  634   │     input_domain.element_domain.assert_non_null()?;
+//  635   │ 
+//  636   │     let mut output_row_domain = input_domain.element_domain.clone();
+//  637   │     output_row_domain.bounds = Some(Bounds::<TA>::new_closed(bounds.clone())?);
+//  638   │ 
+//  639   │     make_row_by_row_fallible(
+//  640   │         input_domain,
+//  641   │         input_metric,
+//  642   │         output_row_domain,
+//  643   │         move |arg: &TA| arg.clone().total_clamp(bounds.0.clone(), bounds.1.clone()),
+//  644   │     )
+//  645   │ }
+
+
+
+method make_clamp(input_domain: Ref, output_domain: Ref, input_metric: Ref, output_metric: Ref, top_bound: Int, bottom_bound: Int) returns(res: Ref)
+    requires bottom_bound <= top_bound
+        requires Metric(input_metric)
+    requires Metric(output_metric)
+    requires Domain(input_domain)
+    requires Domain(output_domain)
+    ensures stability_guarantee(res)
+{
+
+    var f : Function[Int, Int] := total_clamp_as_function(bottom_bound, top_bound)
+
+
+        res := new(t_input_domain, t_output_domain, t_function, t_input_metric, t_output_metric, t_stability_map)
+        res.t_input_domain := input_domain;
+        res.t_output_domain := output_domain;
+        res.t_input_metric := input_metric;
+        res.t_output_metric := output_metric;
+        res.t_function := apply_rows(f);
+
+        fold Transformation(res)
+        fold stability_guarantee(res)
+    
+}

@@ -1,0 +1,18 @@
+
+function count(s: Seq[Int], el: Int) : Int {
+     |s| == 0 ? 0 : ((s[0] == el ? 1 :0) + count(s[1..], el))
+}
+
+
+
+function to_multiset(s: Seq[Int]): Multiset[Int] 
+    ensures forall i:Int :: count(s,i) == i in result
+
+function to_sequence(m: Multiset[Int]): Seq[Int] 
+    ensures forall i:Int :: count(result,i) == i in m
+
+
+
+method test1(m: Multiset[Int]) {
+    assert to_multiset(to_sequence(m)) == m
+}

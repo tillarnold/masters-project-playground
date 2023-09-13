@@ -1,0 +1,148 @@
+field f : Int;
+
+
+field left: Int
+field right: Int
+
+field elem: Int
+field next: Ref
+
+
+predicate lseg(this: Ref, last: Ref) {
+  this != last ==>
+    acc(this.elem, 1/100) && acc(this.next, 1/100) &&
+    this.next != null &&
+    lseg(this.next, last)
+}
+
+function values(this: Ref, last: Ref): Seq[Int]
+  requires lseg(this, last)
+{
+  unfolding lseg(this, last) in 
+    this == last
+      ? Seq[Int]()
+      : Seq(this.elem) ++ values(this.next, last)
+}
+
+predicate list(this: Ref) {
+  acc(this.elem) && acc(this.next) &&
+  (this.next != null ==> list(this.next))
+}
+
+function first(this: Ref) : Int
+  requires list(this)
+  {
+
+    unfolding list(this) in this.elem
+  }
+
+
+
+function last_el(this: Ref) : Int
+  requires list(this)
+{
+     unfolding list(this) in (this.next == null) ?
+      this.elem
+    :
+      last_el(this.next)
+}
+
+function len(this: Ref): Int 
+  requires acc(list(this), 1/100)
+{
+ unfolding list(this) in (this.next == null) ?
+      1
+    :
+      1 + len(this.next)
+
+  }
+
+
+method append(this: Ref, e: Int)
+  requires list(this)
+  ensures  list(this) && last_el(this) == e && old(len(this)) + 1 == len(this)
+{
+  unfold list(this)
+
+  if (this.next == null) {
+    var n: Ref
+
+    n := new(elem, next)
+    n.elem := e
+    n.next := null
+    this.next := n
+
+    fold list(n)
+  } else {
+    append(this.next, e)
+  }
+  fold list(this)
+}
+
+
+
+predicate tuple(this: Ref) {
+  acc(this.left) && acc(this.right)
+}
+
+method setTuple(this: Ref, l: Int, r: Int)
+  requires tuple(this)
+  ensures tuple(this)
+{
+  unfold tuple(this)
+  
+  this.left := l
+  this.right := r
+  fold tuple(this)
+
+  unfold tuple(this); 
+  assert this.left == l;
+  fold tuple(this)
+}
+
+
+
+method create() {
+  var x : Ref := new(f);
+  main(x)
+
+}
+
+method main(x: Ref)
+    requires acc(x.f)
+{
+    x.f := 300;
+    
+    
+    assert(x.f == 300)
+    
+    set(x, 400)
+    assert(x.f == 400)
+
+}
+
+
+method copyAndInc(x: Ref, y: Ref)
+  requires acc(x.f) && acc(y.f, 1/100)
+  ensures  acc(x.f) && acc(y.f, 1/100)
+{
+  x.f := y.f + 1
+}
+
+
+
+method exclusivity(x: Ref, y: Ref)
+requires  acc(x.f) &&  acc(y.f)
+ensures acc(x.f) && acc(y.f) && x != y
+{
+
+}
+
+
+method set(x: Ref, i: Int)
+  requires acc(x.f) && x.f < i
+  ensures  acc(x.f) && x.f == i
+{
+  x.f := i
+}
+

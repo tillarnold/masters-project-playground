@@ -1,0 +1,195 @@
+
+
+
+
+domain Function[A, B] {
+  function eval(fn: Function[A,B], arg: A): B
+}
+
+
+ function stability_map_const(c: Int) : Function[Int, Int]
+    ensures forall i : Int :: eval(result, i) == i * c
+
+  function total_clamp_as_function(min: Int, max: Int) : Function[Int, Int]
+    requires min <= max
+    ensures forall i : Int :: eval(result, i) == total_clamp(i,min, max)
+
+
+function total_clamp(self: Int, min: Int, max: Int)  : Int
+    requires min <= max
+    ensures result <= max
+    ensures result >= min
+    ensures (self <= max && self >= min) ==> result == self
+{
+    (self > max)? max : (self < min) ?  min :self
+}
+
+
+
+
+
+function count(s: Seq[Int], el: Int) : Int {
+     |s| == 0 ? 0 : ((s[0] == el ? 1 :0) + count(s[1..], el))
+}
+
+
+
+function to_multiset(s: Seq[Int]): Multiset[Int] 
+    ensures forall i:Int :: count(s,i) == i in result
+
+
+/// This is supposed to map the int -> int function over a multiset
+/// in the same way that the rust function in OpenDP does
+/// value.iter().map(row_function).collect()
+function apply_rows(f: Function[Int,Int]) : Function[Seq[Int], Seq[Int]] 
+    ensures forall s : Seq[Int] ::|eval(result, s)| == |s|
+    ensures forall i : Int, s : Seq[Int] :: (0 <= i && i < |s|) ==> eval(result,s)[i] == eval(f, s[i])
+
+domain Function2[A, A2, B] {
+  function eval2(fn2: Function2[A,A2, B], arg1: A, arg2: A2): B
+
+}
+
+
+
+field t_input_domain: Ref;
+field t_output_domain: Ref;
+field t_input_metric: Ref;
+field t_output_metric: Ref;
+field t_function: Function[Seq[Int], Seq[Int]];
+field t_stability_map: Function[Int, Int]; // input_metric -> output_metric
+
+
+field d_member: Function[Seq[Int], Bool];
+
+field m_calculate_distance: Function2[Seq[Int], Seq[Int], Int];
+
+
+
+predicate Transformation(t: Ref) {
+    acc(t.t_input_domain) &&
+    acc(t.t_output_domain) &&
+    
+    acc(t.t_function) &&
+    acc(t.t_stability_map) &&
+    
+    acc(t.t_input_metric) &&
+    acc(t.t_output_metric) &&
+
+    Domain(t.t_input_domain) &&
+    Domain(t.t_output_domain) &&
+
+    Metric(t.t_input_metric) &&
+    Metric(t.t_output_metric) 
+}
+
+predicate Domain(d: Ref) {
+    acc(d.d_member)
+}
+
+predicate Metric(m: Ref) {
+    acc(m.m_calculate_distance) 
+}
+
+predicate appropriate_output_domain(t: Ref) {
+    Transformation(t) &&
+    unfolding Transformation(t) in (
+    unfolding Domain(t.t_input_domain) in (
+    unfolding Domain(t.t_output_domain) in
+
+    (forall  el : Seq[Int]  :: 
+    
+    eval(t.t_input_domain.d_member,el) ==>
+        
+        eval(t.t_output_domain.d_member,eval(t.t_function, el))
+    
+    
+    ) ))
+
+}
+
+
+
+function sym_diff(u: Multiset[Int], v: Multiset[Int]) : Multiset[Int] {
+    (v setminus u) union (u setminus v  )
+}
+
+
+function sym_diff_seq(u: Seq[Int], v: Seq[Int]) : Multiset[Int] {
+    sym_diff(to_multiset(u), to_multiset(v))
+}
+
+
+function are_close_under(u: Seq[Int], v: Seq[Int], d: Int, M: Ref) : Bool
+    requires Metric(M) // Currently not used just using sym diff
+{
+   // unfolding Metric(M) in eval2(M.m_calculate_distance, u, v) <= d
+    |sym_diff_seq(u,v)| <= d
+}
+
+predicate stability_guarantee(t: Ref) {
+    Transformation(t) &&
+    unfolding Transformation(t) in (
+    unfolding Domain(t.t_input_domain) in (
+    unfolding Domain(t.t_output_domain) in
+    (forall  u : Seq[Int], v : Seq[Int], d_in : Int, d_out: Int  ::  
+        
+        (eval(t.t_input_domain.d_member, u) && eval(t.t_input_domain.d_member, v) 
+        && are_close_under(u,v, d_in, t.t_input_metric) 
+        && eval(t.t_stability_map, d_in) <= d_out)
+
+        ==> (
+            are_close_under(eval(t.t_function, u), eval(t.t_function, v), d_out, t.t_output_metric) 
+        )
+ 
+    )))
+
+}
+
+
+predicate Transformation_valid(t: Ref) {
+    appropriate_output_domain(t) && stability_guarantee(t)
+}
+
+
+
+method make_row_by_row_fallible(input_domain: Ref, output_domain: Ref, input_metric: Ref, output_metric: Ref, func: Function[Int, Int]) returns(res: Ref)
+    requires Metric(input_metric)
+    requires Metric(output_metric)
+    requires Domain(input_domain)
+    requires Domain(output_domain)
+
+    ensures stability_guarantee(res)
+    {
+        res := new(t_input_domain, t_output_domain, t_function, t_input_metric, t_output_metric, t_stability_map)
+        res.t_input_domain := input_domain;
+        res.t_output_domain := output_domain;
+        res.t_input_metric := input_metric;
+        res.t_output_metric := output_metric;
+        res.t_function := apply_rows(func);
+        res.t_stability_map := stability_map_const(1)
+
+        fold Transformation(res)
+        fold stability_guarantee(res)
+
+    }
+
+
+
+
+
+
+method make_clamp(input_domain: Ref, output_domain: Ref, input_metric: Ref, output_metric: Ref, top_bound: Int, bottom_bound: Int) returns(res: Ref)
+    requires bottom_bound <= top_bound
+        requires Metric(input_metric)
+    requires Metric(output_metric)
+    requires Domain(input_domain)
+    requires Domain(output_domain)
+    ensures stability_guarantee(res)
+{
+
+    var f : Function[Int, Int] := total_clamp_as_function(bottom_bound, top_bound)
+
+    res := make_row_by_row_fallible(input_domain, output_domain, input_metric, output_metric, f)
+    
+}
