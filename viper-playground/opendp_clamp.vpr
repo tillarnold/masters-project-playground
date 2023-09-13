@@ -26,19 +26,43 @@ function total_clamp(self: Int, min: Int, max: Int)  : Int
 
 
 
-
-
-function count(s: Seq[Int], el: Int) : Int {
-     |s| == 0 ? 0 : ((s[0] == el ? 1 :0) + count(s[1..], el))
+/// Count how often `el` occurs in `s`
+function count(s: Seq[Int], el: Int) : Int 
+    ensures result >= 0
+    ensures el in s <==> result >= 1
+{
+     |s| == 0 ? 0 : (s[0] == el ? 1 +  count(s[1..], el):  count(s[1..], el))
 }
 
 
+
+
+method count_test3(s1: Seq[Int],s2: Seq[Int], el: Int)
+{
+    assert count(s1, el) <= count(s1 ++ s2, el)
+    assert count(s1, el) + count(s2, el) == count(s1 ++ s2, el)
+
+}
+
+method count_test(s: Seq[Int], el: Int, c: Int)
+    requires count(s, el) == c
+{
+    assert count((Seq()++s), el) == c
+    assert count((Seq(el)++s), el) == c + 1
+
+}
+
+method count_test2() {
+    assert count(Seq(), 1) == 0
+    assert count(Seq(1), 1) == 1
+    assert count(Seq(1,1), 1) != 1
+}
 
 function to_multiset(s: Seq[Int]): Multiset[Int] 
     ensures forall i:Int :: count(s,i) == i in result
 
 
-/// This is supposed to map the int -> int function over a multiset
+/// This is supposed to map the int -> int function over a sequence
 /// in the same way that the rust function in OpenDP does
 /// value.iter().map(row_function).collect()
 function apply_rows(f: Function[Int,Int]) : Function[Seq[Int], Seq[Int]] 

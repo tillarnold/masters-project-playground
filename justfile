@@ -2,10 +2,12 @@ _default:
   @just --list --unsorted
 
 # initialize the git submodule
-submodule_init:
+init:
 	git submodule init
+	git submodule update
 
 
+# Build all LaTeX documents in the openDP repo
 build_latex_proofs:
 	#!/bin/bash
 	cd opendp
