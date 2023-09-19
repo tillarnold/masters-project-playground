@@ -10,6 +10,7 @@ init:
 # Build all LaTeX documents in the openDP repo
 build_latex_proofs:
 	#!/bin/bash
+	set -euxo pipefail
 	cd opendp
 	for TEXFILE in $(fd '\.tex$')
 	do
@@ -17,7 +18,7 @@ build_latex_proofs:
 		FILENAME=$(basename "$TEXFILE")
 		echo "Processing $FILENAME in $TEXDIR"
 		cd "$TEXDIR"
-		pdflatex -interaction=nonstopmode "$FILENAME"
+		pdflatex -interaction=nonstopmode "$FILENAME" || true # there are files that fail to compile we ignore that
 		cd -
 	done
 
