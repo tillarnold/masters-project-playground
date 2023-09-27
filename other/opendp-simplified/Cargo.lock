@@ -100,7 +100,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0130aef475bc8363bdfc2e5104e2fed091d4ac63b4ea8039fd55453b14d7c8a"
 
 [[package]]
-name = "prusti-opendp-simplest"
+name = "prusti-opendp-simple"
 version = "0.1.0"
 dependencies = [
  "num",

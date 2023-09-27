@@ -6,6 +6,8 @@ init:
 	git submodule init
 	git submodule update
 
+update_submodule:
+	cd opendp && git pull origin main
 
 # Build all LaTeX documents in the openDP repo
 build_latex_proofs:
