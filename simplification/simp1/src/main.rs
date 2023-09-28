@@ -29,10 +29,10 @@ macro_rules! err {
     (@backtrace) => (std::backtrace::Backtrace::capture());
 }
 
-pub struct Function<TI, TO> {
-    pub function: Rc<dyn Fn(&TI) -> Fallible<TO>>,
+pub struct Function {
+    pub function: Rc<dyn Fn(&Vec<f64>) -> Fallible<Vec<f64>>>,
 }
-impl<TI, TO> Clone for Function<TI, TO> {
+impl Clone for Function {
     fn clone(&self) -> Self {
         Function {
             function: self.function.clone(),
@@ -40,38 +40,38 @@ impl<TI, TO> Clone for Function<TI, TO> {
     }
 }
 
-impl<TI, TO> Function<TI, TO> {
-    pub fn new(function: impl Fn(&TI) -> TO + 'static) -> Self {
+impl Function {
+    pub fn new(function: impl Fn(&Vec<f64>) -> Vec<f64> + 'static) -> Self {
         Self::new_fallible(move |arg| Ok(function(arg)))
     }
 
-    pub fn new_fallible(function: impl Fn(&TI) -> Fallible<TO> + 'static) -> Self {
+    pub fn new_fallible(function: impl Fn(&Vec<f64>) -> Fallible<Vec<f64>> + 'static) -> Self {
         Self {
             function: Rc::new(function),
         }
     }
 
-    pub fn eval(&self, arg: &TI) -> Fallible<TO> {
+    pub fn eval(&self, arg: &Vec<f64>) -> Fallible<Vec<f64>> {
         (self.function)(arg)
     }
 }
 
-impl<TI: 'static, TO: 'static> Function<TI, TO> {
+impl Function{
     pub fn make_chain<TX: 'static>(
-        function1: &Function<TX, TO>,
-        function0: &Function<TI, TX>,
-    ) -> Function<TI, TO> {
+        function1: &Function,
+        function0: &Function,
+    ) -> Function{
         let function0 = function0.function.clone();
         let function1 = function1.function.clone();
         Self::new_fallible(move |arg| function1(&function0(arg)?))
     }
 }
 
-pub struct StabilityMap<MI: Metric, MO: Metric>(
-    pub Rc<dyn Fn(&MI::Distance) -> Fallible<MO::Distance>>,
+pub struct StabilityMap(
+    pub Rc<dyn Fn(&IntDistance) -> Fallible<IntDistance>>,
 );
 
-impl<MI: Metric, MO: Metric> Clone for StabilityMap<MI, MO> {
+impl Clone for StabilityMap{
     fn clone(&self) -> Self {
         StabilityMap(self.0.clone())
     }
@@ -88,7 +88,7 @@ macro_rules! impl_exact_int_bounds {
         const MIN_CONSECUTIVE: Self = Self::MIN;
     })*)
 }
-impl_exact_int_bounds!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
+impl_exact_int_bounds!(u32);
 
 pub trait ExactIntCast<TI>: Sized + ExactIntBounds {
     fn exact_int_cast(v: TI) -> Fallible<Self>;
@@ -254,38 +254,38 @@ impl TotalOrd for u32 {
     }
 }
 
-impl<MI: Metric, MO: Metric> StabilityMap<MI, MO> {
-    pub fn new(map: impl Fn(&MI::Distance) -> MO::Distance + 'static) -> Self {
-        StabilityMap(Rc::new(move |d_in: &MI::Distance| Ok(map(d_in))))
+impl StabilityMap{
+    pub fn new(map: impl Fn(&IntDistance) -> IntDistance + 'static) -> Self {
+        StabilityMap(Rc::new(move |d_in: &IntDistance| Ok(map(d_in))))
     }
-    pub fn new_fallible(map: impl Fn(&MI::Distance) -> Fallible<MO::Distance> + 'static) -> Self {
+    pub fn new_fallible(map: impl Fn(&IntDistance) -> Fallible<IntDistance> + 'static) -> Self {
         StabilityMap(Rc::new(map))
     }
-    pub fn new_from_constant(c: MO::Distance) -> Self
+    pub fn new_from_constant(c: IntDistance) -> Self
     where
-        MI::Distance: Clone,
-        MO::Distance: DistanceConstant<MI::Distance>,
+    IntDistance: Clone,
+    IntDistance: DistanceConstant<IntDistance>,
     {
-        StabilityMap::new_fallible(move |d_in: &MI::Distance| {
-            if c < MO::Distance::zero() {
+        StabilityMap::new_fallible(move |d_in: &IntDistance| {
+            if c <IntDistance::zero() {
                 return fallible!(FailedMap, "constant must be non-negative");
             }
-            MO::Distance::inf_cast(d_in.clone())?.inf_mul(&c)
+            IntDistance::inf_cast(d_in.clone())?.inf_mul(&c)
         })
     }
-    pub fn eval(&self, input_distance: &MI::Distance) -> Fallible<MO::Distance> {
+    pub fn eval(&self, input_distance: &IntDistance) -> Fallible<IntDistance> {
         (self.0)(input_distance)
     }
 }
 
-impl<MI: 'static + Metric, MO: 'static + Metric> StabilityMap<MI, MO> {
+impl StabilityMap {
     pub fn make_chain<MX: 'static + Metric>(
-        map1: &StabilityMap<MX, MO>,
-        map0: &StabilityMap<MI, MX>,
+        map1: &StabilityMap,
+        map0: &StabilityMap,
     ) -> Self {
         let map1 = map1.0.clone();
         let map0 = map0.0.clone();
-        StabilityMap(Rc::new(move |d_in: &MI::Distance| map1(&map0(d_in)?)))
+        StabilityMap(Rc::new(move |d_in: &IntDistance| map1(&map0(d_in)?)))
     }
 }
 
@@ -301,10 +301,10 @@ pub trait Metric: Default + Clone + PartialEq + Debug {
 pub struct Transformation {
     pub input_domain: VectorDomain<AtomDomain>,
     pub output_domain: VectorDomain<AtomDomain>,
-    pub function: Function<Vec<f64>, Vec<f64>>,
+    pub function: Function,
     pub input_metric: SymmetricDistance,
     pub output_metric: SymmetricDistance,
-    pub stability_map: StabilityMap<SymmetricDistance, SymmetricDistance>,
+    pub stability_map: StabilityMap,
 }
 
 impl Transformation
@@ -315,10 +315,10 @@ where
     pub fn new(
         input_domain: VectorDomain<AtomDomain>,
         output_domain: VectorDomain<AtomDomain>,
-        function: Function<Vec<f64>, Vec<f64>>,
+        function: Function,
         input_metric: SymmetricDistance,
         output_metric: SymmetricDistance,
-        stability_map: StabilityMap<SymmetricDistance, SymmetricDistance>,
+        stability_map: StabilityMap,
     ) -> Fallible<Self> {
         (input_domain.clone(), input_metric.clone()).assert_compatible()?;
         (output_domain.clone(), output_metric.clone()).assert_compatible()?;
@@ -421,17 +421,17 @@ pub trait DatasetMetric: Metric<Distance = IntDistance> {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct Bounds<T> {
-    lower: Bound<T>,
-    upper: Bound<T>,
+pub struct Bounds {
+    lower: Bound<f64>,
+    upper: Bound<f64>,
 }
 
-impl<T: TotalOrd> Bounds<T> {
-    pub fn new_closed(bounds: (T, T)) -> Fallible<Self> {
+impl Bounds {
+    pub fn new_closed(bounds: (f64, f64)) -> Fallible<Self> {
         Self::new((Bound::Included(bounds.0), Bound::Included(bounds.1)))
     }
     /// Checks that the arguments are well-formed.
-    pub fn new(bounds: (Bound<T>, Bound<T>)) -> Fallible<Self> {
+    pub fn new(bounds: (Bound<f64>, Bound<f64>)) -> Fallible<Self> {
         let (lower, upper) = bounds;
         fn get<T>(value: &Bound<T>) -> Option<&T> {
             match value {
@@ -461,14 +461,14 @@ impl<T: TotalOrd> Bounds<T> {
         }
         Ok(Bounds { lower, upper })
     }
-    pub fn lower(&self) -> Option<&T> {
+    pub fn lower(&self) -> Option<&f64> {
         match &self.lower {
             Bound::Included(v) => Some(v),
             Bound::Excluded(v) => Some(v),
             Bound::Unbounded => None,
         }
     }
-    pub fn upper(&self) -> Option<&T> {
+    pub fn upper(&self) -> Option<&f64> {
         match &self.upper {
             Bound::Included(v) => Some(v),
             Bound::Excluded(v) => Some(v),
@@ -477,8 +477,8 @@ impl<T: TotalOrd> Bounds<T> {
     }
 }
 
-impl<T: Clone + TotalOrd> Bounds<T> {
-    pub fn member(&self, val: &T) -> Fallible<bool> {
+impl Bounds {
+    pub fn member(&self, val: &f64) -> Fallible<bool> {
         Ok(match &self.lower {
             Bound::Included(bound) => val.total_ge(bound)?,
             Bound::Excluded(bound) => val.total_gt(bound)?,
@@ -496,10 +496,10 @@ pub trait CheckNull {
 }
 
 pub trait CheckAtom: CheckNull + Sized + Clone + PartialEq + Debug {
-    fn is_bounded(&self, _bounds: Bounds<Self>) -> Fallible<bool> {
+    fn is_bounded(&self, _bounds: Bounds) -> Fallible<bool> {
         fallible!(FailedFunction, "bounds check is not implemented")
     }
-    fn check_member(&self, bounds: Option<Bounds<Self>>, nullable: bool) -> Fallible<bool> {
+    fn check_member(&self, bounds: Option<Bounds>, nullable: bool) -> Fallible<bool> {
         if let Some(bounds) = bounds {
             if !self.is_bounded(bounds)? {
                 return Ok(false);
@@ -532,14 +532,14 @@ impl<T> Clone for Null<T> {
 }
 
 impl CheckAtom for f64 {
-    fn is_bounded(&self, bounds: Bounds<Self>) -> Fallible<bool> {
+    fn is_bounded(&self, bounds: Bounds) -> Fallible<bool> {
         bounds.member(self)
     }
 }
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct AtomDomain {
-    pub bounds: Option<Bounds<f64>>,
+    pub bounds: Option<Bounds>,
     nullable: bool,
 }
 
@@ -560,7 +560,7 @@ impl Domain for AtomDomain {
 }
 
 impl AtomDomain {
-    pub fn new(bounds: Option<Bounds<f64>>, nullable: Option<Null<f64>>) -> Self {
+    pub fn new(bounds: Option<Bounds>, nullable: Option<Null<f64>>) -> Self {
         AtomDomain {
             bounds,
             nullable: nullable.is_some(),
@@ -575,7 +575,7 @@ impl AtomDomain {
         }
         Ok(())
     }
-    pub fn bounds(&self) -> Option<&Bounds<f64>> {
+    pub fn bounds(&self) -> Option<&Bounds> {
         self.bounds.as_ref()
     }
 }
@@ -680,7 +680,7 @@ where
     input_domain.element_domain.assert_non_null()?;
 
     let mut output_row_domain = input_domain.element_domain.clone();
-    output_row_domain.bounds = Some(Bounds::<f64>::new_closed(bounds.clone())?);
+    output_row_domain.bounds = Some(Bounds::new_closed(bounds.clone())?);
 
     make_row_by_row_fallible(
         input_domain,
