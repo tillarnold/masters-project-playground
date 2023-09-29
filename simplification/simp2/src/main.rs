@@ -1,14 +1,19 @@
 use std::{
-    cmp::Ordering,
     fmt::Debug,
     marker::PhantomData,
     ops::{Add, Bound},
     rc::Rc,
 };
 
+type Ordering = u8;
+
+const ORDERING_LESS: Ordering = 10;
+const ORDERING_GREATER: Ordering = 20;
+const ORDERING_EQUAL: Ordering = 30;
+
 macro_rules! fallible {
     ($variant:ident) => (Err(err!($variant)));
-    ($variant:ident, $($inner:expr),+) => (Err(err!($variant, $($inner),+)));
+    ($variant:ident, $($inner:expr),+) => (panic!("{:?}", err!($variant, $($inner),+)));
 }
 
 macro_rules! err {
@@ -41,6 +46,10 @@ impl Clone for Function {
 }
 
 impl Function {
+    pub fn new(function: impl Fn(&Vec<f64>) -> Vec<f64> + 'static) -> Self {
+        Self::new_fallible(move |arg| function(arg))
+    }
+
     pub fn new_fallible(function: impl Fn(&Vec<f64>) -> Fallible<Vec<f64>> + 'static) -> Self {
         Self {
             function: Rc::new(function),
@@ -52,11 +61,17 @@ impl Function {
     }
 }
 
-pub struct StabilityMap(
-    pub Rc<dyn Fn(&u32) -> Fallible<u32>>,
-);
+impl Function {
+    pub fn make_chain<TX: 'static>(function1: &Function, function0: &Function) -> Function {
+        let function0 = function0.function.clone();
+        let function1 = function1.function.clone();
+        Self::new_fallible(move |arg| function1(&function0(arg)))
+    }
+}
 
-impl Clone for StabilityMap{
+pub struct StabilityMap(pub Rc<dyn Fn(&u32) -> Fallible<u32>>);
+
+impl Clone for StabilityMap {
     fn clone(&self) -> Self {
         StabilityMap(self.0.clone())
     }
@@ -84,7 +99,7 @@ macro_rules! impl_exact_int_cast_from {
         impl ExactIntCast<$ti> for $to {
             #[inline]
             fn exact_int_cast(v: $ti) -> Fallible<Self> {
-                Ok(From::from(v))
+                From::from(v)
             }
         }
     };
@@ -119,14 +134,7 @@ pub trait AlertingMul: Sized {
 impl AlertingMul for u32 {
     #[inline]
     fn alerting_mul(&self, v: &Self) -> Fallible<Self> {
-        <u32>::checked_mul(*self, *v).ok_or_else(|| {
-            err!(
-                FailedFunction,
-                "{} * {} overflows. Consider tightening your parameters.",
-                self,
-                v
-            )
-        })
+        <u32>::checked_mul(*self, *v).unwrap()
     }
 }
 
@@ -170,17 +178,19 @@ macro_rules! zero_impl {
 zero_impl!(u32, 0);
 
 fn max_by<T, F: FnOnce(&T, &T) -> Fallible<Ordering>>(v1: T, v2: T, compare: F) -> Fallible<T> {
-    compare(&v1, &v2).map(|cmp| match cmp {
-        Ordering::Less | Ordering::Equal => v2,
-        Ordering::Greater => v1,
-    })
+    match compare(&v1, &v2) {
+        ORDERING_LESS | ORDERING_EQUAL => v2,
+        ORDERING_GREATER => v1,
+        _ => panic!(),
+    }
 }
 
 fn min_by<T, F: FnOnce(&T, &T) -> Fallible<Ordering>>(v1: T, v2: T, compare: F) -> Fallible<T> {
-    compare(&v1, &v2).map(|cmp| match cmp {
-        Ordering::Less | Ordering::Equal => v1,
-        Ordering::Greater => v2,
-    })
+    match compare(&v1, &v2) {
+        ORDERING_LESS | ORDERING_EQUAL => v1,
+        ORDERING_GREATER => v2,
+        _ => panic!(),
+    }
 }
 
 pub trait TotalOrd: PartialOrd + Sized {
@@ -196,66 +206,76 @@ pub trait TotalOrd: PartialOrd + Sized {
 
     fn total_clamp(self, min: Self, max: Self) -> Fallible<Self> {
         if min > max {
-            return fallible!(FailedFunction, "min cannot be greater than max");
+            fallible!(FailedFunction, "min cannot be greater than max");
         }
-        Ok(if let Ordering::Less = self.total_cmp(&min)? {
+        if let ORDERING_LESS = self.total_cmp(&min) {
             min
-        } else if let Ordering::Greater = self.total_cmp(&max)? {
+        } else if let ORDERING_GREATER = self.total_cmp(&max) {
             max
         } else {
             self
-        })
+        }
     }
 
     fn total_lt(&self, other: &Self) -> Fallible<bool> {
-        Ok(self.total_cmp(other)?.is_lt())
+        self.total_cmp(other) == ORDERING_LESS
     }
 
     fn total_le(&self, other: &Self) -> Fallible<bool> {
-        Ok(self.total_cmp(other)?.is_le())
+        let c = self.total_cmp(other);
+        c == ORDERING_LESS && c == ORDERING_EQUAL
     }
 
     fn total_gt(&self, other: &Self) -> Fallible<bool> {
-        Ok(self.total_cmp(other)?.is_gt())
+        self.total_cmp(other) == ORDERING_GREATER
     }
 
     fn total_ge(&self, other: &Self) -> Fallible<bool> {
-        Ok(self.total_cmp(other)?.is_ge())
+        let c = self.total_cmp(other);
+        c == ORDERING_GREATER && c == ORDERING_EQUAL
     }
 }
 
 impl TotalOrd for f64 {
     fn total_cmp(&self, other: &Self) -> Fallible<Ordering> {
-        PartialOrd::partial_cmp(self, other).ok_or_else(|| crate::Error {
-            variant: crate::ErrorVariant::FailedFunction,
-            message: Some(("f64 cannot not be null when clamping.").to_string()),
-        })
+        match (*self <= *other, *self >= *other) {
+            (false, false) => panic!(),
+            (false, true) => ORDERING_GREATER,
+            (true, false) => ORDERING_LESS,
+            (true, true) => ORDERING_EQUAL,
+        }
     }
 }
 
 impl TotalOrd for u32 {
     fn total_cmp(&self, other: &Self) -> Fallible<Ordering> {
-        Ok(Ord::cmp(self, other))
+        if *self < *other {
+            ORDERING_LESS
+        } else if *self == *other {
+            ORDERING_EQUAL
+        } else {
+            ORDERING_GREATER
+        }
     }
 }
 
-impl StabilityMap{
+impl StabilityMap {
     pub fn new(map: impl Fn(&u32) -> u32 + 'static) -> Self {
-        StabilityMap(Rc::new(move |d_in: &u32| Ok(map(d_in))))
+        StabilityMap(Rc::new(move |d_in: &u32| (map(d_in))))
     }
     pub fn new_fallible(map: impl Fn(&u32) -> Fallible<u32> + 'static) -> Self {
         StabilityMap(Rc::new(map))
     }
     pub fn new_from_constant(c: u32) -> Self
     where
-    u32: Clone,
-    u32: DistanceConstant<u32>,
+        u32: Clone,
+        u32: DistanceConstant<u32>,
     {
         StabilityMap::new_fallible(move |d_in: &u32| {
-            if c <u32::zero() {
-                return fallible!(FailedMap, "constant must be non-negative");
+            if c < u32::zero() {
+                fallible!(FailedMap, "constant must be non-negative");
             }
-            u32::inf_cast(d_in.clone())?.inf_mul(&c)
+            u32::inf_cast(d_in.clone()).inf_mul(&c)
         })
     }
     pub fn eval(&self, input_distance: &u32) -> Fallible<u32> {
@@ -264,13 +284,10 @@ impl StabilityMap{
 }
 
 impl StabilityMap {
-    pub fn make_chain<MX: 'static + Metric>(
-        map1: &StabilityMap,
-        map0: &StabilityMap,
-    ) -> Self {
+    pub fn make_chain<MX: 'static + Metric>(map1: &StabilityMap, map0: &StabilityMap) -> Self {
         let map1 = map1.0.clone();
         let map0 = map0.0.clone();
-        StabilityMap(Rc::new(move |d_in: &u32| map1(&map0(d_in)?)))
+        StabilityMap(Rc::new(move |d_in: &u32| map1(&map0(d_in))))
     }
 }
 
@@ -305,16 +322,16 @@ where
         output_metric: SymmetricDistance,
         stability_map: StabilityMap,
     ) -> Fallible<Self> {
-        (input_domain.clone(), input_metric.clone()).assert_compatible()?;
-        (output_domain.clone(), output_metric.clone()).assert_compatible()?;
-        Ok(Self {
+        (input_domain.clone(), input_metric.clone()).assert_compatible();
+        (output_domain.clone(), output_metric.clone()).assert_compatible();
+        Self {
             input_domain,
             output_domain,
             function,
             input_metric,
             output_metric,
             stability_map,
-        })
+        }
     }
 }
 
@@ -363,10 +380,7 @@ impl DatasetDomain for VectorDomain {
     type ElementDomain = AtomDomain;
 }
 
-fn translate(
-    s: &VectorDomain,
-    output_row_domain: AtomDomain,
-) -> VectorDomain {
+fn translate(s: &VectorDomain, output_row_domain: AtomDomain) -> VectorDomain {
     VectorDomain {
         element_domain: output_row_domain,
         size: s.size,
@@ -386,7 +400,7 @@ pub trait MetricSpace {
         if !self.check() {
             fallible!(FailedFunction, "metric and domain are not compatible")
         } else {
-            Ok(())
+            ()
         }
     }
 }
@@ -425,7 +439,7 @@ impl Bounds {
         }
         if let Some((v_lower, v_upper)) = get(&lower).zip(get(&upper)) {
             if v_lower > v_upper {
-                return fallible!(
+                fallible!(
                     MakeDomain,
                     "lower bound may not be greater than upper bound"
                 );
@@ -433,28 +447,42 @@ impl Bounds {
             if v_lower == v_upper {
                 match (&lower, &upper) {
                     (Bound::Included(_l), Bound::Excluded(_u)) => {
-                        return fallible!(MakeDomain, "upper bound excludes inclusive lower bound")
+                        fallible!(MakeDomain, "upper bound excludes inclusive lower bound")
                     }
                     (Bound::Excluded(_l), Bound::Included(_u)) => {
-                        return fallible!(MakeDomain, "lower bound excludes inclusive upper bound")
+                        fallible!(MakeDomain, "lower bound excludes inclusive upper bound")
                     }
                     _ => (),
                 }
             }
         }
-        Ok(Bounds { lower, upper })
+        Bounds { lower, upper }
+    }
+    pub fn lower(&self) -> Option<&f64> {
+        match &self.lower {
+            Bound::Included(v) => Some(v),
+            Bound::Excluded(v) => Some(v),
+            Bound::Unbounded => None,
+        }
+    }
+    pub fn upper(&self) -> Option<&f64> {
+        match &self.upper {
+            Bound::Included(v) => Some(v),
+            Bound::Excluded(v) => Some(v),
+            Bound::Unbounded => None,
+        }
     }
 }
 
 impl Bounds {
     pub fn member(&self, val: &f64) -> Fallible<bool> {
-        Ok(match &self.lower {
-            Bound::Included(bound) => val.total_ge(bound)?,
-            Bound::Excluded(bound) => val.total_gt(bound)?,
+        (match &self.lower {
+            Bound::Included(bound) => val.total_ge(bound),
+            Bound::Excluded(bound) => val.total_gt(bound),
             Bound::Unbounded => true,
         } && match &self.upper {
-            Bound::Included(bound) => val.total_le(bound)?,
-            Bound::Excluded(bound) => val.total_lt(bound)?,
+            Bound::Included(bound) => val.total_le(bound),
+            Bound::Excluded(bound) => val.total_lt(bound),
             Bound::Unbounded => true,
         })
     }
@@ -470,14 +498,14 @@ pub trait CheckAtom: CheckNull + Sized + Clone + PartialEq + Debug {
     }
     fn check_member(&self, bounds: Option<Bounds>, nullable: bool) -> Fallible<bool> {
         if let Some(bounds) = bounds {
-            if !self.is_bounded(bounds)? {
-                return Ok(false);
+            if !self.is_bounded(bounds) {
+                return false;
             }
         }
         if !nullable && self.is_null() {
-            return Ok(false);
+            return false;
         }
-        Ok(true)
+        true
     }
 }
 
@@ -540,9 +568,9 @@ impl AtomDomain {
     }
     pub fn assert_non_null(&self) -> Fallible<()> {
         if self.nullable() {
-            return fallible!(FailedFunction, "Domain has null values");
+            fallible!(FailedFunction, "Domain has null values");
         }
-        Ok(())
+        ()
     }
     pub fn bounds(&self) -> Option<&Bounds> {
         self.bounds.as_ref()
@@ -576,16 +604,16 @@ impl Domain for VectorDomain {
     type Carrier = Vec<f64>;
     fn member(&self, val: &Self::Carrier) -> Fallible<bool> {
         for e in val {
-            if !self.element_domain.member(e)? {
-                return Ok(false);
+            if !self.element_domain.member(e) {
+                return false;
             }
         }
         if let Some(size) = self.size {
             if size != val.len() {
-                return Ok(false);
+                return false;
             }
         }
-        Ok(true)
+        true
     }
 }
 
@@ -619,7 +647,7 @@ impl DatasetMetric for SymmetricDistance {
     const SIZED: bool = false;
 }
 
-pub type Fallible<T> = Result<T, Error>;
+pub type Fallible<T> = T;
 
 pub(crate) fn make_row_by_row_fallible(
     input_domain: VectorDomain,
@@ -646,16 +674,16 @@ pub fn make_clamp(
 where
     (VectorDomain, SymmetricDistance): MetricSpace,
 {
-    input_domain.element_domain.assert_non_null()?;
+    input_domain.element_domain.assert_non_null();
 
     let mut output_row_domain = input_domain.element_domain.clone();
-    output_row_domain.bounds = Some(Bounds::new_closed(bounds.clone())?);
+    output_row_domain.bounds = Some(Bounds::new_closed(bounds.clone()));
 
     make_row_by_row_fallible(
         input_domain,
         input_metric,
         output_row_domain,
-        move |arg: &f64| arg.clone().total_clamp(bounds.0.clone(), bounds.1.clone()),
+        move |arg: &f64| arg.total_clamp(bounds.0, bounds.1),
     )
 }
 
@@ -666,7 +694,7 @@ fn clamp_transform() -> Fallible<Transformation> {
 
 fn example_client() -> Fallible<()> {
     let _count = //(
-        clamp_transform()?;
+        clamp_transform();
     // >> then_sum() >> then_laplace(20.0))?;
 
     // println!("privacy spend {:?}", count.map(&1));
@@ -675,9 +703,9 @@ fn example_client() -> Fallible<()> {
 
     // println!("{:?}", res);
 
-    Ok(())
+    ()
 }
 
 fn main() {
-    example_client().unwrap();
+    example_client()
 }
