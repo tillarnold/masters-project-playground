@@ -1,9 +1,11 @@
-use std::{
-    fmt::Debug,
-    marker::PhantomData,
-    ops::{Add, Bound},
-    rc::Rc,
-};
+use std::{fmt::Debug, marker::PhantomData, ops::Add, rc::Rc};
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Bound {
+    Included(f64),
+    Excluded(f64),
+    Unbounded,
+}
 
 type Ordering = u8;
 
@@ -35,7 +37,7 @@ macro_rules! err {
 }
 
 pub struct Function {
-    pub function: Rc<dyn Fn(&Vec<f64>) -> Fallible<Vec<f64>>>,
+    pub function: Rc<dyn Fn(&Vec<f64>) -> Vec<f64>>,
 }
 impl Clone for Function {
     fn clone(&self) -> Self {
@@ -50,26 +52,26 @@ impl Function {
         Self::new_fallible(move |arg| function(arg))
     }
 
-    pub fn new_fallible(function: impl Fn(&Vec<f64>) -> Fallible<Vec<f64>> + 'static) -> Self {
+    pub fn new_fallible(function: impl Fn(&Vec<f64>) -> Vec<f64> + 'static) -> Self {
         Self {
             function: Rc::new(function),
         }
     }
 
-    pub fn eval(&self, arg: &Vec<f64>) -> Fallible<Vec<f64>> {
+    pub fn eval(&self, arg: &Vec<f64>) -> Vec<f64> {
         (self.function)(arg)
     }
 }
 
 impl Function {
-    pub fn make_chain<TX: 'static>(function1: &Function, function0: &Function) -> Function {
+    pub fn make_chain(function1: &Function, function0: &Function) -> Function {
         let function0 = function0.function.clone();
         let function1 = function1.function.clone();
         Self::new_fallible(move |arg| function1(&function0(arg)))
     }
 }
 
-pub struct StabilityMap(pub Rc<dyn Fn(&u32) -> Fallible<u32>>);
+pub struct StabilityMap(pub Rc<dyn Fn(&u32) -> u32>);
 
 impl Clone for StabilityMap {
     fn clone(&self) -> Self {
@@ -91,14 +93,14 @@ macro_rules! impl_exact_int_bounds {
 impl_exact_int_bounds!(u32);
 
 pub trait ExactIntCast<TI>: Sized + ExactIntBounds {
-    fn exact_int_cast(v: TI) -> Fallible<Self>;
+    fn exact_int_cast(v: TI) -> Self;
 }
 
 macro_rules! impl_exact_int_cast_from {
     ($ti:ty, $to:ty) => {
         impl ExactIntCast<$ti> for $to {
             #[inline]
-            fn exact_int_cast(v: $ti) -> Fallible<Self> {
+            fn exact_int_cast(v: $ti) -> Self {
                 From::from(v)
             }
         }
@@ -108,17 +110,17 @@ macro_rules! impl_exact_int_cast_from {
 impl_exact_int_cast_from!(u32, u32);
 
 pub trait InfCast<TI>: Sized {
-    fn inf_cast(v: TI) -> Fallible<Self>;
-    fn neg_inf_cast(v: TI) -> Fallible<Self>;
+    fn inf_cast(v: TI) -> Self;
+    fn neg_inf_cast(v: TI) -> Self;
 }
 
 macro_rules! impl_inf_cast_exact {
     ($ti:ty, $to:ty) => {
         impl InfCast<$ti> for $to {
-            fn inf_cast(v: $ti) -> Fallible<Self> {
+            fn inf_cast(v: $ti) -> Self {
                 ExactIntCast::exact_int_cast(v)
             }
-            fn neg_inf_cast(v: $ti) -> Fallible<Self> {
+            fn neg_inf_cast(v: $ti) -> Self {
                 ExactIntCast::exact_int_cast(v)
             }
         }
@@ -128,26 +130,26 @@ macro_rules! impl_inf_cast_exact {
 impl_inf_cast_exact!(u32, u32);
 
 pub trait AlertingMul: Sized {
-    fn alerting_mul(&self, v: &Self) -> Fallible<Self>;
+    fn alerting_mul(&self, v: &Self) -> Self;
 }
 
 impl AlertingMul for u32 {
     #[inline]
-    fn alerting_mul(&self, v: &Self) -> Fallible<Self> {
+    fn alerting_mul(&self, v: &Self) -> Self {
         <u32>::checked_mul(*self, *v).unwrap()
     }
 }
 
 pub trait InfMul: Sized + AlertingMul {
-    fn inf_mul(&self, v: &Self) -> Fallible<Self>;
-    fn neg_inf_mul(&self, v: &Self) -> Fallible<Self>;
+    fn inf_mul(&self, v: &Self) -> Self;
+    fn neg_inf_mul(&self, v: &Self) -> Self;
 }
 
 impl InfMul for u32 {
-    fn inf_mul(&self, other: &Self) -> Fallible<Self> {
+    fn inf_mul(&self, other: &Self) -> Self {
         self.alerting_mul(other)
     }
-    fn neg_inf_mul(&self, other: &Self) -> Fallible<Self> {
+    fn neg_inf_mul(&self, other: &Self) -> Self {
         self.alerting_mul(other)
     }
 }
@@ -177,34 +179,42 @@ macro_rules! zero_impl {
 
 zero_impl!(u32, 0);
 
-fn max_by<T, F: FnOnce(&T, &T) -> Fallible<Ordering>>(v1: T, v2: T, compare: F) -> Fallible<T> {
-    match compare(&v1, &v2) {
-        ORDERING_LESS | ORDERING_EQUAL => v2,
-        ORDERING_GREATER => v1,
-        _ => panic!(),
-    }
-}
+// fn max_by<M, F: FnOnce(&M, &M) -> Ordering>(v1: M, v2: M, compare: F) -> M {
+//     match compare(&v1, &v2) {
+//         ORDERING_LESS | ORDERING_EQUAL => v2,
+//         ORDERING_GREATER => v1,
+//         _ => panic!(),
+//     }
+// }
 
-fn min_by<T, F: FnOnce(&T, &T) -> Fallible<Ordering>>(v1: T, v2: T, compare: F) -> Fallible<T> {
-    match compare(&v1, &v2) {
-        ORDERING_LESS | ORDERING_EQUAL => v1,
-        ORDERING_GREATER => v2,
-        _ => panic!(),
-    }
-}
+// fn min_by<N, F: FnOnce(&N, &N) -> Ordering>(v1: N, v2: N, compare: F) -> N {
+//     match compare(&v1, &v2) {
+//         ORDERING_LESS | ORDERING_EQUAL => v1,
+//         ORDERING_GREATER => v2,
+//         _ => panic!(),
+//     }
+// }
 
 pub trait TotalOrd: PartialOrd + Sized {
-    fn total_cmp(&self, other: &Self) -> Fallible<Ordering>;
+    fn total_cmp(&self, other: &Self) -> Ordering;
 
-    fn total_max(self, other: Self) -> Fallible<Self> {
-        max_by(self, other, TotalOrd::total_cmp)
+    fn total_max(self, other: Self) -> Self {
+        match TotalOrd::total_cmp(&self, &other) {
+            ORDERING_LESS | ORDERING_EQUAL => other,
+            ORDERING_GREATER => self,
+            _ => panic!(),
+        }
     }
 
-    fn total_min(self, other: Self) -> Fallible<Self> {
-        min_by(self, other, TotalOrd::total_cmp)
+    fn total_min(self, other: Self) -> Self {
+        match TotalOrd::total_cmp(&self, &other) {
+            ORDERING_LESS | ORDERING_EQUAL => self,
+            ORDERING_GREATER => other,
+            _ => panic!(),
+        }
     }
 
-    fn total_clamp(self, min: Self, max: Self) -> Fallible<Self> {
+    fn total_clamp(self, min: Self, max: Self) -> Self {
         if min > max {
             fallible!(FailedFunction, "min cannot be greater than max");
         }
@@ -217,27 +227,27 @@ pub trait TotalOrd: PartialOrd + Sized {
         }
     }
 
-    fn total_lt(&self, other: &Self) -> Fallible<bool> {
+    fn total_lt(&self, other: &Self) -> bool {
         self.total_cmp(other) == ORDERING_LESS
     }
 
-    fn total_le(&self, other: &Self) -> Fallible<bool> {
+    fn total_le(&self, other: &Self) -> bool {
         let c = self.total_cmp(other);
         c == ORDERING_LESS && c == ORDERING_EQUAL
     }
 
-    fn total_gt(&self, other: &Self) -> Fallible<bool> {
+    fn total_gt(&self, other: &Self) -> bool {
         self.total_cmp(other) == ORDERING_GREATER
     }
 
-    fn total_ge(&self, other: &Self) -> Fallible<bool> {
+    fn total_ge(&self, other: &Self) -> bool {
         let c = self.total_cmp(other);
         c == ORDERING_GREATER && c == ORDERING_EQUAL
     }
 }
 
 impl TotalOrd for f64 {
-    fn total_cmp(&self, other: &Self) -> Fallible<Ordering> {
+    fn total_cmp(&self, other: &Self) -> Ordering {
         match (*self <= *other, *self >= *other) {
             (false, false) => panic!(),
             (false, true) => ORDERING_GREATER,
@@ -248,7 +258,7 @@ impl TotalOrd for f64 {
 }
 
 impl TotalOrd for u32 {
-    fn total_cmp(&self, other: &Self) -> Fallible<Ordering> {
+    fn total_cmp(&self, other: &Self) -> Ordering {
         if *self < *other {
             ORDERING_LESS
         } else if *self == *other {
@@ -263,7 +273,7 @@ impl StabilityMap {
     pub fn new(map: impl Fn(&u32) -> u32 + 'static) -> Self {
         StabilityMap(Rc::new(move |d_in: &u32| (map(d_in))))
     }
-    pub fn new_fallible(map: impl Fn(&u32) -> Fallible<u32> + 'static) -> Self {
+    pub fn new_fallible(map: impl Fn(&u32) -> u32 + 'static) -> Self {
         StabilityMap(Rc::new(map))
     }
     pub fn new_from_constant(c: u32) -> Self
@@ -278,7 +288,7 @@ impl StabilityMap {
             u32::inf_cast(d_in.clone()).inf_mul(&c)
         })
     }
-    pub fn eval(&self, input_distance: &u32) -> Fallible<u32> {
+    pub fn eval(&self, input_distance: &u32) -> u32 {
         (self.0)(input_distance)
     }
 }
@@ -321,7 +331,7 @@ where
         input_metric: SymmetricDistance,
         output_metric: SymmetricDistance,
         stability_map: StabilityMap,
-    ) -> Fallible<Self> {
+    ) -> Self {
         (input_domain.clone(), input_metric.clone()).assert_compatible();
         (output_domain.clone(), output_metric.clone()).assert_compatible();
         Self {
@@ -369,7 +379,7 @@ pub enum ErrorVariant {
 
 pub trait Domain: Clone + PartialEq + Debug {
     type Carrier;
-    fn member(&self, val: &Self::Carrier) -> Fallible<bool>;
+    fn member(&self, val: &Self::Carrier) -> bool;
 }
 
 pub trait DatasetDomain: Domain {
@@ -387,16 +397,13 @@ fn translate(s: &VectorDomain, output_row_domain: AtomDomain) -> VectorDomain {
     }
 }
 
-fn apply_rows(
-    value: &Vec<f64>,
-    row_function: &impl Fn(&f64) -> Fallible<f64>,
-) -> Fallible<Vec<f64>> {
+fn apply_rows(value: &Vec<f64>, row_function: &impl Fn(&f64) -> f64) -> Vec<f64> {
     value.iter().map(row_function).collect()
 }
 
 pub trait MetricSpace {
     fn check(&self) -> bool;
-    fn assert_compatible(&self) -> Fallible<()> {
+    fn assert_compatible(&self) -> () {
         if !self.check() {
             fallible!(FailedFunction, "metric and domain are not compatible")
         } else {
@@ -419,18 +426,18 @@ pub trait DatasetMetric: Metric<Distance = u32> {
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct Bounds {
-    lower: Bound<f64>,
-    upper: Bound<f64>,
+    lower: Bound,
+    upper: Bound,
 }
 
 impl Bounds {
-    pub fn new_closed(bounds: (f64, f64)) -> Fallible<Self> {
+    pub fn new_closed(bounds: (f64, f64)) -> Self {
         Self::new((Bound::Included(bounds.0), Bound::Included(bounds.1)))
     }
     /// Checks that the arguments are well-formed.
-    pub fn new(bounds: (Bound<f64>, Bound<f64>)) -> Fallible<Self> {
+    pub fn new(bounds: (Bound, Bound)) -> Self {
         let (lower, upper) = bounds;
-        fn get<T>(value: &Bound<T>) -> Option<&T> {
+        fn get(value: &Bound) -> Option<&f64> {
             match value {
                 Bound::Included(value) => Some(value),
                 Bound::Excluded(value) => Some(value),
@@ -475,7 +482,7 @@ impl Bounds {
 }
 
 impl Bounds {
-    pub fn member(&self, val: &f64) -> Fallible<bool> {
+    pub fn member(&self, val: &f64) -> bool {
         (match &self.lower {
             Bound::Included(bound) => val.total_ge(bound),
             Bound::Excluded(bound) => val.total_gt(bound),
@@ -493,10 +500,10 @@ pub trait CheckNull {
 }
 
 pub trait CheckAtom: CheckNull + Sized + Clone + PartialEq + Debug {
-    fn is_bounded(&self, _bounds: Bounds) -> Fallible<bool> {
+    fn is_bounded(&self, _bounds: Bounds) -> bool {
         fallible!(FailedFunction, "bounds check is not implemented")
     }
-    fn check_member(&self, bounds: Option<Bounds>, nullable: bool) -> Fallible<bool> {
+    fn check_member(&self, bounds: Option<Bounds>, nullable: bool) -> bool {
         if let Some(bounds) = bounds {
             if !self.is_bounded(bounds) {
                 return false;
@@ -516,20 +523,20 @@ impl CheckNull for f64 {
     }
 }
 
-#[derive(PartialEq)]
-pub struct Null<T> {
-    pub _marker: PhantomData<T>,
-}
-impl<T> Clone for Null<T> {
-    fn clone(&self) -> Self {
-        Self {
-            _marker: self._marker.clone(),
-        }
-    }
-}
+// #[derive(PartialEq)]
+// pub struct Null<T> {
+//     pub _marker: PhantomData<T>,
+// }
+// impl<T> Clone for Null<T> {
+//     fn clone(&self) -> Self {
+//         Self {
+//             _marker: self._marker.clone(),
+//         }
+//     }
+// }
 
 impl CheckAtom for f64 {
-    fn is_bounded(&self, bounds: Bounds) -> Fallible<bool> {
+    fn is_bounded(&self, bounds: Bounds) -> bool {
         bounds.member(self)
     }
 }
@@ -551,22 +558,22 @@ impl Default for AtomDomain {
 
 impl Domain for AtomDomain {
     type Carrier = f64;
-    fn member(&self, val: &Self::Carrier) -> Fallible<bool> {
+    fn member(&self, val: &Self::Carrier) -> bool {
         val.check_member(self.bounds.clone(), self.nullable)
     }
 }
 
 impl AtomDomain {
-    pub fn new(bounds: Option<Bounds>, nullable: Option<Null<f64>>) -> Self {
-        AtomDomain {
-            bounds,
-            nullable: nullable.is_some(),
-        }
-    }
+    // pub fn new(bounds: Option<Bounds>, nullable: Option<Null<f64>>) -> Self {
+    //     AtomDomain {
+    //         bounds,
+    //         nullable: nullable.is_some(),
+    //     }
+    // }
     pub fn nullable(&self) -> bool {
         self.nullable
     }
-    pub fn assert_non_null(&self) -> Fallible<()> {
+    pub fn assert_non_null(&self) -> () {
         if self.nullable() {
             fallible!(FailedFunction, "Domain has null values");
         }
@@ -602,7 +609,7 @@ impl VectorDomain {
 
 impl Domain for VectorDomain {
     type Carrier = Vec<f64>;
-    fn member(&self, val: &Self::Carrier) -> Fallible<bool> {
+    fn member(&self, val: &Self::Carrier) -> bool {
         for e in val {
             if !self.element_domain.member(e) {
                 return false;
@@ -647,14 +654,12 @@ impl DatasetMetric for SymmetricDistance {
     const SIZED: bool = false;
 }
 
-pub type Fallible<T> = T;
-
 pub(crate) fn make_row_by_row_fallible(
     input_domain: VectorDomain,
     input_metric: SymmetricDistance,
     output_row_domain: AtomDomain,
-    row_function: impl 'static + Fn(&f64) -> Fallible<f64>,
-) -> Fallible<Transformation> {
+    row_function: impl 'static + Fn(&f64) -> f64,
+) -> Transformation {
     let output_domain = translate(&input_domain, output_row_domain);
     Transformation::new(
         input_domain,
@@ -670,7 +675,7 @@ pub fn make_clamp(
     input_domain: VectorDomain,
     input_metric: SymmetricDistance,
     bounds: (f64, f64),
-) -> Fallible<Transformation>
+) -> Transformation
 where
     (VectorDomain, SymmetricDistance): MetricSpace,
 {
@@ -687,12 +692,12 @@ where
     )
 }
 
-fn clamp_transform() -> Fallible<Transformation> {
+fn clamp_transform() -> Transformation {
     let id = VectorDomain::new(AtomDomain::default());
     make_clamp(id, SymmetricDistance, (10.0, 20.0))
 }
 
-fn example_client() -> Fallible<()> {
+fn example_client() -> () {
     let _count = //(
         clamp_transform();
     // >> then_sum() >> then_laplace(20.0))?;
