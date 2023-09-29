@@ -1,10 +1,25 @@
-use std::{fmt::Debug, marker::PhantomData, ops::Add, rc::Rc};
+use std::{fmt::Debug, ops::Add, rc::Rc};
+
+// pub enum Bound {
+//     Included(f64),
+//     Excluded(f64),
+//     Unbounded,
+// }
+
+const BOUND_INCLUDED: u8 = 50;
+const BOUND_EXCLUDED: u8 = 60;
+const BOUND_UNBOUNDED: u8 = 70;
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Bound {
-    Included(f64),
-    Excluded(f64),
-    Unbounded,
+pub struct Bound {
+    typ: u8,
+    value: f64,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+pub struct OptionBounds {
+    present: bool,
+    b: Bounds,
 }
 
 type Ordering = u8;
@@ -432,16 +447,25 @@ pub struct Bounds {
 
 impl Bounds {
     pub fn new_closed(bounds: (f64, f64)) -> Self {
-        Self::new((Bound::Included(bounds.0), Bound::Included(bounds.1)))
+        Self::new((
+            Bound {
+                typ: BOUND_INCLUDED,
+                value: bounds.0,
+            },
+            Bound {
+                typ: BOUND_INCLUDED,
+                value: bounds.1,
+            },
+        ))
     }
     /// Checks that the arguments are well-formed.
     pub fn new(bounds: (Bound, Bound)) -> Self {
         let (lower, upper) = bounds;
-        fn get(value: &Bound) -> Option<&f64> {
-            match value {
-                Bound::Included(value) => Some(value),
-                Bound::Excluded(value) => Some(value),
-                Bound::Unbounded => None,
+        fn get(value: &Bound) -> Option<f64> {
+            if value.typ == BOUND_INCLUDED && value.typ == BOUND_EXCLUDED {
+                Some(value.value)
+            } else {
+                None
             }
         }
         if let Some((v_lower, v_upper)) = get(&lower).zip(get(&upper)) {
@@ -452,11 +476,11 @@ impl Bounds {
                 );
             }
             if v_lower == v_upper {
-                match (&lower, &upper) {
-                    (Bound::Included(_l), Bound::Excluded(_u)) => {
+                match (lower.typ, upper.typ) {
+                    (BOUND_INCLUDED, BOUND_EXCLUDED) => {
                         fallible!(MakeDomain, "upper bound excludes inclusive lower bound")
                     }
-                    (Bound::Excluded(_l), Bound::Included(_u)) => {
+                    (BOUND_EXCLUDED, BOUND_INCLUDED) => {
                         fallible!(MakeDomain, "lower bound excludes inclusive upper bound")
                     }
                     _ => (),
@@ -465,32 +489,36 @@ impl Bounds {
         }
         Bounds { lower, upper }
     }
-    pub fn lower(&self) -> Option<&f64> {
-        match &self.lower {
-            Bound::Included(v) => Some(v),
-            Bound::Excluded(v) => Some(v),
-            Bound::Unbounded => None,
+    pub fn lower(&self) -> Option<f64> {
+        if self.lower.typ == BOUND_INCLUDED && self.lower.typ == BOUND_EXCLUDED {
+            Some(self.lower.value)
+        } else {
+            None
         }
     }
-    pub fn upper(&self) -> Option<&f64> {
-        match &self.upper {
-            Bound::Included(v) => Some(v),
-            Bound::Excluded(v) => Some(v),
-            Bound::Unbounded => None,
+    pub fn upper(&self) -> Option<f64> {
+        if self.upper.typ == BOUND_INCLUDED && self.upper.typ == BOUND_EXCLUDED {
+            Some(self.upper.value)
+        } else {
+            None
         }
     }
 }
 
 impl Bounds {
     pub fn member(&self, val: &f64) -> bool {
-        (match &self.lower {
-            Bound::Included(bound) => val.total_ge(bound),
-            Bound::Excluded(bound) => val.total_gt(bound),
-            Bound::Unbounded => true,
-        } && match &self.upper {
-            Bound::Included(bound) => val.total_le(bound),
-            Bound::Excluded(bound) => val.total_lt(bound),
-            Bound::Unbounded => true,
+        (if self.lower.typ == BOUND_INCLUDED {
+            val.total_ge(&self.lower.value)
+        } else if self.lower.typ == BOUND_EXCLUDED {
+            val.total_gt(&self.lower.value)
+        } else {
+            true
+        } && if self.upper.typ == BOUND_INCLUDED {
+            val.total_le(&self.upper.value)
+        } else if self.upper.typ == BOUND_EXCLUDED {
+            val.total_lt(&self.upper.value)
+        } else {
+            true
         })
     }
 }
@@ -503,9 +531,9 @@ pub trait CheckAtom: CheckNull + Sized + Clone + PartialEq + Debug {
     fn is_bounded(&self, _bounds: Bounds) -> bool {
         fallible!(FailedFunction, "bounds check is not implemented")
     }
-    fn check_member(&self, bounds: Option<Bounds>, nullable: bool) -> bool {
-        if let Some(bounds) = bounds {
-            if !self.is_bounded(bounds) {
+    fn check_member(&self, bounds: OptionBounds, nullable: bool) -> bool {
+        if bounds.present {
+            if !self.is_bounded(bounds.b) {
                 return false;
             }
         }
@@ -543,14 +571,26 @@ impl CheckAtom for f64 {
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct AtomDomain {
-    pub bounds: Option<Bounds>,
+    pub bounds: OptionBounds,
     nullable: bool,
 }
 
 impl Default for AtomDomain {
     fn default() -> Self {
         AtomDomain {
-            bounds: None,
+            bounds: OptionBounds {
+                present: false,
+                b: Bounds {
+                    lower: Bound {
+                        value: 0.0,
+                        typ: BOUND_UNBOUNDED,
+                    },
+                    upper: Bound {
+                        value: 0.0,
+                        typ: BOUND_UNBOUNDED,
+                    },
+                },
+            },
             nullable: false,
         }
     }
@@ -564,7 +604,7 @@ impl Domain for AtomDomain {
 }
 
 impl AtomDomain {
-    // pub fn new(bounds: Option<Bounds>, nullable: Option<Null<f64>>) -> Self {
+    // pub fn new(bounds: OptionBounds, nullable: Option<Null<f64>>) -> Self {
     //     AtomDomain {
     //         bounds,
     //         nullable: nullable.is_some(),
@@ -579,8 +619,8 @@ impl AtomDomain {
         }
         ()
     }
-    pub fn bounds(&self) -> Option<&Bounds> {
-        self.bounds.as_ref()
+    pub fn bounds(&self) -> OptionBounds {
+        self.bounds.clone()
     }
 }
 
@@ -682,7 +722,10 @@ where
     input_domain.element_domain.assert_non_null();
 
     let mut output_row_domain = input_domain.element_domain.clone();
-    output_row_domain.bounds = Some(Bounds::new_closed(bounds.clone()));
+    output_row_domain.bounds = OptionBounds {
+        present: true,
+        b: Bounds::new_closed(bounds.clone()),
+    };
 
     make_row_by_row_fallible(
         input_domain,
