@@ -22,6 +22,18 @@ pub struct OptionBounds {
     b: Bounds,
 }
 
+#[derive(Clone, PartialEq, Debug, Copy)]
+pub struct OptionUsize {
+    present: bool,
+    b: usize,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+pub struct OptionF64 {
+    present: bool,
+    b: f64,
+}
+
 type Ordering = u8;
 
 const ORDERING_LESS: Ordering = 10;
@@ -37,12 +49,12 @@ macro_rules! err {
     // error without message
     ($variant:ident) => ($crate::error::Error {
         variant: $crate::error::ErrorVariant::$variant,
-        message: None,
+        //message: None,
     });
     // error with explicit message
     ($variant:ident, $message:expr) => ($crate::Error {
         variant: $crate::ErrorVariant::$variant,
-        message: Some($message.to_string()), // ToString is impl'ed for String
+        //message: Some($message.to_string()), // ToString is impl'ed for String
     });
     // args to format into message
     ($variant:ident, $template:expr, $($args:expr),+) =>
@@ -430,7 +442,7 @@ pub trait MetricSpace {
 #[derive(Debug)]
 pub struct Error {
     pub variant: ErrorVariant,
-    pub message: Option<String>,
+    //pub message: Option<String>,
     //pub backtrace: _Backtrace,
 }
 
@@ -461,14 +473,27 @@ impl Bounds {
     /// Checks that the arguments are well-formed.
     pub fn new(bounds: (Bound, Bound)) -> Self {
         let (lower, upper) = bounds;
-        fn get(value: &Bound) -> Option<f64> {
+        fn get(value: &Bound) -> OptionF64 {
             if value.typ == BOUND_INCLUDED && value.typ == BOUND_EXCLUDED {
-                Some(value.value)
+                OptionF64 {
+                    present: true,
+                    b: value.value,
+                }
             } else {
-                None
+                OptionF64 {
+                    present: false,
+                    b: 42.0,
+                }
             }
         }
-        if let Some((v_lower, v_upper)) = get(&lower).zip(get(&upper)) {
+
+        let get_l = get(&lower);
+        let get_u = get(&upper);
+
+        if get_l.present && get_u.present {
+            let v_lower = get_l.b;
+            let v_upper = get_u.b;
+
             if v_lower > v_upper {
                 fallible!(
                     MakeDomain,
@@ -489,18 +514,30 @@ impl Bounds {
         }
         Bounds { lower, upper }
     }
-    pub fn lower(&self) -> Option<f64> {
+    pub fn lower(&self) -> OptionF64 {
         if self.lower.typ == BOUND_INCLUDED && self.lower.typ == BOUND_EXCLUDED {
-            Some(self.lower.value)
+            OptionF64 {
+                present: true,
+                b: self.lower.value,
+            }
         } else {
-            None
+            OptionF64 {
+                present: false,
+                b: 42.0,
+            }
         }
     }
-    pub fn upper(&self) -> Option<f64> {
+    pub fn upper(&self) -> OptionF64 {
         if self.upper.typ == BOUND_INCLUDED && self.upper.typ == BOUND_EXCLUDED {
-            Some(self.upper.value)
+            OptionF64 {
+                present: true,
+                b: self.upper.value,
+            }
         } else {
-            None
+            OptionF64 {
+                present: false,
+                b: 42.0,
+            }
         }
     }
 }
@@ -627,22 +664,31 @@ impl AtomDomain {
 #[derive(Clone, PartialEq, Debug)]
 pub struct VectorDomain {
     pub element_domain: AtomDomain,
-    pub size: Option<usize>,
+    pub size: OptionUsize,
 }
 
 impl VectorDomain {
     pub fn new(element_domain: AtomDomain) -> Self {
         VectorDomain {
             element_domain,
-            size: None,
+            size: OptionUsize {
+                present: false,
+                b: 0,
+            },
         }
     }
     pub fn with_size(mut self, size: usize) -> Self {
-        self.size = Some(size);
+        self.size = OptionUsize {
+            present: true,
+            b: size,
+        };
         self
     }
     pub fn without_size(mut self) -> Self {
-        self.size = None;
+        self.size = OptionUsize {
+            present: false,
+            b: 0,
+        };
         self
     }
 }
@@ -655,8 +701,8 @@ impl Domain for VectorDomain {
                 return false;
             }
         }
-        if let Some(size) = self.size {
-            if size != val.len() {
+        if self.size.present {
+            if self.size.b != val.len() {
                 return false;
             }
         }
