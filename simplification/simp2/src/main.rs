@@ -1,8 +1,8 @@
 use std::{fmt::Debug, ops::Add, rc::Rc};
 
 // pub enum Bound {
-//     Included(f64),
-//     Excluded(f64),
+//     Included(i64),
+//     Excluded(i64),
 //     Unbounded,
 // }
 
@@ -13,7 +13,7 @@ const BOUND_UNBOUNDED: u8 = 70;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Bound {
     typ: u8,
-    value: f64,
+    value: i64,
 }
 
 #[derive(Clone, PartialEq, Debug)]
@@ -31,7 +31,7 @@ pub struct OptionUsize {
 #[derive(Clone, PartialEq, Debug)]
 pub struct OptionF64 {
     present: bool,
-    b: f64,
+    b: i64,
 }
 
 type Ordering = u8;
@@ -64,7 +64,7 @@ macro_rules! err {
 }
 
 pub struct Function {
-    pub function: Rc<dyn Fn(&Vec<f64>) -> Vec<f64>>,
+    pub function: Rc<dyn Fn(Vec<i64>) -> Vec<i64>>,
 }
 impl Clone for Function {
     fn clone(&self) -> Self {
@@ -75,26 +75,26 @@ impl Clone for Function {
 }
 
 impl Function {
-    pub fn new(function: impl Fn(&Vec<f64>) -> Vec<f64> + 'static) -> Self {
+    pub fn new(function: impl Fn(Vec<i64>) -> Vec<i64> + 'static) -> Self {
         Self::new_fallible(move |arg| function(arg))
     }
 
-    pub fn new_fallible(function: impl Fn(&Vec<f64>) -> Vec<f64> + 'static) -> Self {
+    pub fn new_fallible(function: impl Fn(Vec<i64>) -> Vec<i64> + 'static) -> Self {
         Self {
             function: Rc::new(function),
         }
     }
 
-    pub fn eval(&self, arg: &Vec<f64>) -> Vec<f64> {
+    pub fn eval(&self, arg: Vec<i64>) -> Vec<i64> {
         (self.function)(arg)
     }
 }
 
 impl Function {
-    pub fn make_chain(function1: &Function, function0: &Function) -> Function {
+    pub fn make_chain(function1: Function, function0: Function) -> Function {
         let function0 = function0.function.clone();
         let function1 = function1.function.clone();
-        Self::new_fallible(move |arg| function1(&function0(arg)))
+        Self::new_fallible(move |arg| function1(function0(arg)))
     }
 }
 
@@ -273,7 +273,7 @@ pub trait TotalOrd: PartialOrd + Sized {
     }
 }
 
-impl TotalOrd for f64 {
+impl TotalOrd for i64 {
     fn total_cmp(&self, other: &Self) -> Ordering {
         match (*self <= *other, *self >= *other) {
             (false, false) => panic!(),
@@ -417,14 +417,14 @@ impl DatasetDomain for VectorDomain {
     type ElementDomain = AtomDomain;
 }
 
-fn translate(s: &VectorDomain, output_row_domain: AtomDomain) -> VectorDomain {
+fn translate(s: VectorDomain, output_row_domain: AtomDomain) -> VectorDomain {
     VectorDomain {
         element_domain: output_row_domain,
         size: s.size,
     }
 }
 
-fn apply_rows(value: &Vec<f64>, row_function: &impl Fn(&f64) -> f64) -> Vec<f64> {
+fn apply_rows(value: Vec<i64>, row_function: &impl Fn(&i64) -> i64) -> Vec<i64> {
     value.iter().map(row_function).collect()
 }
 
@@ -458,7 +458,7 @@ pub struct Bounds {
 }
 
 impl Bounds {
-    pub fn new_closed(bounds: (f64, f64)) -> Self {
+    pub fn new_closed(bounds: (i64, i64)) -> Self {
         Self::new((
             Bound {
                 typ: BOUND_INCLUDED,
@@ -482,7 +482,7 @@ impl Bounds {
             } else {
                 OptionF64 {
                     present: false,
-                    b: 42.0,
+                    b: 42,
                 }
             }
         }
@@ -523,7 +523,7 @@ impl Bounds {
         } else {
             OptionF64 {
                 present: false,
-                b: 42.0,
+                b: 42,
             }
         }
     }
@@ -536,14 +536,14 @@ impl Bounds {
         } else {
             OptionF64 {
                 present: false,
-                b: 42.0,
+                b: 42,
             }
         }
     }
 }
 
 impl Bounds {
-    pub fn member(&self, val: &f64) -> bool {
+    pub fn member(&self, val: &i64) -> bool {
         (if self.lower.typ == BOUND_INCLUDED {
             val.total_ge(&self.lower.value)
         } else if self.lower.typ == BOUND_EXCLUDED {
@@ -581,10 +581,10 @@ pub trait CheckAtom: CheckNull + Sized + Clone + PartialEq + Debug {
     }
 }
 
-impl CheckNull for f64 {
+impl CheckNull for i64 {
     #[inline]
     fn is_null(&self) -> bool {
-        self.is_nan()
+        false
     }
 }
 
@@ -600,7 +600,7 @@ impl CheckNull for f64 {
 //     }
 // }
 
-impl CheckAtom for f64 {
+impl CheckAtom for i64 {
     fn is_bounded(&self, bounds: Bounds) -> bool {
         bounds.member(self)
     }
@@ -619,11 +619,11 @@ impl Default for AtomDomain {
                 present: false,
                 b: Bounds {
                     lower: Bound {
-                        value: 0.0,
+                        value: 0,
                         typ: BOUND_UNBOUNDED,
                     },
                     upper: Bound {
-                        value: 0.0,
+                        value: 0,
                         typ: BOUND_UNBOUNDED,
                     },
                 },
@@ -634,14 +634,14 @@ impl Default for AtomDomain {
 }
 
 impl Domain for AtomDomain {
-    type Carrier = f64;
+    type Carrier = i64;
     fn member(&self, val: &Self::Carrier) -> bool {
         val.check_member(self.bounds.clone(), self.nullable)
     }
 }
 
 impl AtomDomain {
-    // pub fn new(bounds: OptionBounds, nullable: Option<Null<f64>>) -> Self {
+    // pub fn new(bounds: OptionBounds, nullable: Option<Null<i64>>) -> Self {
     //     AtomDomain {
     //         bounds,
     //         nullable: nullable.is_some(),
@@ -694,7 +694,7 @@ impl VectorDomain {
 }
 
 impl Domain for VectorDomain {
-    type Carrier = Vec<f64>;
+    type Carrier = Vec<i64>;
     fn member(&self, val: &Self::Carrier) -> bool {
         for e in val {
             if !self.element_domain.member(e) {
@@ -744,13 +744,13 @@ pub(crate) fn make_row_by_row_fallible(
     input_domain: VectorDomain,
     input_metric: SymmetricDistance,
     output_row_domain: AtomDomain,
-    row_function: impl 'static + Fn(&f64) -> f64,
+    row_function: impl 'static + Fn(&i64) -> i64,
 ) -> Transformation {
-    let output_domain = translate(&input_domain, output_row_domain);
+    let output_domain = translate(input_domain.clone(), output_row_domain);
     Transformation::new(
         input_domain,
         output_domain,
-        Function::new_fallible(move |arg: &Vec<f64>| apply_rows(arg, &row_function)),
+        Function::new_fallible(move |arg: Vec<i64>| apply_rows(arg, &row_function)),
         input_metric.clone(),
         input_metric,
         StabilityMap::new_from_constant(1),
@@ -760,7 +760,7 @@ pub(crate) fn make_row_by_row_fallible(
 pub fn make_clamp(
     input_domain: VectorDomain,
     input_metric: SymmetricDistance,
-    bounds: (f64, f64),
+    bounds: (i64, i64),
 ) -> Transformation
 where
     (VectorDomain, SymmetricDistance): MetricSpace,
@@ -777,13 +777,13 @@ where
         input_domain,
         input_metric,
         output_row_domain,
-        move |arg: &f64| arg.total_clamp(bounds.0, bounds.1),
+        move |arg: &i64| arg.total_clamp(bounds.0, bounds.1),
     )
 }
 
 fn clamp_transform() -> Transformation {
     let id = VectorDomain::new(AtomDomain::default());
-    make_clamp(id, SymmetricDistance, (10.0, 20.0))
+    make_clamp(id, SymmetricDistance, (10, 20))
 }
 
 fn example_client() -> () {
@@ -793,7 +793,7 @@ fn example_client() -> () {
 
     // println!("privacy spend {:?}", count.map(&1));
 
-    // let res: f64 = count.invoke(&vec![1., 2., 3.0f64])?;
+    // let res: i64 = count.invoke(&vec![1., 2., 3.0i64])?;
 
     // println!("{:?}", res);
 
@@ -801,5 +801,9 @@ fn example_client() -> () {
 }
 
 fn main() {
-    example_client()
+    example_client();
+
+
+    let res = clamp_transform().function.eval(vec![0,15,100]);
+    println!("{:?}", res);
 }
