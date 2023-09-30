@@ -6,6 +6,24 @@ use std::{fmt::Debug, ops::Add, rc::Rc};
 //     Unbounded,
 // }
 
+#[derive(Debug)]
+pub struct VecI64 {}
+
+impl VecI64 {
+    fn len(&self) -> usize {
+        3
+    }
+
+    fn get(&self, idx: usize) -> i64 {
+        match idx {
+            0 => 10,
+            1 => 30,
+            2 => 100,
+            _ => panic!("idx out of bounds"),
+        }
+    }
+}
+
 const BOUND_INCLUDED: u8 = 50;
 const BOUND_EXCLUDED: u8 = 60;
 const BOUND_UNBOUNDED: u8 = 70;
@@ -64,7 +82,7 @@ macro_rules! err {
 }
 
 pub struct Function {
-    pub function: Rc<dyn Fn(Vec<i64>) -> Vec<i64>>,
+    pub function: Rc<dyn Fn(VecI64) -> VecI64>,
 }
 impl Clone for Function {
     fn clone(&self) -> Self {
@@ -75,17 +93,17 @@ impl Clone for Function {
 }
 
 impl Function {
-    pub fn new(function: impl Fn(Vec<i64>) -> Vec<i64> + 'static) -> Self {
+    pub fn new(function: impl Fn(VecI64) -> VecI64 + 'static) -> Self {
         Self::new_fallible(move |arg| function(arg))
     }
 
-    pub fn new_fallible(function: impl Fn(Vec<i64>) -> Vec<i64> + 'static) -> Self {
+    pub fn new_fallible(function: impl Fn(VecI64) -> VecI64 + 'static) -> Self {
         Self {
             function: Rc::new(function),
         }
     }
 
-    pub fn eval(&self, arg: Vec<i64>) -> Vec<i64> {
+    pub fn eval(&self, arg: VecI64) -> VecI64 {
         (self.function)(arg)
     }
 }
@@ -424,8 +442,9 @@ fn translate(s: VectorDomain, output_row_domain: AtomDomain) -> VectorDomain {
     }
 }
 
-fn apply_rows(value: Vec<i64>, row_function: &impl Fn(&i64) -> i64) -> Vec<i64> {
-    value.iter().map(row_function).collect()
+fn apply_rows(value: VecI64, row_function: &impl Fn(&i64) -> i64) -> VecI64 {
+    //TODO: value.iter().map(row_function).collect()
+    VecI64 {}
 }
 
 pub trait MetricSpace {
@@ -694,10 +713,12 @@ impl VectorDomain {
 }
 
 impl Domain for VectorDomain {
-    type Carrier = Vec<i64>;
+    type Carrier = VecI64;
     fn member(&self, val: &Self::Carrier) -> bool {
-        for e in val {
-            if !self.element_domain.member(e) {
+        for i in 0..val.len() {
+            let e = val.get(i);
+
+            if !self.element_domain.member(&e) {
                 return false;
             }
         }
@@ -750,7 +771,7 @@ pub(crate) fn make_row_by_row_fallible(
     Transformation::new(
         input_domain,
         output_domain,
-        Function::new_fallible(move |arg: Vec<i64>| apply_rows(arg, &row_function)),
+        Function::new_fallible(move |arg: VecI64| apply_rows(arg, &row_function)),
         input_metric.clone(),
         input_metric,
         StabilityMap::new_from_constant(1),
@@ -803,7 +824,6 @@ fn example_client() -> () {
 fn main() {
     example_client();
 
-
-    let res = clamp_transform().function.eval(vec![0,15,100]);
+    let res = clamp_transform().function.eval(VecI64 {});
     println!("{:?}", res);
 }
