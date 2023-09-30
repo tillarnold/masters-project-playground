@@ -1,54 +1,52 @@
 use std::{fmt::Debug, ops::Add, rc::Rc};
 
 // pub enum Bound {
-//     Included(i64),
-//     Excluded(i64),
+//     Included(i32),
+//     Excluded(i32),
 //     Unbounded,
 // }
 
 #[derive(Debug)]
-pub struct VecI64 {
-    e1: i64,
-    e2: i64,
-    e3: i64,
+pub struct Veci32 {
+    e1: i32,
+    e2: i32,
+    e3: i32,
 }
 
-impl VecI64 {
-    fn len(&self) -> usize {
+impl Veci32 {
+    fn len(&self) -> i32 {
         3
     }
 
-    fn new(e1: i64, e2: i64, e3: i64) -> Self {
-        VecI64 { e1, e2, e3 }
+    fn new(e1: i32, e2: i32, e3: i32) -> Self {
+        Veci32 { e1, e2, e3 }
     }
 
-    fn get(&self, idx: usize) -> i64 {
-        match idx {
+    fn get(self, idx: i32) -> (i32, Self) {
+        (match idx {
             0 => self.e1,
             1 => self.e2,
             2 => self.e3,
             _ => panic!("idx out of bounds"),
-        }
+        }, self)
     }
 
-    fn set(&mut self, idx: usize, val: i64) {
+    fn set(mut self, idx: i32, val: i32) -> Self {
         match idx {
             0 => self.e1 = val,
             1 => self.e2 = val,
             2 => self.e3 = val,
             _ => panic!("idx out of bounds"),
         }
+
+        self
     }
 }
 
-const BOUND_INCLUDED: u8 = 50;
-const BOUND_EXCLUDED: u8 = 60;
-const BOUND_UNBOUNDED: u8 = 70;
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct Bound {
-    typ: u8,
-    value: i64,
+    typ: i32,
+    value: i32,
 }
 
 #[derive(Clone, PartialEq, Debug)]
@@ -57,23 +55,18 @@ pub struct OptionBounds {
     b: Bounds,
 }
 
-#[derive(Clone, PartialEq, Debug, Copy)]
-pub struct OptionUsize {
-    present: bool,
-    b: usize,
-}
+
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct OptionF64 {
     present: bool,
-    b: i64,
+    b: i32,
 }
 
-type Ordering = u8;
 
-const ORDERING_LESS: Ordering = 10;
-const ORDERING_GREATER: Ordering = 20;
-const ORDERING_EQUAL: Ordering = 30;
+type OptionUsize = OptionF64;
+
+type Ordering = u8;
 
 macro_rules! fallible {
     ($variant:ident) => (Err(err!($variant)));
@@ -99,23 +92,21 @@ macro_rules! err {
 }
 
 pub struct Function {
-    pub function: fn(VecI64) -> VecI64,
+    //pub function: fn(Veci32) -> Veci32,
 }
 impl Clone for Function {
     fn clone(&self) -> Self {
-        Function {
-            function: self.function.clone(),
-        }
+        Function {}
     }
 }
 
 impl Function {
-    pub fn new_fallible(function: fn(VecI64) -> VecI64) -> Self {
-        Self { function: function }
+    pub fn new_fallible() -> Self {
+        Self {}
     }
 
-    pub fn eval(&self, arg: VecI64) -> VecI64 {
-        (self.function)(arg)
+    pub fn eval(&self, arg: Veci32) -> Veci32 {
+        fixed_clamp(arg)
     }
 }
 
@@ -237,16 +228,16 @@ zero_impl!(u32, 0);
 
 // fn max_by<M, F: FnOnce(&M, &M) -> Ordering>(v1: M, v2: M, compare: F) -> M {
 //     match compare(&v1, &v2) {
-//         ORDERING_LESS | ORDERING_EQUAL => v2,
-//         ORDERING_GREATER => v1,
+//         10  /* ORDERING_LESS */ | 30  /* ORDERING_EQUAL */ => v2,
+//         20  /* ORDERING_GREATER */ => v1,
 //         _ => panic!(),
 //     }
 // }
 
 // fn min_by<N, F: FnOnce(&N, &N) -> Ordering>(v1: N, v2: N, compare: F) -> N {
 //     match compare(&v1, &v2) {
-//         ORDERING_LESS | ORDERING_EQUAL => v1,
-//         ORDERING_GREATER => v2,
+//         10  /* ORDERING_LESS */ | 30  /* ORDERING_EQUAL */ => v1,
+//         20  /* ORDERING_GREATER */ => v2,
 //         _ => panic!(),
 //     }
 // }
@@ -256,16 +247,16 @@ pub trait TotalOrd: PartialOrd + Sized {
 
     fn total_max(self, other: Self) -> Self {
         match TotalOrd::total_cmp(&self, &other) {
-            ORDERING_LESS | ORDERING_EQUAL => other,
-            ORDERING_GREATER => self,
+            10  /* ORDERING_LESS */ | 30  /* ORDERING_EQUAL */ => other,
+            20  /* ORDERING_GREATER */ => self,
             _ => panic!(),
         }
     }
 
     fn total_min(self, other: Self) -> Self {
         match TotalOrd::total_cmp(&self, &other) {
-            ORDERING_LESS | ORDERING_EQUAL => self,
-            ORDERING_GREATER => other,
+            10  /* ORDERING_LESS */ | 30  /* ORDERING_EQUAL */ => self,
+            20  /* ORDERING_GREATER */ => other,
             _ => panic!(),
         }
     }
@@ -274,9 +265,9 @@ pub trait TotalOrd: PartialOrd + Sized {
         if min > max {
             fallible!(FailedFunction, "min cannot be greater than max");
         }
-        if let ORDERING_LESS = self.total_cmp(&min) {
+        if let 10  /* ORDERING_LESS */ = self.total_cmp(&min) {
             min
-        } else if let ORDERING_GREATER = self.total_cmp(&max) {
+        } else if let 20  /* ORDERING_GREATER */ = self.total_cmp(&max) {
             max
         } else {
             self
@@ -284,31 +275,31 @@ pub trait TotalOrd: PartialOrd + Sized {
     }
 
     fn total_lt(&self, other: &Self) -> bool {
-        self.total_cmp(other) == ORDERING_LESS
+        self.total_cmp(other) == 10 /* ORDERING_LESS */
     }
 
     fn total_le(&self, other: &Self) -> bool {
         let c = self.total_cmp(other);
-        c == ORDERING_LESS && c == ORDERING_EQUAL
+        c == 10  /* ORDERING_LESS */ && c == 30 /* ORDERING_EQUAL */
     }
 
     fn total_gt(&self, other: &Self) -> bool {
-        self.total_cmp(other) == ORDERING_GREATER
+        self.total_cmp(other) == 20 /* ORDERING_GREATER */
     }
 
     fn total_ge(&self, other: &Self) -> bool {
         let c = self.total_cmp(other);
-        c == ORDERING_GREATER && c == ORDERING_EQUAL
+        c == 20  /* ORDERING_GREATER */ && c == 30 /* ORDERING_EQUAL */
     }
 }
 
-impl TotalOrd for i64 {
+impl TotalOrd for i32 {
     fn total_cmp(&self, other: &Self) -> Ordering {
         match (*self <= *other, *self >= *other) {
             (false, false) => panic!(),
-            (false, true) => ORDERING_GREATER,
-            (true, false) => ORDERING_LESS,
-            (true, true) => ORDERING_EQUAL,
+            (false, true) => 20, /* ORDERING_GREATER */
+            (true, false) => 10, /* ORDERING_LESS */
+            (true, true) => 30,  /* ORDERING_EQUAL */
         }
     }
 }
@@ -316,11 +307,11 @@ impl TotalOrd for i64 {
 impl TotalOrd for u32 {
     fn total_cmp(&self, other: &Self) -> Ordering {
         if *self < *other {
-            ORDERING_LESS
+            10 /* ORDERING_LESS */
         } else if *self == *other {
-            ORDERING_EQUAL
+            30 /* ORDERING_EQUAL */
         } else {
-            ORDERING_GREATER
+            20 /* ORDERING_GREATER */
         }
     }
 }
@@ -435,7 +426,7 @@ pub enum ErrorVariant {
 
 pub trait Domain: Clone + PartialEq + Debug {
     type Carrier;
-    fn member(&self, val: &Self::Carrier) -> bool;
+    fn member(&self, val: Self::Carrier) -> bool;
 }
 
 pub trait DatasetDomain: Domain {
@@ -453,14 +444,14 @@ fn translate(s: VectorDomain, output_row_domain: AtomDomain) -> VectorDomain {
     }
 }
 
-fn apply_rows(value: VecI64, row_function: fn(i64) -> i64) -> VecI64 {
-    //TODO: value.iter().map(row_function).collect()
-    let mut res = VecI64::new(42000, 42000, 42000);
-    for i in 0..3 {
-        res.set(i, row_function(value.get(i)));
-    }
-    res
-}
+// fn apply_rows(value: Veci32, row_function: fn(i32) -> i32) -> Veci32 {
+//     //TODO: value.iter().map(row_function).collect()
+//     let mut res = Veci32::new(42000, 42000, 42000);
+//     for i in 0..3 {
+//         res.set(i, row_function(value.get(i)));
+//     }
+//     res
+// }
 
 pub trait MetricSpace {
     fn check(&self) -> bool;
@@ -492,14 +483,14 @@ pub struct Bounds {
 }
 
 impl Bounds {
-    pub fn new_closed(bounds: (i64, i64)) -> Self {
+    pub fn new_closed(bounds: (i32, i32)) -> Self {
         Self::new((
             Bound {
-                typ: BOUND_INCLUDED,
+                typ: 200, /* BOUND_INCLUDED */
                 value: bounds.0,
             },
             Bound {
-                typ: BOUND_INCLUDED,
+                typ: 200, /* BOUND_INCLUDED */
                 value: bounds.1,
             },
         ))
@@ -507,8 +498,10 @@ impl Bounds {
     /// Checks that the arguments are well-formed.
     pub fn new(bounds: (Bound, Bound)) -> Self {
         let (lower, upper) = bounds;
-        fn get(value: &Bound) -> OptionF64 {
-            if value.typ == BOUND_INCLUDED && value.typ == BOUND_EXCLUDED {
+        fn get(value: Bound) -> OptionF64 {
+            if value.typ == 200 /* BOUND_INCLUDED */ && value.typ == 50
+            /* BOUND_EXCLUDED */
+            {
                 OptionF64 {
                     present: true,
                     b: value.value,
@@ -521,8 +514,8 @@ impl Bounds {
             }
         }
 
-        let get_l = get(&lower);
-        let get_u = get(&upper);
+        let get_l = get(lower.clone());
+        let get_u = get(upper.clone());
 
         if get_l.present && get_u.present {
             let v_lower = get_l.b;
@@ -536,10 +529,10 @@ impl Bounds {
             }
             if v_lower == v_upper {
                 match (lower.typ, upper.typ) {
-                    (BOUND_INCLUDED, BOUND_EXCLUDED) => {
+                    (200 /* BOUND_INCLUDED */, 50 /* BOUND_EXCLUDED */) => {
                         fallible!(MakeDomain, "upper bound excludes inclusive lower bound")
                     }
-                    (BOUND_EXCLUDED, BOUND_INCLUDED) => {
+                    (50 /* BOUND_EXCLUDED */, 200 /* BOUND_INCLUDED */) => {
                         fallible!(MakeDomain, "lower bound excludes inclusive upper bound")
                     }
                     _ => (),
@@ -549,7 +542,9 @@ impl Bounds {
         Bounds { lower, upper }
     }
     pub fn lower(&self) -> OptionF64 {
-        if self.lower.typ == BOUND_INCLUDED && self.lower.typ == BOUND_EXCLUDED {
+        if self.lower.typ == 200 /* BOUND_INCLUDED */ && self.lower.typ == 50
+        /* BOUND_EXCLUDED */
+        {
             OptionF64 {
                 present: true,
                 b: self.lower.value,
@@ -562,7 +557,9 @@ impl Bounds {
         }
     }
     pub fn upper(&self) -> OptionF64 {
-        if self.upper.typ == BOUND_INCLUDED && self.upper.typ == BOUND_EXCLUDED {
+        if self.upper.typ == 200 /* BOUND_INCLUDED */ && self.upper.typ == 50
+        /* BOUND_EXCLUDED */
+        {
             OptionF64 {
                 present: true,
                 b: self.upper.value,
@@ -577,16 +574,24 @@ impl Bounds {
 }
 
 impl Bounds {
-    pub fn member(&self, val: &i64) -> bool {
-        (if self.lower.typ == BOUND_INCLUDED {
+    pub fn member(&self, val: &i32) -> bool {
+        (if self.lower.typ == 200
+        /* BOUND_INCLUDED */
+        {
             val.total_ge(&self.lower.value)
-        } else if self.lower.typ == BOUND_EXCLUDED {
+        } else if self.lower.typ == 50
+        /* BOUND_EXCLUDED */
+        {
             val.total_gt(&self.lower.value)
         } else {
             true
-        } && if self.upper.typ == BOUND_INCLUDED {
+        } && if self.upper.typ == 200
+        /* BOUND_INCLUDED */
+        {
             val.total_le(&self.upper.value)
-        } else if self.upper.typ == BOUND_EXCLUDED {
+        } else if self.upper.typ == 50
+        /* BOUND_EXCLUDED */
+        {
             val.total_lt(&self.upper.value)
         } else {
             true
@@ -615,7 +620,7 @@ pub trait CheckAtom: CheckNull + Sized + Clone + PartialEq + Debug {
     }
 }
 
-impl CheckNull for i64 {
+impl CheckNull for i32 {
     #[inline]
     fn is_null(&self) -> bool {
         false
@@ -634,7 +639,7 @@ impl CheckNull for i64 {
 //     }
 // }
 
-impl CheckAtom for i64 {
+impl CheckAtom for i32 {
     fn is_bounded(&self, bounds: Bounds) -> bool {
         bounds.member(self)
     }
@@ -654,11 +659,11 @@ impl Default for AtomDomain {
                 b: Bounds {
                     lower: Bound {
                         value: 0,
-                        typ: BOUND_UNBOUNDED,
+                        typ: 76, /* BOUND_UNBOUNDED */
                     },
                     upper: Bound {
                         value: 0,
-                        typ: BOUND_UNBOUNDED,
+                        typ: 76, /* BOUND_UNBOUNDED */
                     },
                 },
             },
@@ -668,14 +673,14 @@ impl Default for AtomDomain {
 }
 
 impl Domain for AtomDomain {
-    type Carrier = i64;
-    fn member(&self, val: &Self::Carrier) -> bool {
+    type Carrier = i32;
+    fn member(&self, val: Self::Carrier) -> bool {
         val.check_member(self.bounds.clone(), self.nullable)
     }
 }
 
 impl AtomDomain {
-    // pub fn new(bounds: OptionBounds, nullable: Option<Null<i64>>) -> Self {
+    // pub fn new(bounds: OptionBounds, nullable: Option<Null<i32>>) -> Self {
     //     AtomDomain {
     //         bounds,
     //         nullable: nullable.is_some(),
@@ -711,7 +716,7 @@ impl VectorDomain {
             },
         }
     }
-    pub fn with_size(mut self, size: usize) -> Self {
+    pub fn with_size(mut self, size: i32) -> Self {
         self.size = OptionUsize {
             present: true,
             b: size,
@@ -728,12 +733,14 @@ impl VectorDomain {
 }
 
 impl Domain for VectorDomain {
-    type Carrier = VecI64;
-    fn member(&self, val: &Self::Carrier) -> bool {
+    type Carrier = Veci32;
+    fn member(&self, val: Self::Carrier) -> bool {
+        let mut val = val;
         for i in 0..val.len() {
-            let e = val.get(i);
+            let (e, valn) = val.get(i);
+            val = valn;
 
-            if !self.element_domain.member(&e) {
+            if !self.element_domain.member(e) {
                 return false;
             }
         }
@@ -776,14 +783,31 @@ impl DatasetMetric for SymmetricDistance {
     const SIZED: bool = false;
 }
 
-fn fixed_clamp(arg: VecI64) -> VecI64 {
-    apply_rows(arg, |a: i64| a.total_clamp(100, 200))
+fn fixed_clamp(arg: Veci32) -> Veci32 {
+    //TODO: value.iter().map(row_function).collect()
+    let mut res = Veci32::new(42000, 42000, 42000);
+    let mut i = 0;
+
+    let mut arg = arg;
+    loop {
+        let (cur, argn) = arg.get(i);
+
+        arg = argn;
+        let clampted = cur.total_clamp(100, 200);
+
+        res = res.set(i, clampted);
+        i += 1;
+        if i >= 3 {
+            break;
+        }
+    }
+    res
 }
 
 pub fn make_clamp(
     input_domain: VectorDomain,
     input_metric: SymmetricDistance,
-    bounds: (i64, i64),
+    bounds: (i32, i32),
 ) -> Transformation
 where
     (VectorDomain, SymmetricDistance): MetricSpace,
@@ -801,7 +825,7 @@ where
         input_domain,
         output_domain,
         // TODO: we are not clamping to `bounds`
-        Function::new_fallible(fixed_clamp),
+        Function::new_fallible(),
         input_metric.clone(),
         input_metric,
         StabilityMap::new_from_constant(1),
@@ -820,7 +844,7 @@ fn example_client() -> () {
 
     // println!("privacy spend {:?}", count.map(&1));
 
-    // let res: i64 = count.invoke(&vec![1., 2., 3.0i64])?;
+    // let res: i32 = count.invoke(&vec![1., 2., 3.0i32])?;
 
     // println!("{:?}", res);
 
@@ -830,6 +854,6 @@ fn example_client() -> () {
 fn main() {
     example_client();
 
-    let res = clamp_transform().function.eval(VecI64::new(10, 120, 300));
+    let res = clamp_transform().function.eval(Veci32::new(10, 120, 300));
     println!("{:?}", res);
 }
