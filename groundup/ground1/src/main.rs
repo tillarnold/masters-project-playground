@@ -1,9 +1,8 @@
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
-#[trusted]
-struct Vector {
-}
+#[derive(Clone)]
+struct Vector {}
 
 impl Vector {
     #[pure]
@@ -32,33 +31,41 @@ impl Vector {
     }
 }
 
-
+#[derive(Clone, Copy)]
 struct Bounds {
     upper: i32,
     lower: i32,
 }
 
 impl Bounds {
+    #[pure]
     fn new(lower: i32, upper: i32) -> Self {
         Bounds { upper, lower }
     }
 }
 
+#[derive(Clone, Copy)]
 struct ClampTransform {
     bounds: Bounds,
 }
 
 
+#[ensures(transform === old(transform))]
+#[ensures(result.len() === old(data).len())]
+#[ensures(forall(|ip: i32| (0<= ip && ip < old(snap(&data)).len() )  ==> result.get(ip) == transform.do_transform((old(snap(&data))).get(ip)) ))]
 fn apply_row_by_row(transform: ClampTransform, data: Vector) -> Vector {
     apply_row_by_row_rec(transform, data, 0)
 }
 
 
+#[requires(i >= 0)]
+#[ensures(transform === old(transform))]
+#[ensures(result.len() === old(data).len())]
+#[ensures(forall(|ip: i32| (i<= ip && ip < old(snap(&data)).len())  ==> result.get(ip) == transform.do_transform((old(snap(&data))).get(ip)) ))]
 fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, i: i32) -> Vector {
     if i >= data.len() {
         return data;
-    }
-    else {
+    } else {
         let cur = data.get(i);
         let new = transform.do_transform(cur);
         let data = data.set(i, new);
@@ -68,39 +75,34 @@ fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, i: i32) -> Vect
 }
 
 impl ClampTransform {
+    #[pure]
     fn make_clamp(bounds: Bounds) -> Self {
-        Self {
-            bounds
-        }
+        Self { bounds }
     }
 
+    #[pure]
     fn do_transform(&self, data: i32) -> i32 {
         if data < self.bounds.lower {
             self.bounds.lower
-        }
-        else if data > self.bounds.upper {
+        } else if data > self.bounds.upper {
             self.bounds.upper
-        }
-        else {
+        } else {
             data
         }
     }
 }
-
 
 #[requires(vec.len() == 10)]
 fn vector_client(vec: Vector) {
     let vec = vec.set(5, 42);
     let res = vec.get(5);
     assert!(res == 42);
-
 }
 
 fn client(data: Vector) {
     let t = ClampTransform::make_clamp(Bounds::new(100, 200));
-    apply_row_by_row(t, data);
+    let res = apply_row_by_row(t, data);
+    prusti_assert!(forall(|i: i32| (0<= i && i< res.len()) ==> res.get(i) <= 200 && res.get(i) >= 100))
 }
 
-fn main() {
-
-}
+fn main() {}
