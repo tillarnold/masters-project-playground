@@ -1,0 +1,3 @@
+prusti:
+	mkdir -p local-testing
+	../../../aurel-prusi-dev/target/debug/cargo-prusti

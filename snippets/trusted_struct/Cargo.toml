@@ -1,5 +1,5 @@
 [package]
-name = "pure_test"
+name = "trusted_struct"
 version = "0.1.0"
 edition = "2021"
 
