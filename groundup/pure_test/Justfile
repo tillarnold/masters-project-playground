@@ -1,0 +1,13 @@
+cargo-prusti:
+	mkdir -p local-testing
+	cd ../../../prusti-dev/prusti && cargo build
+	RUST_BACKTRACE=1 PRUSTI_LOG=debug RUST_LOG=debug PRUSTI_LOG_TRACING=false ../../../prusti-dev/target/debug/cargo-prusti
+
+prusti:
+	mkdir -p local-testing
+	cd ../../../prusti-dev/prusti && cargo build
+	RUST_BACKTRACE=1 PRUSTI_LOG=debug RUST_LOG=debug PRUSTI_LOG_TRACING=false ../../../prusti-dev/target/debug/prusti-rustc src/main.rs
+
+
+print_log:
+	bat target/verify/log/trace.json
