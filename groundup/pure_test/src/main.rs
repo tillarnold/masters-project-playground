@@ -1,13 +1,13 @@
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
-
-#[pure]
-#[requires(true)]
-#[ensures(true)]
-fn len() -> i32 { 0 }
+#[ensures(result >= 0)]
+fn len() -> i32 {
+    0
+}
 
 
 fn main() {
-    len();
+    let x = len();
+    prusti_assert!(x == 0);
 }

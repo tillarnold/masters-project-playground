@@ -36,7 +36,7 @@ prusti_driver_direct:
 	 LD_LIBRARY_PATH="{{toolchain_home}}/lib:{{toolchain_home}}/bin:/usr/lib/jvm/jre/lib/server" \
 	 PRUSTI_SMT_SOLVER_WRAPPER_PATH="{{prusti_bins_dir}}/prusti-smt-solver" \
 	 PRUSTI_SMT_SOLVER_PATH="{{viper_tools}}/z3/bin/z3" \
-	 {{prusti_bins_dir}}/prusti-driver \
+	 valgrind --num-callers=500 -- {{prusti_bins_dir}}/prusti-driver \
 	 	--cfg=prusti {{main_rs}} \
 		-L dependency={{prusti_target_dir}}/verify/debug/deps \
 		--extern prusti_contracts={{prusti_target_dir}}/verify/debug/libprusti_contracts.rlib \
