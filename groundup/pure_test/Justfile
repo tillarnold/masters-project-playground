@@ -27,7 +27,7 @@ cargo-prusti: (build-prusti)
 	{{prusti_bins_dir}}/cargo-prusti
 
 prusti: (build-prusti)
-	{{prusti_bins_dir}}/prusti-rustc {{main_rs}}
+	{{prusti_bins_dir}}/prusti-rustc -Z dump-mir=F {{main_rs}}
 
 
 prusti_driver_direct:
@@ -45,3 +45,7 @@ prusti_driver_direct:
 
 print_log:
 	bat target/verify/log/trace.json
+
+
+delete_mir_dump:
+	rm -r mir_dump
