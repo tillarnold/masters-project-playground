@@ -62,12 +62,20 @@ fn len_free(v: Vector) -> i32 {
 }
 
 impl Vector {
-
     #[pure]
     #[trusted]
     #[requires(idx >= 0)]
     #[requires(idx < self.len)]
     fn get(self, idx: i32) -> i32 {
+        unimplemented!()
+    }
+
+    #[trusted]
+    #[requires(idx >= 0)]
+    #[requires(idx < self.len)]
+    #[ensures(result.0 == self.get(idx))]
+    #[ensures(result.1.veq(self))]
+    fn impure_get(self, idx: i32) -> (i32, Self) {
         unimplemented!()
     }
 
@@ -80,6 +88,15 @@ impl Vector {
     fn set(self, idx: i32, value: i32) -> Self {
         unimplemented!()
     }
+
+    #[trusted]
+    #[pure]
+    #[ensures(result ==> (self.len == other.len))]
+    #[ensures(result ==> forall(|i : i32| (i >= 0  && i < self.len) ==> other.get(i) == self.get(i)))]
+    fn veq(self, other: Vector) -> bool {   
+        unimplemented!()
+    }
+
 }
 
 
