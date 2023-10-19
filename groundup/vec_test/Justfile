@@ -18,7 +18,6 @@ export RUST_BACKTRACE := "1"
 export PRUSTI_LOG := "debug"
 export RUST_LOG := "debug"
 export PRUSTI_LOG_TRACING := "false"
-export PRUSTI_CHECK_OVERFLOWS := "false"
 
 build-prusti:
 	mkdir -p local-testing
@@ -28,7 +27,7 @@ cargo-prusti: (build-prusti)
 	{{prusti_bins_dir}}/cargo-prusti
 
 prusti: (build-prusti)
-	{{prusti_bins_dir}}/prusti-rustc -Z dump-mir=F {{main_rs}}
+	{{prusti_bins_dir}}/prusti-rustc {{main_rs}}
 
 
 prusti_driver_direct:
@@ -46,7 +45,3 @@ prusti_driver_direct:
 
 print_log:
 	bat target/verify/log/trace.json
-
-
-delete_mir_dump:
-	rm -r mir_dump

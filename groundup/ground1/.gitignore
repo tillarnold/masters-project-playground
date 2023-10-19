@@ -1,3 +1,5 @@
 /target
 /local-testing
-/rustc-ice-*
+/vgcore.*
+/mir_dump
+/rustc-ice*

@@ -82,6 +82,15 @@ impl Vector {
     #[trusted]
     #[requires(idx >= 0)]
     #[requires(idx < self.len)]
+    #[ensures(result.0 == self.get(idx))]
+    #[ensures(result.1 === self)]
+    fn impure_get2(self, idx: i32) -> (i32, Self) {
+        unimplemented!()
+    }
+
+    #[trusted]
+    #[requires(idx >= 0)]
+    #[requires(idx < self.len)]
     #[ensures(self.len == result.len)]
     #[ensures(result.get(idx) == value)]
     #[ensures(forall(|i : i32| (i >= 0  && i < self.len && !(i == idx)) ==> result.get(i) == self.get(i)))]
@@ -100,18 +109,66 @@ impl Vector {
 }
 
 
+
+
 #[requires(vec.len == 10)]
 fn vector_client(vec: Vector) {
     let vec = vec.set(5, 42);
-    let res = vec.get(5);
+    let (res, vec) = vec.impure_get(5);
+    assert_eq(res, 42);
+    let (res, vec) = vec.impure_get2(5);
     assert_eq(res, 42);
 }
+
+
+#[requires(idx < vec.len )]
+#[requires(idx >=  0 )]
+fn vector_client2(vec: Vector, idx: i32) {
+    let (r1, vec) = vec.impure_get2(idx);
+    let (r2, vec) = vec.impure_get(idx);
+    let r3 = vec.get(idx);
+
+    assert_eq(r1, r2);
+    assert_eq(r1, r3);
+}
+
+
+
 
 
 #[pure]
 fn not(b: bool) -> bool {
     !b
 }
+
+#[pure]
+fn ge_regression() -> bool {
+     0 >= 0 
+}
+
+
+#[requires(i <= 1000)]
+fn addition(i: i32) -> i32 {
+ i + 1
+}
+
+
+#[requires(i >= 0)]
+#[requires(i <= 1000)]
+#[ensures(result >= 0)]
+fn geq_test(i: i32) -> i32 {
+    i + 1
+}
+
+// struct Foo {
+//     a: i32, 
+//     b: i32,
+// }
+
+// #[pure]
+// fn make_foo() {
+//     let f = Foo {a: 100, b: 100};
+// }
 
 fn main() {
     assert_ge_0(id(0));

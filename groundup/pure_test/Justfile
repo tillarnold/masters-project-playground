@@ -18,6 +18,7 @@ export RUST_BACKTRACE := "1"
 export PRUSTI_LOG := "debug"
 export RUST_LOG := "debug"
 export PRUSTI_LOG_TRACING := "false"
+export PRUSTI_CHECK_OVERFLOWS := "false"
 
 build-prusti:
 	mkdir -p local-testing
