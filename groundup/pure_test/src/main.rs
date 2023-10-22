@@ -61,6 +61,15 @@ fn len_free(v: Vector) -> i32 {
     v.len
 }
 
+
+#[pure]
+#[requires(x >= 0)]
+#[requires(x < 1)]
+#[ensures(result == 0)]
+fn logic(x: i32) -> i32 {
+    x
+}
+
 impl Vector {
     #[pure]
     #[trusted]
