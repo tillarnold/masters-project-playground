@@ -8,32 +8,27 @@ requires p_Adt_Vector(_0p)
   requires p_Adt_Vector(_1p)
   requires s_Bool_val(
   (let _0_1s_0 == (p_Adt_Vector_snap(_1p)) in
-  (let _0_2s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val(
+  (let _0_2s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: (
   (
   (let _1_phi_0 == (((((s_Int_i32_val(s_Int_i32_cons(0))) <= (s_Int_i32_val(qvar_0_0))))) == false
-    ? (s_Bool_cons(false))
-    : (s_Bool_cons(s_Int_i32_val(qvar_0_0) < (s_Int_i32_val(s_Adt_Vector_read_0(_0_1s_0)))))) in
-  ( (((s_Bool_cons(!(s_Bool_val(_1_phi_0))))) == s_Bool_cons(false)
-    ? (s_Bool_cons((s_Int_i32_val(f_get(_0_1s_0, qvar_0_0))) > (s_Int_i32_val(s_Int_i32_cons(10)))))
-    : s_Bool_cons(true)))))))) in _0_2s_1)))
+    ? ((false))
+    : ((s_Int_i32_val(qvar_0_0) < (s_Int_i32_val(s_Adt_Vector_read_0(_0_1s_0)))))) in
+  ( ((((((_1_phi_0)))))
+    ? (((s_Int_i32_val(f_get(_0_1s_0, qvar_0_0))) > (s_Int_i32_val(s_Int_i32_cons(10)))))
+    : (true)))))))) in _0_2s_1)))
 
   ensures p_Adt_Vector(_0p)
   ensures s_Bool_val(s_Bool_cons(((s_Adt_Vector_read_0((p_Adt_Vector_snap(_0p))))) == ((s_Adt_Vector_read_0((old(p_Adt_Vector_snap(_1p))))))))
-  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Vector_snap(_1p))) in
-(
-(let _0_3s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((
-  (let _1_2s_0 == (qvar_0_0) in
-  (let _1_6s_1 == (qvar_0_0) in //WAT
-  (
-  (let _1_phi_0 == (((s_Int_i32_val(s_Int_i32_cons(0))) <= (s_Int_i32_val(qvar_0_0)))
-    ? (s_Int_i32_val(_1_2s_0)) < (s_Int_i32_val(s_Adt_Vector_read_0(_0_1s_0)))
-    : false
-    )
-    in
-   ((_1_phi_0)
-    ? (s_Bool_cons(((f_get((p_Adt_Vector_snap(_0p)) , _1_2s_0))) == ((f_max(f_get(_0_1s_0, _1_2s_0), s_Int_i32_cons(1))))))
-    : s_Bool_cons(true)))))))))) in
-(_0_3s_1)))))
+
+  ensures
+    (let _0_1s_0 == (old(p_Adt_Vector_snap(_1p))) in
+    (let _0_3s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32  :: (
+    (let _1_2s_0 == (qvar_0_0) in // Manually replacing even one mention of _1_2s_0 with qvar_0_0 makes it work
+  ((s_Int_i32_val(s_Int_i32_cons(0)) <= s_Int_i32_val(_1_2s_0)) && (s_Int_i32_val(_1_2s_0) < s_Int_i32_val(s_Adt_Vector_read_0(_0_1s_0)))
+    ? (((f_get(p_Adt_Vector_snap(_0p) , _1_2s_0)) == (f_max(f_get(_0_1s_0, _1_2s_0), s_Int_i32_cons(1)))))
+    : (true)))
+    ))) in
+(s_Bool_val(_0_3s_1))))
 {
 label start
   goto bb_0
