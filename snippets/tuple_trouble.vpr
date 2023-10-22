@@ -4,7 +4,7 @@ method tuple_test() {
 
   var t_s: s_Tuple2_s_Int_i32_s_Bool
   t_s := s_Tuple2_s_Int_i32_s_Bool_cons(val_i, s_Bool_cons(false))
-  //assert s_Tuple2_s_Int_i32_s_Bool_read_0(t_s) == val_i // Adding this assert makes the final assert work
+  assert s_Tuple2_s_Int_i32_s_Bool_read_0(t_s) == val_i // Adding this assert makes the final assert work
 
   var t_p: Ref
   inhale p_Tuple2_s_Int_i32_s_Bool(t_p) 

@@ -1,4 +1,4 @@
-method logic_test(val: s_Int_i32)
+method test(val: s_Int_i32)
 {
   assume (s_Int_i32_val(val)) >= (s_Int_i32_val(s_Int_i32_cons(0))) // val >= 0
   assume (s_Int_i32_val(val)) < (s_Int_i32_val(s_Int_i32_cons(1))) // val < 1
@@ -12,8 +12,11 @@ domain s_Int_i32 {
   axiom ax_inverse_s_Int_i32_val_s_Int_i32_cons {
     forall val: Int :: {s_Int_i32_cons(val)} (s_Int_i32_val(s_Int_i32_cons(val))) == (val)
   }
+
+ axiom ax_inverse_s_Int_i32_val_s_Int_i32_cons2 {
+    forall s: s_Int_i32 :: {s_Int_i32_val(s)} (s_Int_i32_cons(s_Int_i32_val((s)))) == (s)
+  }
+
   function s_Int_i32_cons(Int): s_Int_i32
   function s_Int_i32_val(s_Int_i32): Int
 }
-
-

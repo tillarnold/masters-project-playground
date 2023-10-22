@@ -169,6 +169,24 @@ fn geq_test(i: i32) -> i32 {
     i + 1
 }
 
+
+
+
+
+struct Test {
+    x: i32
+}
+
+
+fn take_test(test: Test) -> Test {
+    if test.x > 20 {
+        return test;
+    }
+
+    return Test {
+        x: 100
+    }
+}
 // struct Foo {
 //     a: i32, 
 //     b: i32,

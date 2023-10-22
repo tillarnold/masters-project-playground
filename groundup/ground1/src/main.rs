@@ -1,7 +1,7 @@
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
-struct Vector {
+pub struct Vector {
     len: i32,
 }
 
@@ -14,7 +14,6 @@ impl Vector {
     fn get(self, idx: i32) -> i32 {
         unimplemented!()
     }
-
 
     #[pure]
     #[trusted]
@@ -59,13 +58,10 @@ impl Vector {
     // #[pure]
     // #[ensures(result ==> (self.len == other.len))]
     // #[ensures(result ==> forall(|i : i32| (i >= 0  && i < self.len) ==> other.get(i) == self.get(i)))]
-    // fn veq(self, other: Vector) -> bool {   
+    // fn veq(self, other: Vector) -> bool {
     //     unimplemented!()
     // }
-
 }
-
-
 
 #[derive(Clone, Copy)]
 struct Bounds {
@@ -73,11 +69,10 @@ struct Bounds {
     lower: i32,
 }
 
-
+#[derive(Clone, Copy)]
 struct ClampTransform {
     bounds: Bounds,
 }
-
 
 #[requires(data.len >= 0)]
 #[requires(transform.bounds.lower < transform.bounds.upper)]
@@ -91,10 +86,8 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> Vector {
     }
 
     let l = data.len;
-    apply_row_by_row_rec(transform, data, l - 1).0
+    apply_row_by_row_rec(transform, data, l - 1)
 }
-
-
 
 // #[requires(transform.bounds.lower < transform.bounds.upper)]
 // #[requires(i >= 0)]
@@ -122,86 +115,28 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> Vector {
 //     }
 // }
 
-
-
 #[requires(transform.bounds.lower < transform.bounds.upper)]
 #[requires(idx >= 0)]
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
-#[ensures(result.1 === transform)]
-#[ensures(result.0.len === data.len)]
-#[ensures(forall(|i: i32| (i >= 0 && i > idx && i < data.len)  ==> result.0.get(i) == data.get(i)))]
-#[ensures(result.0.get(idx) == transform.do_transform(data.get(idx)))]
-#[ensures(result.0.get(0) == transform.do_transform(data.get(0)))]
-#[ensures(forall(|i: i32| (i >= 0 && i <= idx && i < data.len)  ==> result.0.get(i) == transform.do_transform(data.get(i))))]
-fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, idx: i32) -> (Vector, ClampTransform) {
-    
-        let orig_data = data;
-        assert_true(idx < orig_data.len);
-        assert_geq_0(idx);
-        if idx >= 1 {
-            let next = idx - 1;
+#[ensures(result.len === data.len)]
+#[ensures(forall(|i: i32| (i >= 0 && i > idx && i < data.len)  ==> result.get(i) == data.get(i)))]
+#[ensures(result.get(idx) == transform.do_transform(data.get(idx)))]
+#[ensures(result.get(0) == transform.do_transform(data.get(0)))]
+#[ensures(forall(|i: i32| (i >= 0 && i <= idx && i < data.len)  ==> result.get(i) == transform.do_transform(data.get(i))))]
+fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, idx: i32) -> Vector {
+    let modified = if idx >= 1 {
+         apply_row_by_row_rec(transform, data, idx - 1)
+    } 
+    else {
+        data
+    };
 
-            assert_geq_0(next);
-            assert_true(next <= orig_data.len);
-
-
-            let (modified, transform) = apply_row_by_row_rec(transform, orig_data, next);
-
-            let (zero_before, modified) = modified.impure_get(0);
-
-
-
-            assert_true(!(idx == 0));
-            let (cur, modified) = modified.impure_get(idx);
-            let (new, transform) = transform.do_transform_impure(cur);
-            let modified = modified.set(idx, new);
-    
-            let(check, modified) = modified.impure_get(idx);
-            assert_eq(check, new);
-
-            let (zero_after, modified) = modified.impure_get(0);
-
-            assert_eq(zero_after, zero_before);
-
-
-            ////
-
-                let (cur, modified) = modified.impure_get(0);
-                let (new0, transform) = transform.do_transform_impure(cur);
-                assert_eq(new0, zero_before);
-
-        /////
-
-            (modified, transform)
-        }
-
-        else {
-            assert_true(idx >= 0);
-            assert_true(idx < 1);
-            assume(idx == 0);
-
-
-            let (modified, orig_data) = orig_data.clone();
-            let (cur, orig_data) = orig_data.impure_get(idx);
-            let (new, transform) = transform.do_transform_impure(cur);
-            let modified = modified.set(idx, new);
-    
-            let(check, modified) = modified.impure_get(idx);
-            assert_eq(check, new);
-            (modified, transform)
-        }
-
-
-        // let (cur, data) = data.impure_get(idx);
-        // let new = transform.do_transform(cur);
-        // let data = data.set(idx, new);
-
-        // let(check, data) = data.impure_get(idx);
-        // assert_eq(check, new);
-        // (data, transform)
+    let (cur, data) = modified.impure_get(idx);
+    let (new, _transform) = transform.do_transform_impure(cur);
+    let modified = data.set(idx, new);
+    modified
 }
-
 
 // #[requires(transform.bounds.lower < transform.bounds.upper)]
 // #[requires(idx >= 0)]
@@ -213,16 +148,14 @@ fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, idx: i32) -> (V
 
 // #[ensures(((idx < data.len)) ==> result.get(idx) ==  transform.do_transform(data.get(idx)))]
 
-
 // #[ensures(forall(|i: i32| (i >= 0 &&  i < data.len && i < idx )  ==> result.get(i) == data.get(i)))]
-
 
 // #[requires(forall(|i: i32| (i >= 0 &&  i < data.len && i < idx )  ==> target.get(i) == transform.do_transform(data.get(i))))]
 // #[ensures(forall(|i: i32| (i >= 0 &&  i < data.len  )  ==> result.get(i) == transform.do_transform(data.get(i))))]
 // fn apply_row_by_row_rec2(transform: ClampTransform, data: Vector, target: Vector, idx: i32) -> Vector {
 //     if idx >= data.len {
 //         return target;
-//     }  
+//     }
 
 //     let (cur, data) = data.impure_get(idx);
 //     let new = transform.do_transform(cur);
@@ -236,10 +169,6 @@ fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, idx: i32) -> (V
 //     apply_row_by_row_rec2(transform, data, target, next)
 // }
 
-
-
-
-
 // #[requires(forall(|ip: i32| (0<= ip && ip < data.len)  ==> data.get(ip) > 10))]
 // #[ensures(result.len === (data).len)]
 // #[ensures(forall(|ip: i32| (0<= ip && ip < data.len)  ==> result.get(ip) == max((data.get(ip)), 1 )))]
@@ -248,16 +177,9 @@ fn apply_row_by_row_rec(transform: ClampTransform, data: Vector, idx: i32) -> (V
 // }
 
 
-#[trusted]
-#[ensures(b)]
-fn assume(b: bool) {
-
-}
 
 #[requires(i >= 0)]
-fn assert_geq_0(i : i32) {
-
-}
+fn assert_geq_0(i: i32) {}
 
 #[pure]
 #[ensures( a > b ==> result === a)]
@@ -265,7 +187,11 @@ fn assert_geq_0(i : i32) {
 #[ensures( b >= a ==> result === b)]
 #[ensures( a == b ==> result === b)]
 fn max(a: i32, b: i32) -> i32 {
-    if a > b { a } else { b }
+    if a > b {
+        a
+    } else {
+        b
+    }
 }
 
 #[pure]
@@ -274,7 +200,11 @@ fn max(a: i32, b: i32) -> i32 {
 #[ensures( a >= b ==> result === b)]
 #[ensures( a == b ==> result === b)]
 fn min(a: i32, b: i32) -> i32 {
-    if a >= b { b } else { a }
+    if a >= b {
+        b
+    } else {
+        a
+    }
 }
 
 impl ClampTransform {
@@ -303,7 +233,7 @@ impl ClampTransform {
     #[ensures(result >= self.bounds.lower)]
     fn do_transform(self, data: i32) -> i32 {
         // implemented like this due to limitation in pure controll flow
-        max( self.bounds.lower, min(self.bounds.upper, data))
+        max(self.bounds.lower, min(self.bounds.upper, data))
     }
 
     #[requires(self.bounds.lower < self.bounds.upper)]
@@ -321,19 +251,15 @@ impl ClampTransform {
             (self.bounds.upper, self)
         } else {
             (data, self)
-
         }
     }
 }
-
-
 
 #[requires(b)]
 fn assert_true(b: bool) {}
 
 #[requires(a == b)]
 fn assert_eq(a: i32, b: i32) {}
-
 
 #[requires(vec.len == 10)]
 fn vector_client(vec: Vector) {
@@ -348,20 +274,19 @@ fn between(val: i32, lower: i32, upper: i32) -> bool {
 }
 
 #[requires(forall(|i: i32| (0<= i && i< res.len) ==> between(res.get(i), 100, 200)))]
-fn final_assert(res: Vector) {
-
-}
+fn final_assert(res: Vector) {}
 
 #[requires(data.len >= 0)]
-fn client(data: Vector) {
-    let t = ClampTransform::make_clamp(Bounds{ lower: 100, upper: 200 });
+pub fn client(data: Vector) {
+    let t = ClampTransform::make_clamp(Bounds {
+        lower: 100,
+        upper: 200,
+    });
     let res = apply_row_by_row(t, data);
     //TODO: reenable final assert
-    //final_assert(res);
+    final_assert(res);
     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
 }
-
-
 
 #[requires(data.len >= 0)]
 #[requires(idx >= 0 && idx < data.len)]
@@ -372,4 +297,5 @@ fn clone_client(data: Vector, idx: i32) {
     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
 }
 
-fn main() {}
+fn main() {
+}
