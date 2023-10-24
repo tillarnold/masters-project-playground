@@ -1,0 +1,233 @@
+method m_take_test(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Test(_0p)
+  requires p_Adt_Test(_1p)
+  ensures p_Adt_Test(_0p)
+{
+label start
+  var _2p: Ref
+  inhale p_Tuple0(_2p)
+  var _3p: Ref
+  inhale p_Bool(_3p)
+  var _4p: Ref
+  inhale p_Int_i32(_4p)
+  var _5p: Ref
+  inhale p_Never(_5p)
+  var _6p: Ref
+  inhale p_Never(_6p)
+  goto bb_0
+label bb_0
+  // _4 = (_1.0: i32)
+  unfold p_Adt_Test(_1p)
+  reassign_p_Int_i32(_4p, p_Int_i32_snap(p_Adt_Test_field_0(_1p)))
+  // _3 = Gt(move _4, const 20_i32)
+  reassign_p_Bool(_3p, s_Bool_cons((s_Int_i32_val(p_Int_i32_snap(_4p))) > (s_Int_i32_val(s_Int_i32_cons(20)))))
+  if (p_Bool_snap(_3p) == s_Bool_cons(false)) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _0 = move _1
+  fold p_Adt_Test(_1p)
+  reassign_p_Adt_Test(_0p, p_Adt_Test_snap(_1p))
+  goto bb_3
+label bb_2
+  // _2 = const ()
+  reassign_p_Tuple0(_2p, s_Tuple0_cons())
+  // _0 = Test { x: const 100_i32 }
+  unfold p_Adt_Test(_0p)
+  reassign_p_Int_i32(p_Adt_Test_field_0(_0p), s_Int_i32_cons(100))
+  fold p_Adt_Test(_0p)
+  goto bb_3
+label bb_3
+  fold p_Adt_Test(_1p)
+  goto end
+label end
+  // return
+}
+
+field f_Bool: s_Bool
+domain s_Bool {
+  axiom ax_inverse_s_Bool_val_s_Bool_cons {
+    forall val: Bool :: {s_Bool_cons(val)} (s_Bool_val(s_Bool_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Bool_cons_s_Bool_val {
+    forall val: s_Bool :: {s_Bool_val(val)} (s_Bool_cons(s_Bool_val(val))) == (val)
+  }
+  function s_Bool_cons(Bool): s_Bool
+  function s_Bool_val(s_Bool): Bool
+}
+
+function s_Bool_unreachable(
+): s_Bool
+  requires false
+
+function p_Bool_snap(
+  self: Ref
+): s_Bool
+  requires p_Bool(self)
+{
+  unfolding p_Bool(self) in (self.f_Bool)
+}
+
+predicate p_Bool(self_p: Ref) {
+  acc(self_p.f_Bool)
+}
+
+method reassign_p_Bool(
+  _p: Ref,
+  _s_new: s_Bool
+)
+  requires p_Bool(_p)
+  ensures p_Bool(_p)
+  ensures (p_Bool_snap(_p)) == (_s_new)
+
+field f_s_Int_i32: s_Int_i32
+domain s_Int_i32 {
+  axiom ax_inverse_s_Int_i32_val_s_Int_i32_cons {
+    forall val: Int :: {s_Int_i32_cons(val)} (s_Int_i32_val(s_Int_i32_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Int_i32_cons_s_Int_i32_val {
+    forall val: s_Int_i32 :: {s_Int_i32_val(val)} (s_Int_i32_cons(s_Int_i32_val(val))) == (val)
+  }
+  function s_Int_i32_cons(Int): s_Int_i32
+  function s_Int_i32_val(s_Int_i32): Int
+}
+
+function s_Int_i32_unreachable(
+): s_Int_i32
+  requires false
+
+function p_Int_i32_snap(
+  self: Ref
+): s_Int_i32
+  requires p_Int_i32(self)
+{
+  unfolding p_Int_i32(self) in (self.f_s_Int_i32)
+}
+
+predicate p_Int_i32(self_p: Ref) {
+  acc(self_p.f_s_Int_i32)
+}
+
+
+
+method reassign_p_Int_i32(
+  _p: Ref,
+  _s_new: s_Int_i32
+)
+  requires p_Int_i32(_p)
+  ensures p_Int_i32(_p)
+  ensures (p_Int_i32_snap(_p)) == (_s_new)
+
+domain s_Adt_Test {
+  axiom ax_s_Adt_Test_write_0_read_0 {
+    forall self: s_Adt_Test, val: s_Int_i32 :: {s_Adt_Test_read_0(s_Adt_Test_write_0(self, val))} (s_Adt_Test_read_0(s_Adt_Test_write_0(self, val))) == (val)
+  }
+  axiom ax_s_Adt_Test_cons_read_0 {
+    forall f0: s_Int_i32 :: {s_Adt_Test_cons(f0)} (s_Adt_Test_read_0(s_Adt_Test_cons(f0))) == (f0)
+  }
+  axiom ax_s_Adt_Test_cons {
+    forall self: s_Adt_Test :: {s_Adt_Test_cons(s_Adt_Test_read_0(self))} (s_Adt_Test_cons(s_Adt_Test_read_0(self))) == (self)
+  }
+  function s_Adt_Test_cons(s_Int_i32): s_Adt_Test
+  function s_Adt_Test_read_0(s_Adt_Test): s_Int_i32
+  function s_Adt_Test_write_0(s_Adt_Test, s_Int_i32): s_Adt_Test
+}
+
+function p_Adt_Test_field_0(
+  self: Ref
+): Ref
+function s_Adt_Test_unreachable(
+): s_Adt_Test
+  requires false
+
+function p_Adt_Test_snap(
+  self_p: Ref
+): s_Adt_Test
+  requires p_Adt_Test(self_p)
+{
+  unfolding p_Adt_Test(self_p) in (s_Adt_Test_cons(p_Int_i32_snap(p_Adt_Test_field_0(self_p))))
+}
+
+predicate p_Adt_Test(self_p: Ref) {
+  p_Int_i32(p_Adt_Test_field_0(self_p))
+}
+
+method assign_p_Adt_Test(
+  _p: Ref,
+  _s_new: s_Adt_Test
+)
+  ensures p_Adt_Test(_p)
+  ensures (p_Adt_Test_snap(_p)) == (_s_new)
+
+method reassign_p_Adt_Test(
+  _p: Ref,
+  _s_new: s_Adt_Test
+)
+  requires p_Adt_Test(_p)
+  ensures p_Adt_Test(_p)
+  ensures (p_Adt_Test_snap(_p)) == (_s_new)
+
+field f_Tuple0: s_Tuple0
+domain s_Tuple0 {
+  function s_Tuple0_cons(): s_Tuple0
+}
+
+
+
+function p_Tuple0_snap(
+  self: Ref
+): s_Tuple0
+  requires p_Tuple0(self)
+
+predicate p_Tuple0(self_p: Ref)
+
+method assign_p_Tuple0(
+  _p: Ref,
+  _s_new: s_Tuple0
+)
+  ensures p_Tuple0(_p)
+  ensures (p_Tuple0_snap(_p)) == (_s_new)
+
+method reassign_p_Tuple0(
+  _p: Ref,
+  _s_new: s_Tuple0
+)
+  requires p_Tuple0(_p)
+  ensures p_Tuple0(_p)
+  ensures (p_Tuple0_snap(_p)) == (_s_new)
+
+field f_Never: s_Never
+domain s_Never {
+}
+
+function s_Never_unreachable(
+): s_Never
+  requires false
+
+function p_Never_snap(
+  self: Ref
+): s_Never
+  requires p_Never(self)
+
+predicate p_Never(self_p: Ref)
+
+method assign_p_Never(
+  _p: Ref,
+  _s_new: s_Never
+)
+  ensures p_Never(_p)
+  ensures (p_Never_snap(_p)) == (_s_new)
+
+method reassign_p_Never(
+  _p: Ref,
+  _s_new: s_Never
+)
+  requires p_Never(_p)
+  ensures p_Never(_p)
+  ensures (p_Never_snap(_p)) == (_s_new)
+
+// -----------------------------
+// utility types
+// -----------------------------
