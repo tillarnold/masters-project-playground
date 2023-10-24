@@ -173,30 +173,6 @@ fn geq_test(i: i32) -> i32 {
 
 
 
-struct Test {
-    x: i32
-}
-
-
-fn take_test(test: Test) -> Test {
-    if test.x > 20 {
-        return test;
-    }
-
-    return Test {
-        x: 100
-    }
-}
-// struct Foo {
-//     a: i32, 
-//     b: i32,
-// }
-
-// #[pure]
-// fn make_foo() {
-//     let f = Foo {a: 100, b: 100};
-// }
-
 fn main() {
     assert_ge_0(id(0));
     assert_ge_0(id(f1()));

@@ -1,0 +1,52 @@
+# Configuration
+config_prusti_repo := "../../../prusti-dev"
+config_rust_toolchain := "nightly-2023-07-16-x86_64-unknown-linux-gnu"
+
+# Computed values
+prusti_dev_dir := absolute_path(config_prusti_repo)
+prusti_target_dir := prusti_dev_dir / "target"
+prusti_bins_dir := prusti_target_dir / "debug"
+user_home_dir := `realpath ~`
+rustup_home := absolute_path(env_var_or_default("RUSTUP_HOME", user_home_dir/".rustup"))
+toolchain_home := rustup_home / "toolchains" / config_rust_toolchain
+viper_tools := clean(prusti_bins_dir / "../../viper_tools")
+main_rs := absolute_path("src/main.rs")
+
+
+# Env vars
+export RUST_BACKTRACE := "1"
+export PRUSTI_LOG := "debug"
+export RUST_LOG := "debug"
+export PRUSTI_LOG_TRACING := "false"
+export PRUSTI_CHECK_OVERFLOWS := "false"
+
+build-prusti:
+	mkdir -p local-testing
+	cd {{prusti_dev_dir}}/prusti && cargo build
+
+cargo-prusti: (build-prusti)
+	{{prusti_bins_dir}}/cargo-prusti
+
+prusti: (build-prusti)
+	{{prusti_bins_dir}}/prusti-rustc {{main_rs}}
+
+
+prusti_driver_direct:
+	PRUSTI_VIPER_HOME="{{viper_tools}}/backends" \
+	 PRUSTI_JAVA_HOME="/usr/lib/jvm/jre" \
+	 LD_LIBRARY_PATH="{{toolchain_home}}/lib:{{toolchain_home}}/bin:/usr/lib/jvm/jre/lib/server" \
+	 PRUSTI_SMT_SOLVER_WRAPPER_PATH="{{prusti_bins_dir}}/prusti-smt-solver" \
+	 PRUSTI_SMT_SOLVER_PATH="{{viper_tools}}/z3/bin/z3" \
+	 valgrind --num-callers=500 -- {{prusti_bins_dir}}/prusti-driver \
+	 	--cfg=prusti {{main_rs}} \
+		-L dependency={{prusti_target_dir}}/verify/debug/deps \
+		--extern prusti_contracts={{prusti_target_dir}}/verify/debug/libprusti_contracts.rlib \
+		--extern prusti_std={{prusti_target_dir}}/verify/debug/libprusti_std.rlib \
+		--sysroot {{toolchain_home}}
+
+print_log:
+	bat target/verify/log/trace.json
+
+
+delete_mir_dump:
+	rm -r mir_dump

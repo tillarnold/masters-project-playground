@@ -76,17 +76,17 @@ struct ClampTransform {
 
 #[requires(data.len >= 0)]
 #[requires(transform.bounds.lower < transform.bounds.upper)]
-#[ensures(transform === (transform))]
-#[ensures(result.len === (data).len)]
-#[ensures(forall(|ip: i32| (0<= ip && ip < (data).len)  ==> result.get(ip) == transform.do_transform(data.get(ip)) ))]
-fn apply_row_by_row(transform: ClampTransform, data: Vector) -> Vector {
+#[ensures(result.0.len === data.len)]
+#[ensures(result.1 === transform)]
+#[ensures(forall(|ip: i32| (0<= ip && ip < data.len)  ==> result.0.get(ip) == transform.do_transform(data.get(ip))))]
+fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (Vector, ClampTransform) {
     //apply_row_by_row_rec(transform, data, 0)
     if data.len <= 0 {
-        return data;
+        return (data,transform);
     }
 
     let l = data.len;
-    apply_row_by_row_rec(transform, data, l - 1)
+    (apply_row_by_row_rec(transform, data, l - 1),transform)
 }
 
 // #[requires(transform.bounds.lower < transform.bounds.upper)]
@@ -231,6 +231,7 @@ impl ClampTransform {
     #[ensures(data >= self.bounds.lower && data <= self.bounds.upper ==> result == data)]
     #[ensures(result <= self.bounds.upper)]
     #[ensures(result >= self.bounds.lower)]
+    #[ensures(between(result, self.bounds.lower, self.bounds.upper))]
     fn do_transform(self, data: i32) -> i32 {
         // implemented like this due to limitation in pure controll flow
         max(self.bounds.lower, min(self.bounds.upper, data))
@@ -276,14 +277,19 @@ fn between(val: i32, lower: i32, upper: i32) -> bool {
 #[requires(forall(|i: i32| (0<= i && i< res.len) ==> between(res.get(i), 100, 200)))]
 fn final_assert(res: Vector) {}
 
-#[requires(data.len >= 0)]
+#[requires(data.len >= 10)]
 pub fn client(data: Vector) {
     let t = ClampTransform::make_clamp(Bounds {
         lower: 100,
         upper: 200,
     });
-    let res = apply_row_by_row(t, data);
-    //TODO: reenable final assert
+    let (res, t2) = apply_row_by_row(t, data);
+
+
+    // let (val3, res) = res.impure_get(3);
+    // assert_true(val3 <= t2.bounds.upper);
+
+
     final_assert(res);
     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
 }
