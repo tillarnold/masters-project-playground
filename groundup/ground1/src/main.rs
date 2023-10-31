@@ -274,14 +274,15 @@ fn between(val: i32, lower: i32, upper: i32) -> bool {
     val <= upper && val >= lower
 }
 
-#[requires(forall(|i: i32| (0<= i && i< res.len) ==> between(res.get(i), 100, 200)))]
-fn final_assert(res: Vector) {}
+#[requires(forall(|i: i32| (0<= i && i< res.len) ==> between(res.get(i), lower, upper)))]
+fn final_assert(res: Vector, lower: i32, upper: i32) {}
 
 #[requires(data.len >= 10)]
-pub fn client(data: Vector) {
+#[requires(lower < upper)]
+pub fn client(data: Vector, lower: i32, upper: i32) {
     let t = ClampTransform::make_clamp(Bounds {
-        lower: 100,
-        upper: 200,
+        lower,
+        upper,
     });
     let (res, t2) = apply_row_by_row(t, data);
 
@@ -290,7 +291,7 @@ pub fn client(data: Vector) {
     // assert_true(val3 <= t2.bounds.upper);
 
 
-    final_assert(res);
+    final_assert(res, lower, upper);
     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
 }
 
