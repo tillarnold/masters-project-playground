@@ -1,47 +1,36 @@
 
 
 method m_client(original_vec_s: s_Vector)
-  requires s_Int_i32_val(s_Vector_len(original_vec_s)) >= 1
 {
 
 
-  var clamped_vec_p: Ref
-  inhale p_Vector(clamped_vec_p)
-  
- 
- var lower: Int := 100;
- var upper: Int := 200;
+  var lower: Int := 100;
+  var upper: Int := 200;
 
-
-var clamped_vec_s : s_Vector := p_Vector_snap(clamped_vec_p);
-
-assume s_Vector_len(original_vec_s) == s_Vector_len(clamped_vec_s)
-
-
+  // create new vector with same length
+  var clamped_vec_s: s_Vector := s_Vector_cons(s_Vector_len(original_vec_s))
 
 
 
   // Assume that clamped_vec_p is original_vec_p but clamped between 
   assume 
-(forall qvar_0_0: s_Int_i32 :: (
-(let _1_2s_0 == (qvar_0_0) in
-
-
-  (0 <= s_Int_i32_val(qvar_0_0) // replace _1_2s_0 with qvar_0_0 here
+(forall qvar: s_Int_i32 :: (
+(let qvar_alias == (qvar) in
+  (0 <= s_Int_i32_val(qvar) // replace qvar_alias with qvar here
     ? (
-      s_Int_i32_val(_1_2s_0) < s_Int_i32_val(s_Vector_len(original_vec_s))
-      ? f_get(clamped_vec_s, _1_2s_0) == (s_Int_i32_cons(f_clamp( f_get(original_vec_s, _1_2s_0), lower, upper)))
+      s_Int_i32_val(qvar_alias) < (s_Vector_len(original_vec_s))
+      ? f_get(clamped_vec_s, qvar_alias) == ((f_clamp( f_get(original_vec_s, qvar_alias), lower, upper)))
       : true
       )
     : true 
 ))))
 
-  assert let _0_1s_0 == (p_Vector_snap((clamped_vec_p))) in
+  assert 
     (forall qvar_0_0: s_Int_i32 :: 
       (
         (0 > s_Int_i32_val(qvar_0_0)) ||
-        (s_Int_i32_val(qvar_0_0) >= s_Int_i32_val((s_Vector_len(_0_1s_0)))) ||
-        (let val == (s_Int_i32_val(f_get(_0_1s_0, qvar_0_0))) in (val <= upper) && (val >= lower))
+        (s_Int_i32_val(qvar_0_0) >= ((s_Vector_len(clamped_vec_s)))) ||
+        (let val == (f_get(clamped_vec_s, qvar_0_0)) in (val <= upper) && (val >= lower))
       )
     )
 
@@ -54,31 +43,30 @@ assume s_Vector_len(original_vec_s) == s_Vector_len(clamped_vec_s)
 function f_get(
   vec: s_Vector,
   _2p: s_Int_i32
-): s_Int_i32
+): Int
   requires s_Int_i32_val(_2p) >= 0
-  requires s_Int_i32_val(_2p) < s_Int_i32_val(s_Vector_len(vec))
-  requires s_Int_i32_val((s_Vector_len(vec))) >= 0
+  requires s_Int_i32_val(_2p) < s_Vector_len(vec)
+  requires s_Vector_len(vec) >= 0
 
 
 
 
 function f_clamp(
-  v: s_Int_i32,
+  val: Int,
   lower: Int,
   upper: Int
 ): Int
-{(let val == (s_Int_i32_val(v)) in (
+{(
  val < lower ? lower :
  val > upper ? upper :
  val
-))}
+)}
 
 
 
 // -----------------------------
 // types
 // -----------------------------
-field f_s_Int_i32: s_Int_i32
 domain s_Int_i32 {
   axiom ax_inverse_s_Int_i32_val_s_Int_i32_cons {
     forall val: Int :: {s_Int_i32_cons(val)} (s_Int_i32_val(s_Int_i32_cons(val))) == (val)
@@ -92,51 +80,18 @@ domain s_Int_i32 {
 
 
 
-function p_Int_i32_snap(
-  self: Ref
-): s_Int_i32
-  requires p_Int_i32(self)
-{
-  unfolding p_Int_i32(self) in (self.f_s_Int_i32)
-}
-
-predicate p_Int_i32(self_p: Ref) {
-  acc(self_p.f_s_Int_i32)
-}
 
 
 domain s_Vector {
-  axiom ax_s_Vector_write_0_read_0 {
-    forall self: s_Vector, val: s_Int_i32 :: {s_Vector_len(s_Vector_write_0(self, val))} (s_Vector_len(s_Vector_write_0(self, val))) == (val)
-  }
+
   axiom ax_s_Vector_cons_read_0 {
-    forall f0: s_Int_i32 :: {s_Vector_cons(f0)} (s_Vector_len(s_Vector_cons(f0))) == (f0)
+    forall f0: Int :: {s_Vector_cons(f0)} (s_Vector_len(s_Vector_cons(f0))) == (f0)
   }
   axiom ax_s_Vector_cons {
     forall self: s_Vector :: {s_Vector_cons(s_Vector_len(self))} (s_Vector_cons(s_Vector_len(self))) == (self)
   }
-  function s_Vector_cons(s_Int_i32): s_Vector
-  function s_Vector_len(s_Vector): s_Int_i32
-  function s_Vector_write_0(s_Vector, s_Int_i32): s_Vector
-}
-
-function p_Vector_field_0(
-  self: Ref
-): Ref
-function s_Vector_unreachable(
-): s_Vector
-  requires false
-
-function p_Vector_snap(
-  self_p: Ref
-): s_Vector
-  requires p_Vector(self_p)
-{
-  unfolding p_Vector(self_p) in (s_Vector_cons(p_Int_i32_snap(p_Vector_field_0(self_p))))
-}
-
-predicate p_Vector(self_p: Ref) {
-  p_Int_i32(p_Vector_field_0(self_p))
+  function s_Vector_cons(Int): s_Vector
+  function s_Vector_len(s_Vector): Int
 }
 
 
@@ -145,36 +100,5 @@ predicate p_Vector(self_p: Ref) {
 
 
 
-
-
-
-
-field f_Bool: s_Bool
-domain s_Bool {
-  axiom ax_inverse_s_Bool_val_s_Bool_cons {
-    forall val: Bool :: {s_Bool_cons(val)} (s_Bool_val(s_Bool_cons(val))) == (val)
-  }
-  axiom ax_inverse_s_Bool_cons_s_Bool_val {
-    forall val: s_Bool :: {s_Bool_val(val)} (s_Bool_cons(s_Bool_val(val))) == (val)
-  }
-  function s_Bool_cons(Bool): s_Bool
-  function s_Bool_val(s_Bool): Bool
-}
-
-function s_Bool_unreachable(
-): s_Bool
-  requires false
-
-function p_Bool_snap(
-  self: Ref
-): s_Bool
-  requires p_Bool(self)
-{
-  unfolding p_Bool(self) in (self.f_Bool)
-}
-
-predicate p_Bool(self_p: Ref) {
-  acc(self_p.f_Bool)
-}
 
 
