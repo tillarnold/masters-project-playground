@@ -1,52 +1,49 @@
 
 
-method m_client(original_vec_s: s_Vector)
+method m_client(original_vec: Vector)
+requires (Vector_len(original_vec)) > 10
 {
-
-
   var lower: Int := 100;
   var upper: Int := 200;
 
   // create new vector with same length
-  var clamped_vec_s: s_Vector := s_Vector_cons(s_Vector_len(original_vec_s))
+  var clamped_vec: Vector := Vector_cons(Vector_len(original_vec))
 
 
+  assert f_get(clamped_vec, s_Int_i32_cons(0)) == f_get(clamped_vec, s_Int_i32_cons(0)) 
 
-  // Assume that clamped_vec_p is original_vec_p but clamped between 
+  // Assume that `clamped_vec` is `original_vec` but clamped between `lower` and `upper`
   assume 
-(forall qvar: s_Int_i32 :: (
-(let qvar_alias == (qvar) in
-  (0 <= s_Int_i32_val(qvar) // replace qvar_alias with qvar here
-    ? (
-      s_Int_i32_val(qvar_alias) < (s_Vector_len(original_vec_s))
-      ? f_get(clamped_vec_s, qvar_alias) == ((f_clamp( f_get(original_vec_s, qvar_alias), lower, upper)))
-      : true
-      )
-    : true 
-))))
+    (forall qvar: s_Int_i32 :: (
+      (let qvar_alias == (qvar) in
+      (0 > s_Int_i32_val(qvar) ||  s_Int_i32_val(qvar_alias) >= Vector_len(original_vec)
+        ? true // qvar is outside the bounds of the vector
+        : f_get(clamped_vec, qvar_alias) == f_clamp(f_get(original_vec, qvar_alias), lower, upper)
+    ))))
 
   assert 
     (forall qvar_0_0: s_Int_i32 :: 
       (
         (0 > s_Int_i32_val(qvar_0_0)) ||
-        (s_Int_i32_val(qvar_0_0) >= ((s_Vector_len(clamped_vec_s)))) ||
-        (let val == (f_get(clamped_vec_s, qvar_0_0)) in (val <= upper) && (val >= lower))
+        (s_Int_i32_val(qvar_0_0) >= Vector_len(clamped_vec)) ||
+        (let val == (f_get(clamped_vec, qvar_0_0)) in (val <= upper) && (val >= lower))
       )
     )
 
 }
 
 
+
 // -----------------------------
 // functions
 // -----------------------------
 function f_get(
-  vec: s_Vector,
+  vec: Vector,
   _2p: s_Int_i32
 ): Int
   requires s_Int_i32_val(_2p) >= 0
-  requires s_Int_i32_val(_2p) < s_Vector_len(vec)
-  requires s_Vector_len(vec) >= 0
+  requires s_Int_i32_val(_2p) < Vector_len(vec)
+  requires Vector_len(vec) >= 0
 
 
 
@@ -82,16 +79,15 @@ domain s_Int_i32 {
 
 
 
-domain s_Vector {
-
-  axiom ax_s_Vector_cons_read_0 {
-    forall f0: Int :: {s_Vector_cons(f0)} (s_Vector_len(s_Vector_cons(f0))) == (f0)
+domain Vector {
+  axiom ax_Vector_cons_read_0 {
+    forall f0: Int :: {Vector_cons(f0)} (Vector_len(Vector_cons(f0))) == (f0)
   }
-  axiom ax_s_Vector_cons {
-    forall self: s_Vector :: {s_Vector_cons(s_Vector_len(self))} (s_Vector_cons(s_Vector_len(self))) == (self)
+  axiom ax_Vector_cons {
+    forall self: Vector :: {Vector_cons(Vector_len(self))} (Vector_cons(Vector_len(self))) == (self)
   }
-  function s_Vector_cons(Int): s_Vector
-  function s_Vector_len(s_Vector): Int
+  function Vector_cons(Int): Vector
+  function Vector_len(Vector): Int
 }
 
 
