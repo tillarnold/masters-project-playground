@@ -6,27 +6,26 @@ method m_apply_row_by_row(
 )
   requires p_Adt_Vector(_0p)
   requires p_Adt_Vector(_2p)
-  requires s_Int_i32_val((s_Adt_Vector_read_len(p_Adt_Vector_snap(_2p)))) >= 0
+  requires s_Int_i32_val(s_Adt_Vector_read_len(p_Adt_Vector_snap(_2p))) >= 0
   requires s_Int_i32_val(l) < s_Int_i32_val(u)
 
   ensures p_Adt_Vector(_0p)
-  ensures (s_Adt_Vector_read_len(p_Adt_Vector_snap(_0p)) == (s_Adt_Vector_read_len((old(p_Adt_Vector_snap(_2p))) )))
+  ensures s_Adt_Vector_read_len(p_Adt_Vector_snap(_0p)) == (s_Adt_Vector_read_len((old(p_Adt_Vector_snap(_2p))) ))
 
 
   ensures 
-(forall qvar_0_0: s_Int_i32 :: ((
+(forall qvar_0_0: s_Int_i32 :: (
 (let _1_2s_0 == (qvar_0_0) in
-(let _1_6s_1 == (_1_2s_0) in
-(let _1_5s_1 == (0 <= (s_Int_i32_val(qvar_0_0))) in // replace _1_6s_1 with qvar_0_0 here
-(let _1_phi_0 == (((!_1_5s_1)? (false) : ((((s_Int_i32_val(_1_2s_0)) < (s_Int_i32_val(s_Adt_Vector_read_len((old(p_Adt_Vector_snap(_2p))))))))))) in
-(
-(
-(_1_phi_0) 
-? (let _1_12s_1 == (p_Adt_Vector_snap(_0p)) in
-  (
-  (let _1_14s_1 == (f_max(l, f_min(u, f_get((old(p_Adt_Vector_snap(_2p))) , _1_2s_0)))) in
-  (f_get(_1_12s_1, _1_2s_0) == _1_14s_1))))
-: true)))))))))
+(let x == (old(p_Adt_Vector_snap(_2p))) in
+
+  (0 <= s_Int_i32_val(qvar_0_0) // replace _1_2s_0 with qvar_0_0 here
+    ? (
+      s_Int_i32_val(_1_2s_0) < s_Int_i32_val(s_Adt_Vector_read_len(x))
+      ? f_get(p_Adt_Vector_snap(_0p), s_Int_i32_val(_1_2s_0)) == f_max(l, f_min(u, f_get(x, s_Int_i32_val(_1_2s_0))))
+      : true
+      )
+    : true 
+)))))
  // Body removed to minimize example
 
 
@@ -35,21 +34,16 @@ method m_apply_row_by_row(
 
 
 
-method m_client(
-  _1p: Ref
-)
+method m_client( _1p: Ref)
   requires p_Adt_Vector(_1p)
   requires s_Int_i32_val(s_Adt_Vector_read_len((p_Adt_Vector_snap(_1p)))) >= 10
 {
 
-  
-  
+
   var _6p: Ref
   inhale p_Adt_Vector(_6p)
   
  
-
-
 
   m_apply_row_by_row(_6p, s_Int_i32_cons(100), s_Int_i32_cons(200), _1p)
 
@@ -58,7 +52,7 @@ method m_client(
       (
         (0 > s_Int_i32_val(qvar_0_0)) ||
         (s_Int_i32_val(qvar_0_0) >= s_Int_i32_val((s_Adt_Vector_read_len(_0_1s_0)))) ||
-        (let val == (s_Int_i32_val(f_get(_0_1s_0, qvar_0_0))) in (val <= 200) && (val >= 100))
+        (let val == (s_Int_i32_val(f_get(_0_1s_0, s_Int_i32_val(qvar_0_0)))) in (val <= 200) && (val >= 100))
       )
     )
 
@@ -70,10 +64,10 @@ method m_client(
 // -----------------------------
 function f_get(
   _1p: s_Adt_Vector,
-  _2p: s_Int_i32
+  _2p: Int
 ): s_Int_i32
-  requires s_Int_i32_val(_2p) >= 0
-  requires s_Int_i32_val(_2p) < s_Int_i32_val(s_Adt_Vector_read_len(_1p))
+  requires (_2p) >= 0
+  requires (_2p) < s_Int_i32_val(s_Adt_Vector_read_len(_1p))
   requires s_Int_i32_val((s_Adt_Vector_read_len(_1p))) >= 0
 
 
@@ -162,204 +156,12 @@ predicate p_Adt_Vector(self_p: Ref) {
 
 
 
-domain s_Adt_Bounds {
-  axiom ax_s_Adt_Bounds_write_0_read_0 {
-    forall self: s_Adt_Bounds, val: s_Int_i32 :: {s_Adt_Bounds_read_0(s_Adt_Bounds_write_0(self, val))} (s_Adt_Bounds_read_0(s_Adt_Bounds_write_0(self, val))) == (val)
-  }
-  axiom ax_s_Adt_Bounds_write_0_read_1 {
-    forall self: s_Adt_Bounds, val: s_Int_i32 :: {s_Adt_Bounds_read_1(s_Adt_Bounds_write_0(self, val))} (s_Adt_Bounds_read_1(s_Adt_Bounds_write_0(self, val))) == (s_Adt_Bounds_read_1(self))
-  }
-  axiom ax_s_Adt_Bounds_write_1_read_0 {
-    forall self: s_Adt_Bounds, val: s_Int_i32 :: {s_Adt_Bounds_read_0(s_Adt_Bounds_write_1(self, val))} (s_Adt_Bounds_read_0(s_Adt_Bounds_write_1(self, val))) == (s_Adt_Bounds_read_0(self))
-  }
-  axiom ax_s_Adt_Bounds_write_1_read_1 {
-    forall self: s_Adt_Bounds, val: s_Int_i32 :: {s_Adt_Bounds_read_1(s_Adt_Bounds_write_1(self, val))} (s_Adt_Bounds_read_1(s_Adt_Bounds_write_1(self, val))) == (val)
-  }
-  axiom ax_s_Adt_Bounds_cons_read_0 {
-    forall f0: s_Int_i32, f1: s_Int_i32 :: {s_Adt_Bounds_cons(f0, f1)} (s_Adt_Bounds_read_0(s_Adt_Bounds_cons(f0, f1))) == (f0)
-  }
-  axiom ax_s_Adt_Bounds_cons_read_1 {
-    forall f0: s_Int_i32, f1: s_Int_i32 :: {s_Adt_Bounds_cons(f0, f1)} (s_Adt_Bounds_read_1(s_Adt_Bounds_cons(f0, f1))) == (f1)
-  }
-  axiom ax_s_Adt_Bounds_cons {
-    forall self: s_Adt_Bounds :: {s_Adt_Bounds_cons(s_Adt_Bounds_read_0(self), s_Adt_Bounds_read_1(self))} (s_Adt_Bounds_cons(s_Adt_Bounds_read_0(self), s_Adt_Bounds_read_1(self))) == (self)
-  }
-  function s_Adt_Bounds_cons(s_Int_i32, s_Int_i32): s_Adt_Bounds
-  function s_Adt_Bounds_read_0(s_Adt_Bounds): s_Int_i32
-  function s_Adt_Bounds_write_0(s_Adt_Bounds, s_Int_i32): s_Adt_Bounds
-  function s_Adt_Bounds_read_1(s_Adt_Bounds): s_Int_i32
-  function s_Adt_Bounds_write_1(s_Adt_Bounds, s_Int_i32): s_Adt_Bounds
-}
-
-function p_Adt_Bounds_field_0(
-  self: Ref
-): Ref
-function p_Adt_Bounds_field_1(
-  self: Ref
-): Ref
-function s_Adt_Bounds_unreachable(
-): s_Adt_Bounds
-  requires false
-
-function p_Adt_Bounds_snap(
-  self_p: Ref
-): s_Adt_Bounds
-  requires p_Adt_Bounds(self_p)
-{
-  unfolding p_Adt_Bounds(self_p) in (s_Adt_Bounds_cons(p_Int_i32_snap(p_Adt_Bounds_field_0(self_p)), p_Int_i32_snap(p_Adt_Bounds_field_1(self_p))))
-}
-
-predicate p_Adt_Bounds(self_p: Ref) {
-  (p_Int_i32(p_Adt_Bounds_field_0(self_p))) && (p_Int_i32(p_Adt_Bounds_field_1(self_p)))
-}
-
-method assign_p_Adt_Bounds(
-  _p: Ref,
-  _s_new: s_Adt_Bounds
-)
-  ensures p_Adt_Bounds(_p)
-  ensures (p_Adt_Bounds_snap(_p)) == (_s_new)
-
-method reassign_p_Adt_Bounds(
-  _p: Ref,
-  _s_new: s_Adt_Bounds
-)
-  requires p_Adt_Bounds(_p)
-  ensures p_Adt_Bounds(_p)
-  ensures (p_Adt_Bounds_snap(_p)) == (_s_new)
-
-domain s_Adt_ClampTransform {
-  axiom ax_s_Adt_ClampTransform_write_0_read_0 {
-    forall self: s_Adt_ClampTransform, val: s_Adt_Bounds :: {s_Adt_ClampTransform_read_0(s_Adt_ClampTransform_write_0(self, val))} (s_Adt_ClampTransform_read_0(s_Adt_ClampTransform_write_0(self, val))) == (val)
-  }
-  axiom ax_s_Adt_ClampTransform_cons_read_0 {
-    forall f0: s_Adt_Bounds :: {s_Adt_ClampTransform_cons(f0)} (s_Adt_ClampTransform_read_0(s_Adt_ClampTransform_cons(f0))) == (f0)
-  }
-  axiom ax_s_Adt_ClampTransform_cons {
-    forall self: s_Adt_ClampTransform :: {s_Adt_ClampTransform_cons(s_Adt_ClampTransform_read_0(self))} (s_Adt_ClampTransform_cons(s_Adt_ClampTransform_read_0(self))) == (self)
-  }
-  function s_Adt_ClampTransform_cons(s_Adt_Bounds): s_Adt_ClampTransform
-  function s_Adt_ClampTransform_read_0(s_Adt_ClampTransform): s_Adt_Bounds
-  function s_Adt_ClampTransform_write_0(s_Adt_ClampTransform, s_Adt_Bounds): s_Adt_ClampTransform
-}
-
-function p_Adt_ClampTransform_field_0(
-  self: Ref
-): Ref
-function s_Adt_ClampTransform_unreachable(
-): s_Adt_ClampTransform
-  requires false
-
-function p_Adt_ClampTransform_snap(
-  self_p: Ref
-): s_Adt_ClampTransform
-  requires p_Adt_ClampTransform(self_p)
-{
-  unfolding p_Adt_ClampTransform(self_p) in (s_Adt_ClampTransform_cons(p_Adt_Bounds_snap(p_Adt_ClampTransform_field_0(self_p))))
-}
-
-predicate p_Adt_ClampTransform(self_p: Ref) {
-  p_Adt_Bounds(p_Adt_ClampTransform_field_0(self_p))
-}
-
-method assign_p_Adt_ClampTransform(
-  _p: Ref,
-  _s_new: s_Adt_ClampTransform
-)
-  ensures p_Adt_ClampTransform(_p)
-  ensures (p_Adt_ClampTransform_snap(_p)) == (_s_new)
-
-method reassign_p_Adt_ClampTransform(
-  _p: Ref,
-  _s_new: s_Adt_ClampTransform
-)
-  requires p_Adt_ClampTransform(_p)
-  ensures p_Adt_ClampTransform(_p)
-  ensures (p_Adt_ClampTransform_snap(_p)) == (_s_new)
-
-domain s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform {
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0_read_0 {
-    forall self: s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform, val: s_Adt_Vector :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0(self, val))} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0(self, val))) == (val)
-  }
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0_read_1 {
-    forall self: s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform, val: s_Adt_Vector :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0(self, val))} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0(self, val))) == (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(self))
-  }
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1_read_0 {
-    forall self: s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform, val: s_Adt_ClampTransform :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1(self, val))} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1(self, val))) == (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(self))
-  }
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1_read_1 {
-    forall self: s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform, val: s_Adt_ClampTransform :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1(self, val))} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1(self, val))) == (val)
-  }
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons_read_0 {
-    forall f0: s_Adt_Vector, f1: s_Adt_ClampTransform :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(f0, f1)} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(f0, f1))) == (f0)
-  }
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons_read_1 {
-    forall f0: s_Adt_Vector, f1: s_Adt_ClampTransform :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(f0, f1)} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(f0, f1))) == (f1)
-  }
-  axiom ax_s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons {
-    forall self: s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform :: {s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(self), s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(self))} (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(self), s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(self))) == (self)
-  }
-  function s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(s_Adt_Vector, s_Adt_ClampTransform): s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform
-  function s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform): s_Adt_Vector
-  function s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform, s_Adt_Vector): s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform
-  function s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform): s_Adt_ClampTransform
-  function s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_write_1(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform, s_Adt_ClampTransform): s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform
-}
-
-function p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_0(
-  self: Ref
-): Ref
-function p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_1(
-  self: Ref
-): Ref
-function s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_unreachable(
-): s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform
-  requires false
-
-function p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_snap(
-  self_p: Ref
-): s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform
-  requires p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(self_p)
-{
-  unfolding p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(self_p) in (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_cons(p_Adt_Vector_snap(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_0(self_p)), p_Adt_ClampTransform_snap(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_1(self_p))))
-}
-
-predicate p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(self_p: Ref) {
-  (p_Adt_Vector(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_0(self_p))) && (p_Adt_ClampTransform(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_1(self_p)))
-}
 
 
 
-field f_Tuple0: s_Tuple0
-domain s_Tuple0 {
-  function s_Tuple0_cons(): s_Tuple0
-}
 
-function s_Tuple0_unreachable(
-): s_Tuple0
-  requires false
 
-function p_Tuple0_snap(
-  self: Ref
-): s_Tuple0
-  requires p_Tuple0(self)
 
-predicate p_Tuple0(self_p: Ref)
-
-method assign_p_Tuple0(
-  _p: Ref,
-  _s_new: s_Tuple0
-)
-  ensures p_Tuple0(_p)
-  ensures (p_Tuple0_snap(_p)) == (_s_new)
-
-method reassign_p_Tuple0(
-  _p: Ref,
-  _s_new: s_Tuple0
-)
-  requires p_Tuple0(_p)
-  ensures p_Tuple0(_p)
-  ensures (p_Tuple0_snap(_p)) == (_s_new)
 
 field f_Bool: s_Bool
 domain s_Bool {
@@ -389,53 +191,4 @@ predicate p_Bool(self_p: Ref) {
   acc(self_p.f_Bool)
 }
 
-method assign_p_Bool(
-  _p: Ref,
-  _s_new: s_Bool
-)
-  ensures p_Bool(_p)
-  ensures (p_Bool_snap(_p)) == (_s_new)
-
-method reassign_p_Bool(
-  _p: Ref,
-  _s_new: s_Bool
-)
-  requires p_Bool(_p)
-  ensures p_Bool(_p)
-  ensures (p_Bool_snap(_p)) == (_s_new)
-
-
-
-
-// -----------------------------
-// utility types
-// -----------------------------
-domain Tuple_3[T0, T1, T2] {
-  axiom ax_Tuple_3_elem {
-    forall elem0: T0, elem1: T1, elem2: T2 :: {Tuple_3_cons(elem0, elem1, elem2)} (((Tuple_3_elem_0(Tuple_3_cons(elem0, elem1, elem2))) == (elem0)) && ((Tuple_3_elem_1(Tuple_3_cons(elem0, elem1, elem2))) == (elem1))) && ((Tuple_3_elem_2(Tuple_3_cons(elem0, elem1, elem2))) == (elem2))
-  }
-  function Tuple_3_elem_0(Tuple_3[T0, T1, T2]): T0
-  function Tuple_3_elem_1(Tuple_3[T0, T1, T2]): T1
-  function Tuple_3_elem_2(Tuple_3[T0, T1, T2]): T2
-  function Tuple_3_cons(T0, T1, T2): Tuple_3[T0, T1, T2]
-}
-
-domain Tuple_1[T0] {
-  axiom ax_Tuple_1_elem {
-    forall elem0: T0 :: {Tuple_1_cons(elem0)} (Tuple_1_elem_0(Tuple_1_cons(elem0))) == (elem0)
-  }
-  function Tuple_1_elem_0(Tuple_1[T0]): T0
-  function Tuple_1_cons(T0): Tuple_1[T0]
-}
-
-domain Tuple_4[T0, T1, T2, T3] {
-  axiom ax_Tuple_4_elem {
-    forall elem0: T0, elem1: T1, elem2: T2, elem3: T3 :: {Tuple_4_cons(elem0, elem1, elem2, elem3)} ((((Tuple_4_elem_0(Tuple_4_cons(elem0, elem1, elem2, elem3))) == (elem0)) && ((Tuple_4_elem_1(Tuple_4_cons(elem0, elem1, elem2, elem3))) == (elem1))) && ((Tuple_4_elem_2(Tuple_4_cons(elem0, elem1, elem2, elem3))) == (elem2))) && ((Tuple_4_elem_3(Tuple_4_cons(elem0, elem1, elem2, elem3))) == (elem3))
-  }
-  function Tuple_4_elem_0(Tuple_4[T0, T1, T2, T3]): T0
-  function Tuple_4_elem_1(Tuple_4[T0, T1, T2, T3]): T1
-  function Tuple_4_elem_2(Tuple_4[T0, T1, T2, T3]): T2
-  function Tuple_4_elem_3(Tuple_4[T0, T1, T2, T3]): T3
-  function Tuple_4_cons(T0, T1, T2, T3): Tuple_4[T0, T1, T2, T3]
-}
 
