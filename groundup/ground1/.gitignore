@@ -3,3 +3,4 @@
 /vgcore.*
 /mir_dump
 /rustc-ice*
+/log
