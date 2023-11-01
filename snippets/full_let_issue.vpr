@@ -1,49 +1,32 @@
 method m_apply_row_by_row(
   _0p: Ref,
-  _1p: Ref,
+  l: s_Int_i32,
+  u: s_Int_i32,
   _2p: Ref
 )
-  requires p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(_0p)
-  requires p_Adt_ClampTransform(_1p)
+  requires p_Adt_Vector(_0p)
   requires p_Adt_Vector(_2p)
-  requires s_Bool_val((((s_Bool_cons((s_Int_i32_val((s_Adt_Vector_read_0(p_Adt_Vector_snap(_2p))))) >= (((0))))))))
-  requires s_Bool_val((let _0_1s_0 == (p_Adt_ClampTransform_snap(_1p)) in
-(
-(let _0_4s_1 == (s_Adt_Bounds_read_1(s_Adt_ClampTransform_read_0(_0_1s_0))) in
-(let _0_5s_1 == (s_Adt_Bounds_read_0(s_Adt_ClampTransform_read_0(_0_1s_0))) in
-s_Bool_cons((s_Int_i32_val(_0_4s_1)) < (s_Int_i32_val(_0_5s_1))))))))
-  ensures p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(_0p)
-  ensures ((let _0_1s_0 == (old(p_Adt_ClampTransform_snap(_1p))) in
-(let _0_2s_0 == (old(p_Adt_Vector_snap(_2p))) in
-(let _0_3s_0 == (p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_snap(_0p)) in
-(let _0_5s_1 == (s_Adt_Vector_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(_0_3s_0))) in
-((((_0_5s_1) == (s_Adt_Vector_read_0(_0_2s_0))))))))))
+  requires s_Int_i32_val((s_Adt_Vector_read_len(p_Adt_Vector_snap(_2p)))) >= 0
+  requires s_Int_i32_val(l) < s_Int_i32_val(u)
+
+  ensures p_Adt_Vector(_0p)
+  ensures (s_Adt_Vector_read_len(p_Adt_Vector_snap(_0p)) == (s_Adt_Vector_read_len((old(p_Adt_Vector_snap(_2p))) )))
 
 
-  ensures ((let _0_1s_0 == (old(p_Adt_ClampTransform_snap(_1p))) in
-(
-(
-(
-(
-(let _0_6s_1 == (Tuple_3_cons((old(p_Adt_Vector_snap(_2p))) , (p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_snap(_0p)) , _0_1s_0)) in
+  ensures 
 (forall qvar_0_0: s_Int_i32 :: ((
 (let _1_2s_0 == (qvar_0_0) in
 (let _1_6s_1 == (_1_2s_0) in
-(let _1_5s_1 == (((((0))) <= (s_Int_i32_val(_1_6s_1)))) in // replace _1_6s_1 with qvar_0_0 here
-(let _1_phi_0 == (((!_1_5s_1)? (false) : ((((s_Int_i32_val(_1_2s_0)) < (s_Int_i32_val(s_Adt_Vector_read_0(Tuple_3_elem_0(_0_6s_1))))))))) in
+(let _1_5s_1 == (0 <= (s_Int_i32_val(qvar_0_0))) in // replace _1_6s_1 with qvar_0_0 here
+(let _1_phi_0 == (((!_1_5s_1)? (false) : ((((s_Int_i32_val(_1_2s_0)) < (s_Int_i32_val(s_Adt_Vector_read_len((old(p_Adt_Vector_snap(_2p))))))))))) in
 (
 (
 (_1_phi_0) 
-? (let _1_12s_1 == (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(Tuple_3_elem_1(_0_6s_1))) in
+? (let _1_12s_1 == (p_Adt_Vector_snap(_0p)) in
   (
-  (let _1_11s_1 == (f_get(_1_12s_1, _1_2s_0)) in
-  (let _1_15s_1 == (Tuple_3_elem_2(_0_6s_1)) in
-  (let _1_17s_1 == (Tuple_3_elem_0(_0_6s_1)) in
-  (
-  (let _1_16s_1 == (f_get(_1_17s_1, _1_2s_0)) in
-  (let _1_14s_1 == (f_do_transform(_1_15s_1, _1_16s_1)) in
-  ((_1_11s_1) == (_1_14s_1))))))))))
-: (true)))))))))))))))))
+  (let _1_14s_1 == (f_max(l, f_min(u, f_get((old(p_Adt_Vector_snap(_2p))) , _1_2s_0)))) in
+  (f_get(_1_12s_1, _1_2s_0) == _1_14s_1))))
+: true)))))))))
  // Body removed to minimize example
 
 
@@ -53,46 +36,31 @@ s_Bool_cons((s_Int_i32_val(_0_4s_1)) < (s_Int_i32_val(_0_5s_1))))))))
 
 
 method m_client(
-  _0p: Ref,
   _1p: Ref
 )
-  requires p_Tuple0(_0p)
   requires p_Adt_Vector(_1p)
-  requires ((s_Int_i32_val((s_Adt_Vector_read_0((p_Adt_Vector_snap(_1p)))))) >= (s_Int_i32_val(s_Int_i32_cons(10))))
-  ensures p_Tuple0(_0p)
+  requires s_Int_i32_val(s_Adt_Vector_read_len((p_Adt_Vector_snap(_1p)))) >= 10
 {
-  var _2p: Ref
-  inhale p_Adt_ClampTransform(_2p)
-  var _3p: Ref
-  inhale p_Adt_Bounds(_3p)
+
   
   
   var _6p: Ref
-  inhale p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(_6p)
+  inhale p_Adt_Vector(_6p)
   
  
 
 
-  unfold p_Adt_Bounds(_3p)
-  assume (p_Int_i32_snap(p_Adt_Bounds_field_0(_3p))) == s_Int_i32_cons(200)
-  assume (p_Int_i32_snap(p_Adt_Bounds_field_1(_3p))) == s_Int_i32_cons(100)
-  fold p_Adt_Bounds(_3p)
 
-  assume ((s_Adt_ClampTransform_read_0( (p_Adt_ClampTransform_snap(_2p))))) == (p_Adt_Bounds_snap(_3p))
+  m_apply_row_by_row(_6p, s_Int_i32_cons(100), s_Int_i32_cons(200), _1p)
 
-
-  m_apply_row_by_row(_6p, _2p, _1p)
-  unfold p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(_6p)
-
-  assert s_Bool_val((let _0_1s_0 == (p_Adt_Vector_snap(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_0(_6p))) in
-(
-(let _0_4s_1 == (_0_1s_0) in
-s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((
-(let _1_phi_0 == ((0 > (s_Int_i32_val(qvar_0_0)))  ? (false)
-  : ((((s_Int_i32_val(qvar_0_0)) < (s_Int_i32_val((s_Adt_Vector_read_0(_0_1s_0)))))))) in
-((((((_1_phi_0)))) ? (((f_between(f_get(_0_1s_0, qvar_0_0), s_Int_i32_cons(100), s_Int_i32_cons(200))))): s_Bool_cons(true)))
-
-))))))))
+  assert let _0_1s_0 == (p_Adt_Vector_snap((_6p))) in
+    (forall qvar_0_0: s_Int_i32 :: 
+      (
+        (0 > s_Int_i32_val(qvar_0_0)) ||
+        (s_Int_i32_val(qvar_0_0) >= s_Int_i32_val((s_Adt_Vector_read_len(_0_1s_0)))) ||
+        (let val == (s_Int_i32_val(f_get(_0_1s_0, qvar_0_0))) in (val <= 200) && (val >= 100))
+      )
+    )
 
 }
 
@@ -104,25 +72,18 @@ function f_get(
   _1p: s_Adt_Vector,
   _2p: s_Int_i32
 ): s_Int_i32
-  requires ((((((s_Int_i32_val(_2p)) >= (((0))))))))
-  requires (((((((s_Int_i32_val(_2p)) < (s_Int_i32_val(s_Adt_Vector_read_0(_1p)))))))))
-  requires ((((((s_Int_i32_val((s_Adt_Vector_read_0(_1p)))) >= (((0))))))))
+  requires s_Int_i32_val(_2p) >= 0
+  requires s_Int_i32_val(_2p) < s_Int_i32_val(s_Adt_Vector_read_len(_1p))
+  requires s_Int_i32_val((s_Adt_Vector_read_len(_1p))) >= 0
 
-function f_between(
-  _1p: s_Int_i32,
-  _2p: s_Int_i32,
-  _3p: s_Int_i32
-): s_Bool
-{
-((s_Bool_cons((s_Int_i32_val(_1p) <= s_Int_i32_val(_3p)) && (s_Int_i32_val(_1p) >= s_Int_i32_val(_2p)))))
-}
+
 
 function f_min(
   _1p: s_Int_i32,
   _2p: s_Int_i32
 ): s_Int_i32
 {
-((s_Int_i32_val(_1p)) >= (s_Int_i32_val(_2p)) ? _2p : _1p)
+  ((s_Int_i32_val(_1p)) >= (s_Int_i32_val(_2p)) ? _2p : _1p)
 }
 
 function f_max(
@@ -130,29 +91,7 @@ function f_max(
   _2p: s_Int_i32
 ): s_Int_i32
 {
-((s_Int_i32_val(_1p)) <= (s_Int_i32_val(_2p)) ? _2p : _1p)
-
-}
-
-function f_do_transform(
-  _1p: s_Adt_ClampTransform,
-  _2p: s_Int_i32
-): s_Int_i32
-  requires s_Bool_val((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_4s_1 == (s_Adt_Bounds_read_1(s_Adt_ClampTransform_read_0(_0_1s_0))) in
-(let _0_5s_1 == (s_Adt_Bounds_read_0(s_Adt_ClampTransform_read_0(_0_1s_0))) in
-s_Bool_cons((s_Int_i32_val(_0_4s_1)) < (s_Int_i32_val(_0_5s_1))))))))
-
-
-{
-  (let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_3s_1 == (s_Adt_Bounds_read_1(s_Adt_ClampTransform_read_0(_0_1s_0))) in
-(let _0_5s_1 == (s_Adt_Bounds_read_0(s_Adt_ClampTransform_read_0(_0_1s_0))) in
-(let _0_6s_1 == (_0_2s_0) in
-(let _0_4s_1 == (f_min(_0_5s_1, _0_6s_1)) in
-f_max(_0_3s_1, _0_4s_1)))))))
+  ((s_Int_i32_val(_1p)) <= (s_Int_i32_val(_2p)) ? _2p : _1p)
 }
 
 
@@ -185,33 +124,19 @@ predicate p_Int_i32(self_p: Ref) {
   acc(self_p.f_s_Int_i32)
 }
 
-method assign_p_Int_i32(
-  _p: Ref,
-  _s_new: s_Int_i32
-)
-  ensures p_Int_i32(_p)
-  ensures (p_Int_i32_snap(_p)) == (_s_new)
-
-method reassign_p_Int_i32(
-  _p: Ref,
-  _s_new: s_Int_i32
-)
-  requires p_Int_i32(_p)
-  ensures p_Int_i32(_p)
-  ensures (p_Int_i32_snap(_p)) == (_s_new)
 
 domain s_Adt_Vector {
   axiom ax_s_Adt_Vector_write_0_read_0 {
-    forall self: s_Adt_Vector, val: s_Int_i32 :: {s_Adt_Vector_read_0(s_Adt_Vector_write_0(self, val))} (s_Adt_Vector_read_0(s_Adt_Vector_write_0(self, val))) == (val)
+    forall self: s_Adt_Vector, val: s_Int_i32 :: {s_Adt_Vector_read_len(s_Adt_Vector_write_0(self, val))} (s_Adt_Vector_read_len(s_Adt_Vector_write_0(self, val))) == (val)
   }
   axiom ax_s_Adt_Vector_cons_read_0 {
-    forall f0: s_Int_i32 :: {s_Adt_Vector_cons(f0)} (s_Adt_Vector_read_0(s_Adt_Vector_cons(f0))) == (f0)
+    forall f0: s_Int_i32 :: {s_Adt_Vector_cons(f0)} (s_Adt_Vector_read_len(s_Adt_Vector_cons(f0))) == (f0)
   }
   axiom ax_s_Adt_Vector_cons {
-    forall self: s_Adt_Vector :: {s_Adt_Vector_cons(s_Adt_Vector_read_0(self))} (s_Adt_Vector_cons(s_Adt_Vector_read_0(self))) == (self)
+    forall self: s_Adt_Vector :: {s_Adt_Vector_cons(s_Adt_Vector_read_len(self))} (s_Adt_Vector_cons(s_Adt_Vector_read_len(self))) == (self)
   }
   function s_Adt_Vector_cons(s_Int_i32): s_Adt_Vector
-  function s_Adt_Vector_read_0(s_Adt_Vector): s_Int_i32
+  function s_Adt_Vector_read_len(s_Adt_Vector): s_Int_i32
   function s_Adt_Vector_write_0(s_Adt_Vector, s_Int_i32): s_Adt_Vector
 }
 
@@ -235,13 +160,7 @@ predicate p_Adt_Vector(self_p: Ref) {
 }
 
 
-method reassign_p_Adt_Vector(
-  _p: Ref,
-  _s_new: s_Adt_Vector
-)
-  requires p_Adt_Vector(_p)
-  ensures p_Adt_Vector(_p)
-  ensures (p_Adt_Vector_snap(_p)) == (_s_new)
+
 
 domain s_Adt_Bounds {
   axiom ax_s_Adt_Bounds_write_0_read_0 {
