@@ -10,51 +10,46 @@ method m_apply_row_by_row(
 (let _0_2s_0 == (p_Adt_Vector_snap(_2p)) in
 (let _0_4s_1 == (s_Adt_Vector_read_0(_0_2s_0)) in
 s_Bool_cons((s_Int_i32_val(_0_4s_1)) >= (s_Int_i32_val(s_Int_i32_cons(0))))))))
+
   requires s_Bool_val((let _0_1s_0 == (p_Adt_ClampTransform_snap(_1p)) in
 (let _0_2s_0 == (p_Adt_Vector_snap(_2p)) in
 (let _0_4s_1 == (s_Adt_Bounds_read_1(s_Adt_ClampTransform_read_0(_0_1s_0))) in
 (let _0_5s_1 == (s_Adt_Bounds_read_0(s_Adt_ClampTransform_read_0(_0_1s_0))) in
 s_Bool_cons((s_Int_i32_val(_0_4s_1)) < (s_Int_i32_val(_0_5s_1))))))))
+
   ensures p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(_0p)
+
   ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_ClampTransform_snap(_1p))) in
 (let _0_2s_0 == (old(p_Adt_Vector_snap(_2p))) in
 (let _0_3s_0 == (p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_snap(_0p)) in
 (let _0_5s_1 == (s_Adt_Vector_read_0(s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(_0_3s_0))) in
-(let _0_7s_1 == (s_Adt_Vector_read_0(_0_2s_0)) in
-(let _0_6s_1 == (_0_7s_1) in
-s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+((s_Bool_cons((_0_5s_1) == (s_Adt_Vector_read_0(_0_2s_0))))))))))
+
   ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_ClampTransform_snap(_1p))) in
 (let _0_2s_0 == (old(p_Adt_Vector_snap(_2p))) in
 (let _0_3s_0 == (p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_snap(_0p)) in
-(let _0_5s_1 == (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_1(_0_3s_0)) in
-(let _0_7s_1 == (_0_1s_0) in
-(let _0_6s_1 == (_0_7s_1) in
-s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
-  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_ClampTransform_snap(_1p))) in
-(let _0_2s_0 == (old(p_Adt_Vector_snap(_2p))) in
-(let _0_3s_0 == (p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_snap(_0p)) in
-(let _0_5s_1 == (s_Tuple0_cons()) in
-(let _0_7s_1 == (_0_1s_0) in
-(let _0_6s_1 == (Tuple_3_cons(_0_2s_0, _0_3s_0, _0_7s_1)) in
+(
+(
+(let _0_6s_1 == (Tuple_3_cons(_0_2s_0, _0_3s_0, _0_1s_0)) in
 s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((let _1_1s_0 == (_0_6s_1) in
 (let _1_2s_0 == (qvar_0_0) in
 (let _1_6s_1 == (_1_2s_0) in
-(let _1_5s_1 == (s_Bool_cons((s_Int_i32_val(s_Int_i32_cons(0))) <= (s_Int_i32_val(_1_6s_1)))) in // replace _1_6s_1 with qvar_0_0 here
-(let _1_phi_0 == ((_1_5s_1) == (s_Bool_cons(false))
+(let _1_5s_1 == (((s_Int_i32_val(s_Int_i32_cons(0))) <= (s_Int_i32_val(qvar_0_0)))) in // replace _1_6s_1 with qvar_0_0 here
+(let _1_phi_0 == ((_1_5s_1) == ((false))
   ? s_Bool_cons(false)
-  : (let _1_8s_1 == (_1_2s_0) in
+  : (
     (let _1_9s_1 == (s_Adt_Vector_read_0(Tuple_3_elem_0(_1_1s_0))) in
-    s_Bool_cons((s_Int_i32_val(_1_8s_1)) < (s_Int_i32_val(_1_9s_1)))))) in
-(let _1_4s_3 == (_1_phi_0) in
-(let _1_3s_1 == (s_Bool_cons(!(s_Bool_val(_1_4s_3)))) in
-(_1_3s_1) == (s_Bool_cons(false))
+    s_Bool_cons((s_Int_i32_val(_1_2s_0)) < (s_Int_i32_val(_1_9s_1)))))) in
+(
+(let _1_3s_1 == ((!(s_Bool_val(_1_phi_0)))) in
+(_1_3s_1) == ((false))
 ? (let _1_12s_1 == (s_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_read_0(Tuple_3_elem_1(_1_1s_0))) in
-  (let _1_13s_1 == (_1_2s_0) in
-  (let _1_11s_1 == (f_get(_1_12s_1, _1_13s_1)) in
+  (
+  (let _1_11s_1 == (f_get(_1_12s_1, _1_2s_0)) in
   (let _1_15s_1 == (Tuple_3_elem_2(_1_1s_0)) in
   (let _1_17s_1 == (Tuple_3_elem_0(_1_1s_0)) in
-  (let _1_18s_1 == (_1_2s_0) in
-  (let _1_16s_1 == (f_get(_1_17s_1, _1_18s_1)) in
+  (
+  (let _1_16s_1 == (f_get(_1_17s_1, _1_2s_0)) in
   (let _1_14s_1 == (f_do_transform(_1_15s_1, _1_16s_1)) in
   s_Bool_cons((_1_11s_1) == (_1_14s_1))))))))))
 : s_Bool_cons(true)))))))))))))))))
@@ -64,82 +59,6 @@ s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((let _1_1s_0 == (_0_6s_1) i
 
 
 
-method m_assert_true(
-  _0p: Ref,
-  _1p: Ref
-)
-  requires p_Tuple0(_0p)
-  requires p_Bool(_1p)
-  requires s_Bool_val(p_Bool_snap(_1p))
-  ensures p_Tuple0(_0p)
-{
-  reassign_p_Tuple0(_0p, s_Tuple0_cons())
-}
-
-method m_assert_eq(
-  _0p: Ref,
-  _1p: Ref,
-  _2p: Ref
-)
-  requires p_Tuple0(_0p)
-  requires p_Int_i32(_1p)
-  requires p_Int_i32(_2p)
-  requires s_Bool_val((let _0_1s_0 == (p_Int_i32_snap(_1p)) in
-(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_1s_0) in
-(let _0_5s_1 == (_0_2s_0) in
-s_Bool_cons((_0_4s_1) == (_0_5s_1)))))))
-  ensures p_Tuple0(_0p)
-{
-  reassign_p_Tuple0(_0p, s_Tuple0_cons())
-}
-
-
-method m_final_assert(
-  _0p: Ref,
-  _1p: Ref
-)
-  requires p_Tuple0(_0p)
-  requires p_Adt_Vector(_1p)
-  requires s_Bool_val((let _0_1s_0 == (p_Adt_Vector_snap(_1p)) in
-(let _0_3s_1 == (s_Tuple0_cons()) in
-(let _0_4s_1 == (_0_1s_0) in
-s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((let _1_1s_0 == (_0_4s_1) in
-(let _1_2s_0 == (qvar_0_0) in
-(let _1_6s_1 == (_1_2s_0) in
-(let _1_5s_1 == (s_Bool_cons((s_Int_i32_val(s_Int_i32_cons(0))) <= (s_Int_i32_val(_1_6s_1)))) in
-(let _1_phi_0 == ((_1_5s_1) == (s_Bool_cons(false))
-  ? s_Bool_cons(false)
-  : (let _1_8s_1 == (_1_2s_0) in
-    (let _1_9s_1 == (s_Adt_Vector_read_0(_1_1s_0)) in
-    s_Bool_cons((s_Int_i32_val(_1_8s_1)) < (s_Int_i32_val(_1_9s_1)))))) in
-(let _1_4s_3 == (_1_phi_0) in
-(let _1_3s_1 == (s_Bool_cons(!(s_Bool_val(_1_4s_3)))) in
-(_1_3s_1) == (s_Bool_cons(false))
-? (let _1_12s_1 == (_1_1s_0) in
-  (let _1_13s_1 == (_1_2s_0) in
-  (let _1_11s_1 == (f_get(_1_12s_1, _1_13s_1)) in
-  f_between(_1_11s_1, s_Int_i32_cons(100), s_Int_i32_cons(200)))))
-: s_Bool_cons(true))))))))))))))
-  ensures p_Tuple0(_0p)
-{
-  reassign_p_Tuple0(_0p, s_Tuple0_cons())
-}
-
-method m_make_clamp(
-  _0p: Ref,
-  _1p: Ref
-)
-  requires p_Adt_ClampTransform(_0p)
-  requires p_Adt_Bounds(_1p)
-  ensures p_Adt_ClampTransform(_0p)
-  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Bounds_snap(_1p))) in
-(let _0_2s_0 == (p_Adt_ClampTransform_snap(_0p)) in
-(let _0_4s_1 == (s_Adt_ClampTransform_read_0(_0_2s_0)) in
-(let _0_6s_1 == (_0_1s_0) in
-(let _0_5s_1 == (_0_6s_1) in
-s_Bool_cons((_0_4s_1) == (_0_5s_1))))))))
-// body removed
 
 
 method m_client(
@@ -148,12 +67,11 @@ method m_client(
 )
   requires p_Tuple0(_0p)
   requires p_Adt_Vector(_1p)
-  requires s_Bool_val((let _0_1s_0 == (p_Adt_Vector_snap(_1p)) in
-(let _0_3s_1 == (s_Adt_Vector_read_0(_0_1s_0)) in
+  requires s_Bool_val((
+(let _0_3s_1 == (s_Adt_Vector_read_0((p_Adt_Vector_snap(_1p)))) in
 s_Bool_cons((s_Int_i32_val(_0_3s_1)) >= (s_Int_i32_val(s_Int_i32_cons(10)))))))
   ensures p_Tuple0(_0p)
 {
-label start
   var _2p: Ref
   inhale p_Adt_ClampTransform(_2p)
   var _3p: Ref
@@ -168,46 +86,37 @@ label start
   inhale p_Adt_ClampTransform(_7p)
   var _8p: Ref
   inhale p_Adt_Vector(_8p)
-  var _9p: Ref
-  inhale p_Tuple0(_9p)
-  var _10p: Ref
-  inhale p_Adt_Vector(_10p)
-  goto bb_0
-label bb_0
-  // _3 = Bounds { upper: const 200_i32, lower: const 100_i32 }
+
+
+
   unfold p_Adt_Bounds(_3p)
   reassign_p_Int_i32(p_Adt_Bounds_field_0(_3p), s_Int_i32_cons(200))
   reassign_p_Int_i32(p_Adt_Bounds_field_1(_3p), s_Int_i32_cons(100))
   fold p_Adt_Bounds(_3p)
-  m_make_clamp(_2p, _3p)
-  goto bb_1
-label bb_1
-  // FakeRead(ForLet(None), _2)
-  // _7 = _2
+
+  assume ((((s_Adt_ClampTransform_read_0( (p_Adt_ClampTransform_snap(_2p))))) == (((p_Adt_Bounds_snap(_3p))))))
+
+
   reassign_p_Adt_ClampTransform(_7p, p_Adt_ClampTransform_snap(_2p))
-  // _8 = move _1
   reassign_p_Adt_Vector(_8p, p_Adt_Vector_snap(_1p))
   m_apply_row_by_row(_6p, _7p, _8p)
-  goto bb_2
-label bb_2
-  // PlaceMention(_6)
-  // _4 = move (_6.0: Vector)
+
+ 
   unfold p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform(_6p)
-  reassign_p_Adt_Vector(_4p, p_Adt_Vector_snap(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_0(_6p)))
-  // _5 = (_6.1: ClampTransform)
-  reassign_p_Adt_ClampTransform(_5p, p_Adt_ClampTransform_snap(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_1(_6p)))
-  // _10 = move _4
-  reassign_p_Adt_Vector(_10p, p_Adt_Vector_snap(_4p))
-  m_final_assert(_9p, _10p)
-  goto bb_3
-label bb_3
-  // _0 = const ()
-  reassign_p_Tuple0(_0p, s_Tuple0_cons())
-  goto end
-label bb_4
-  assert false // terminator resume
-label end
-  // return
+
+  assert s_Bool_val((let _0_1s_0 == (p_Adt_Vector_snap(p_Tuple2_s_Adt_Vector_s_Adt_ClampTransform_field_0(_6p))) in
+(
+(let _0_4s_1 == (_0_1s_0) in
+s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((
+(
+(
+(
+(let _1_phi_0 == (((s_Int_i32_val(s_Int_i32_cons(0))) > (s_Int_i32_val(qvar_0_0)))  ? (false)
+  : ((((s_Int_i32_val(qvar_0_0)) < (s_Int_i32_val((s_Adt_Vector_read_0(_0_1s_0)))))))) in
+((((((_1_phi_0)))) ? (((f_between(f_get(_0_1s_0, qvar_0_0), s_Int_i32_cons(100), s_Int_i32_cons(200))))): s_Bool_cons(true)))
+
+)))))))))))
+
 }
 
 
@@ -219,16 +128,16 @@ function f_get(
   _2p: s_Int_i32
 ): s_Int_i32
   requires s_Bool_val((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_4s_1 == (_0_2s_0) in
-s_Bool_cons((s_Int_i32_val(_0_4s_1)) >= (s_Int_i32_val(s_Int_i32_cons(0))))))))
+(
+(
+s_Bool_cons((s_Int_i32_val(_2p)) >= (s_Int_i32_val(s_Int_i32_cons(0))))))))
   requires s_Bool_val((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_4s_1 == (_0_2s_0) in
+(
+(
 (let _0_5s_1 == (s_Adt_Vector_read_0(_0_1s_0)) in
-s_Bool_cons((s_Int_i32_val(_0_4s_1)) < (s_Int_i32_val(_0_5s_1))))))))
+s_Bool_cons((s_Int_i32_val(_2p)) < (s_Int_i32_val(_0_5s_1))))))))
   requires s_Bool_val((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
+(
 (let _0_4s_1 == (s_Adt_Vector_read_0(_0_1s_0)) in
 s_Bool_cons((s_Int_i32_val(_0_4s_1)) >= (s_Int_i32_val(s_Int_i32_cons(0))))))))
 
@@ -238,17 +147,17 @@ function f_between(
   _3p: s_Int_i32
 ): s_Bool
 {
-  (let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_3s_0 == (_3p) in
-(let _0_5s_1 == (_0_1s_0) in
-(let _0_6s_1 == (_0_3s_0) in
-(let _0_4s_1 == (s_Bool_cons((s_Int_i32_val(_0_5s_1)) <= (s_Int_i32_val(_0_6s_1)))) in
+  (
+(
+(
+(
+(
+(let _0_4s_1 == (s_Bool_cons((s_Int_i32_val(_1p)) <= (s_Int_i32_val(_3p)))) in
 (_0_4s_1) == (s_Bool_cons(false))
 ? s_Bool_cons(false)
-: (let _0_8s_1 == (_0_1s_0) in
-  (let _0_9s_1 == (_0_2s_0) in
-  s_Bool_cons((s_Int_i32_val(_0_8s_1)) >= (s_Int_i32_val(_0_9s_1)))))))))))
+: (
+  (
+  s_Bool_cons((s_Int_i32_val(_1p)) >= (s_Int_i32_val(_2p)))))))))))
 }
 
 function f_min(
