@@ -3,6 +3,7 @@ use prusti_contracts::*;
 
 pub struct Vector {
     len: i32,
+    contents: i32, // dummy variable encoding the contents of the vector
 }
 
 impl Vector {
@@ -153,6 +154,10 @@ fn assert_true(b: bool) {}
 #[requires(a == b)]
 fn assert_eq(a: i32, b: i32) {}
 
+
+#[requires(a === b)]
+fn assert_eq_snap(a: Vector, b: Vector) {}
+
 #[requires(vec.len == 10)]
 fn vector_client(vec: Vector) {
     let vec = vec.set(5, 42);
@@ -178,6 +183,16 @@ pub fn client(data: Vector, lower: i32, upper: i32) {
     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
 }
 
+
+/// This function shows that the second field in vector is required
+/// if that field is removed this verifies implying that all vectors of the same length are the same
+#[requires(data1.len == data2.len)]
+#[requires(data1 !== data2)]
+#[cfg(f)]
+pub fn client2(data1: Vector, data2: Vector) {
+    assert_true(false);
+}
+
 // #[requires(data.len >= 0)]
 // #[requires(idx >= 0 && idx < data.len)]
 // fn clone_client(data: Vector, idx: i32) {
@@ -187,4 +202,6 @@ pub fn client(data: Vector, lower: i32, upper: i32) {
 //     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
 // }
 
-fn main() {}
+fn main() {
+
+}
