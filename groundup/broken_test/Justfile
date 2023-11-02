@@ -19,6 +19,7 @@ export PRUSTI_LOG := "debug"
 export RUST_LOG := "debug"
 export PRUSTI_LOG_TRACING := "false"
 export PRUSTI_CHECK_OVERFLOWS := "false"
+export PRUSTI_TEST_FREE_PCS := "true"
 
 build-prusti:
 	mkdir -p local-testing
@@ -28,7 +29,7 @@ cargo-prusti: (build-prusti)
 	{{prusti_bins_dir}}/cargo-prusti
 
 prusti: (build-prusti)
-	{{prusti_bins_dir}}/prusti-rustc {{main_rs}}
+	{{prusti_bins_dir}}/prusti-rustc --edition=2021 -Z dump_mir_dataflow -Ptest_free_pcs=true -Z dump-mir=F {{main_rs}}
 
 
 prusti_driver_direct:

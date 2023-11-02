@@ -1,3 +1,5 @@
+#![feature(core_intrinsics, rustc_attrs)]
+
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
@@ -14,6 +16,7 @@ struct Test {
 }
 
 
+#[rustc_mir(borrowck_graphviz_postflow="log/analysis/fn_name/fn_name.dot")]
 fn take_test(test: Test) -> Test {
     if test.x > 20 {
         return test;
