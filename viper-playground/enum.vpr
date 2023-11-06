@@ -14,19 +14,23 @@
           forall self: s_Result :: s_Result_discriminant(self) <= 1 // number of variants
         } 
 
+
+        axiom cons_discr1 {
+          s_Result_discriminant(s_Result_cons_1()) == 1
+        } 
+
+          axiom cons_discr0 {
+          forall i: s_Int_i32 :: s_Result_discriminant(s_Result_cons_0(i)) == 0
+        } 
+
+
+
         axiom s_Result_write_read_variant_0_field_0 {
           forall self: s_Result, val: s_Int_i32 :: {s_Result_read_variant0_field0(s_Result_write_variant0_field0(self, val))}
           ( (s_Result_discriminant(self) == 0) ==>  s_Result_read_variant0_field0(s_Result_write_variant0_field0(self, val)) == (val))
        }
     }
 
-
-
-function p_Result_discriminant(
-  self: Ref
-): Int
-  ensures result >= 0
-  ensures result <= 1
 
 
 function s_Result_unreachable(
@@ -36,7 +40,6 @@ function s_Result_unreachable(
 function p_Result_variant_0_field_0(
   self: Ref
 ): Ref
-  //requires p_Result_discriminant(self) == 0
 
 
 function p_Result_snap(
@@ -45,19 +48,18 @@ function p_Result_snap(
   requires p_Result(self_p)
 {
   unfolding p_Result(self_p) in //(s_Adt_Vector_cons(p_Int_i32_snap(p_Adt_Vector_field_0(self_p)), p_Int_i32_snap(p_Adt_Vector_field_1(self_p))))
-  let discriminant == (p_Result_discriminant(self_p)) in
-    discriminant == 0 ? s_Result_cons_0(p_Int_i32_snap(p_Result_variant_0_field_0(self_p))) :
-    discriminant == 1 ? s_Result_cons_1() : s_Result_unreachable()
+    self_p.discr == 0 ? s_Result_cons_0(p_Int_i32_snap(p_Result_variant_0_field_0(self_p))) :
+    self_p.discr == 1 ? s_Result_cons_1() : s_Result_unreachable()
 
 }
 
+field discr: Int
 
-predicate p_Result_some(self_p: Ref) {
-   p_Result_discriminant(self_p) == 0 ==> p_Int_i32(p_Result_variant_0_field_0(self_p))
-}
+
 
 predicate p_Result(self_p: Ref) {
-   p_Result_discriminant(self_p) == 1 || p_Result_some(self_p)
+  acc(self_p.discr) && self_p.discr >= 0 &&  self_p.discr <=1 &&
+  (self_p.discr == 0 ==> p_Int_i32(p_Result_variant_0_field_0(self_p)))
 }
 
 field f_s_Int_i32: s_Int_i32
