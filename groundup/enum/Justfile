@@ -15,8 +15,8 @@ main_rs := absolute_path("src/main.rs")
 
 # Env vars
 export RUST_BACKTRACE := "1"
-export PRUSTI_LOG := "debug"
-export RUST_LOG := "debug"
+export PRUSTI_LOG := "debug,mir_state_analysis=warn"
+export RUST_LOG := "debug,mir_state_analysis=warn"
 export PRUSTI_LOG_TRACING := "false"
 export PRUSTI_CHECK_OVERFLOWS := "false"
 
