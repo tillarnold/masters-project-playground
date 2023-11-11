@@ -14,16 +14,8 @@ enum IntOption {
 }
 
 impl IntOption {
-    #[pure]
-    #[trusted]
-    #[ensures(result == (self === IntOption::None))]
-    fn is_none(self) -> bool {
-        matches!(self, IntOption::None)
-    }
-
-
     #[rustc_mir(borrowck_graphviz_postflow="log/analysis/fn_name/fn_name.dot")]
-    #[ensures(self.is_none() ==> result == default)]
+    #[ensures(self === IntOption::None ==> result == default)]
     fn unwrap_or(self, default: i32) -> i32 {
         match self {
             IntOption::Some(v) => v,
