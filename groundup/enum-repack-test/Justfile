@@ -48,8 +48,10 @@ print_log:
 	bat target/verify/log/trace.json
 
 
-delete_mir_dump:
-	rm -r mir_dump
+delete_all_dump:
+	rm -r mir_dump 
+	rm -r log 
+	rm -r local-testing
 
 
 open_graph:

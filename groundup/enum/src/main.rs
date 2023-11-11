@@ -1,3 +1,5 @@
+#![feature(core_intrinsics, rustc_attrs)]
+
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
@@ -109,6 +111,7 @@ impl IntOption {
         matches!(self, IntOption::Some(..))
     }
 
+    #[rustc_mir(borrowck_graphviz_postflow="log/analysis/fn_name/fn_name.dot")]
     #[ensures(self.is_none() ==> result == default)]
     fn unwrap_or(self, default: i32) -> i32 {
         match self {
