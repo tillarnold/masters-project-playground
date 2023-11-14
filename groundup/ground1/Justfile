@@ -48,5 +48,20 @@ print_log:
 	bat target/verify/log/trace.json
 
 
-delete_mir_dump:
-	rm -r mir_dump
+delete_logs_and_dumps:
+	rm -rf mir_dump/
+	rm -rf log/
+	rm -rf rustc-ice-*
+	rm -rf local-testing/
+
+
+clean_build_prusti:
+	mkdir -p local-testing
+	cd {{prusti_dev_dir}} && cargo clean
+	just build_all_prusti
+
+
+build_all_prusti:
+	cd {{prusti_dev_dir}}/prusti && cargo build
+	cd {{prusti_dev_dir}}/prusti-contracts-build && cargo build
+	cd {{prusti_dev_dir}}/prusti-launch && cargo build

@@ -54,3 +54,15 @@ delete_mir_dump:
 
 open_graph:
 	cd log/analysis/fn_name/ && dot -Tpdf -ofree_pcs_fn_name.pdf free_pcs_fn_name.dot && xdg-open free_pcs_fn_name.pdf
+
+
+clean_build_prusti:
+        mkdir -p local-testing
+        cd {{prusti_dev_dir}} && cargo clean
+        just build_all_prusti
+
+
+build_all_prusti:
+        cd {{prusti_dev_dir}}/prusti && cargo build
+        cd {{prusti_dev_dir}}/prusti-contracts-build && cargo build
+        cd {{prusti_dev_dir}}/prusti-launch && cargo build
