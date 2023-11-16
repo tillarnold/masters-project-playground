@@ -1,0 +1,65 @@
+// // acc(res) && ( acc(res) --* acc(x) )
+// fn bar(x: &mut ((i32, i32), bool)) -> &mut i32 {
+//     // let mut v = (0, 1);
+//     // // acc(v)
+//     // let x = &mut v;
+//     // // acc(v) && x.ref == v
+//     // *x = 10;
+//     let res = foo(&mut x.0);
+//     // acc(res) && acc(x.1) && ( acc(res) --* acc(x.0) && x.0.0 == old[lhs](res) && x.0.1 == 10 )
+
+
+
+//     // package acc(res) --* acc(x) {
+//         // take in acc(x.1)
+//         // apply acc(res) --* acc(x.0)
+//         // fold(x)
+//     /
+
+
+
+/// fn test(v: Foo) {
+///  let x = &mut v;
+///  x.f1 == 10;
+///  assert!(v.f1 == 10)
+/// }
+
+field f1 : Int
+
+field ref : Ref
+
+
+method test() {
+
+    var v : Ref;
+    var x : Ref;
+    
+    inhale acc(v.f1)
+    inhale acc(x.ref)
+
+    inhale x.ref == v
+    inhale x.ref.f1 == 10
+
+    assert v.f1 == 10
+}
+
+
+/// fn test(v: Foo) {
+///  let res = foo(&mut Foo)
+/// }
+
+method test2() {
+    var v : Ref;
+    var res : Ref;
+    
+    inhale acc(v.f1)
+    
+    exhale acc(v.f1)
+    inhale acc(res.f1) 
+    inhale acc(res.f1) --* acc(v.f1) && v.f1 == old[lhs](res.f1)
+
+
+    apply acc(res.f1) --* acc(v.f1) && v.f1 == old[lhs](res.f1)
+
+    assert acc(v.f1)
+}

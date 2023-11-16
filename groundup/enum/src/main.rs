@@ -113,6 +113,7 @@ impl IntOption {
 
     #[rustc_mir(borrowck_graphviz_postflow="log/analysis/fn_name/fn_name.dot")]
     #[ensures(self.is_none() ==> result == default)]
+    #[ensures(self === IntOption::None ==> result == default)]
     fn unwrap_or(self, default: i32) -> i32 {
         match self {
             IntOption::Some(v) => v,
@@ -130,6 +131,15 @@ impl IntOption {
         IntOption::Some(i)
     }
 }
+
+
+fn f3() {
+    match IntOption::Some(3) {
+        IntOption::None => assert(false),
+        IntOption::Some(v) => assert(v == 3),
+    }
+}
+
 fn main() {
     let x = Person {
         name: 42,
@@ -141,12 +151,7 @@ fn main() {
     let y = x.inverse().id();
     assert_neq_dir(y, Direction::Down);
 
-    let p = IntOption::Some(3);
-
-    match p {
-        IntOption::None => assert(false),
-        IntOption::Some(v) => assert(v == 3),
-    }
+ 
 
     let v = IntOption::None.unwrap_or(22);
     assert(v == 22);

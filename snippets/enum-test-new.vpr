@@ -1,0 +1,1425 @@
+// -----------------------------
+// methods
+// -----------------------------
+method m_inverse_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  ensures p_Adt_Direction(_0p)
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Direction_snap(_1p))) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_0p)) in
+(let _0_5s_1 == (_0_2s_0) in
+(let _0_7s_1 == (_0_1s_0) in
+(let _0_6s_1 == (_0_7s_1) in
+(let _0_4s_1 == (s_Bool_cons((_0_5s_1) == (_0_6s_1))) in
+(let _0_3s_1 == (s_Bool_cons(!(s_Bool_val(_0_4s_1)))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0)))))))))
+{
+label start
+  var _2p: Ref
+  goto bb_0
+label bb_0
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _2 = discriminant(_1)
+  assign_p_Int_isize(_2p, s_Int_isize_cons(unfolding p_Adt_Direction(_1p) in (_1p.p_Adt_Direction_discriminant)))
+  // switchInt(move _2) -> [0: bb1, 1: bb2, 2: bb3, 3: bb4, otherwise: bb5]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_2p)
+  exhale p_Int_isize(_2p)
+  if (_tmp0 == s_Int_isize_cons(0)) { goto bb_1 }
+  elseif (_tmp0 == s_Int_isize_cons(1)) { goto bb_2 }
+  elseif (_tmp0 == s_Int_isize_cons(2)) { goto bb_3 }
+  elseif (_tmp0 == s_Int_isize_cons(3)) { goto bb_4 }
+  else { goto bb_5 }
+label bb_1
+  // falseEdge -> [real: bb6, imaginary: bb2]
+  goto bb_6
+label bb_2
+  // falseEdge -> [real: bb7, imaginary: bb3]
+  goto bb_7
+label bb_3
+  // falseEdge -> [real: bb8, imaginary: bb4]
+  goto bb_8
+label bb_4
+  // _0 = Direction::Left
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_2_Left_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_5
+  // unreachable
+  assert false // terminator unreachable
+label bb_6
+  // _0 = Direction::Down
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_1_Down_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_7
+  // _0 = Direction::Up
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_0_Up_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_8
+  // _0 = Direction::Right
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_3_Right_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_9
+  // return
+  exhale p_Adt_Direction(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_id_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  ensures p_Adt_Direction(_0p)
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Direction_snap(_1p))) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_0p)) in
+(let _0_4s_1 == (_0_2s_0) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_5s_1 == (_0_6s_1) in
+(let _0_3s_1 == (s_Bool_cons((_0_4s_1) == (_0_5s_1))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0))))))))
+{
+label start
+  var _2p: Ref
+  goto bb_0
+label bb_0
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _2 = discriminant(_1)
+  assign_p_Int_isize(_2p, s_Int_isize_cons(unfolding p_Adt_Direction(_1p) in (_1p.p_Adt_Direction_discriminant)))
+  // switchInt(move _2) -> [0: bb1, 1: bb2, 2: bb3, 3: bb4, otherwise: bb5]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_2p)
+  exhale p_Int_isize(_2p)
+  if (_tmp0 == s_Int_isize_cons(0)) { goto bb_1 }
+  elseif (_tmp0 == s_Int_isize_cons(1)) { goto bb_2 }
+  elseif (_tmp0 == s_Int_isize_cons(2)) { goto bb_3 }
+  elseif (_tmp0 == s_Int_isize_cons(3)) { goto bb_4 }
+  else { goto bb_5 }
+label bb_1
+  // falseEdge -> [real: bb6, imaginary: bb2]
+  goto bb_6
+label bb_2
+  // falseEdge -> [real: bb7, imaginary: bb3]
+  goto bb_7
+label bb_3
+  // falseEdge -> [real: bb8, imaginary: bb4]
+  goto bb_8
+label bb_4
+  // _0 = Direction::Right
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_3_Right_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_5
+  // unreachable
+  assert false // terminator unreachable
+label bb_6
+  // _0 = Direction::Up
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_0_Up_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_7
+  // _0 = Direction::Down
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_1_Down_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_8
+  // _0 = Direction::Left
+  assign_p_Adt_Direction(_0p, s_Adt_Direction_2_Left_cons())
+  // goto -> bb9
+  goto bb_9
+label bb_9
+  // return
+  exhale p_Adt_Direction(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_val((let _0_1s_0 == (p_Bool_snap(_1p)) in
+(let _0_2s_1 == (_0_1s_0) in
+(let _0_0s_0 == (_0_2s_1) in
+_0_0s_0))))
+  ensures p_Tuple0(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_Tuple0(_0p, s_Tuple0_cons())
+  // return
+  exhale p_Bool(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_eq_dir_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  requires p_Adt_Direction(_2p)
+  requires s_Bool_val((let _0_1s_0 == (p_Adt_Direction_snap(_1p)) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_2p)) in
+(let _0_4s_1 == (_0_1s_0) in
+(let _0_6s_1 == (_0_2s_0) in
+(let _0_5s_1 == (_0_6s_1) in
+(let _0_3s_1 == (s_Bool_cons((_0_4s_1) == (_0_5s_1))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0))))))))
+  ensures p_Tuple0(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_Tuple0(_0p, s_Tuple0_cons())
+  // return
+  exhale p_Adt_Direction(_1p)
+  exhale p_Adt_Direction(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_neq_dir_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  requires p_Adt_Direction(_2p)
+  requires s_Bool_val((let _0_1s_0 == (p_Adt_Direction_snap(_1p)) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_2p)) in
+(let _0_5s_1 == (_0_1s_0) in
+(let _0_7s_1 == (_0_2s_0) in
+(let _0_6s_1 == (_0_7s_1) in
+(let _0_4s_1 == (s_Bool_cons((_0_5s_1) == (_0_6s_1))) in
+(let _0_3s_1 == (s_Bool_cons(!(s_Bool_val(_0_4s_1)))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0)))))))))
+  ensures p_Tuple0(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_Tuple0(_0p, s_Tuple0_cons())
+  // return
+  exhale p_Adt_Direction(_1p)
+  exhale p_Adt_Direction(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_CALLER_0_15(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_val((let _0_1s_0 == (p_Bool_snap(_1p)) in
+(let _0_2s_1 == (_0_1s_0) in
+(let _0_0s_0 == (_0_2s_1) in
+_0_0s_0))))
+  ensures p_Tuple0(_0p)
+
+method m_test2_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  ensures p_Tuple0(_0p)
+{
+label start
+  var _2p: Ref
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  goto bb_0
+label bb_0
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _3 = discriminant(_1)
+  assign_p_Int_isize(_3p, s_Int_isize_cons(unfolding p_Adt_Direction(_1p) in (_1p.p_Adt_Direction_discriminant)))
+  // switchInt(move _3) -> [0: bb1, otherwise: bb2]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_3p)
+  exhale p_Int_isize(_3p)
+  if (_tmp0 == s_Int_isize_cons(0)) { goto bb_1 }
+  else { goto bb_2 }
+label bb_1
+  // falseEdge -> [real: bb3, imaginary: bb2]
+  goto bb_3
+label bb_2
+  // _2 = const false
+  assign_p_Bool(_2p, s_Bool_cons(false))
+  // goto -> bb4
+  goto bb_4
+label bb_3
+  // _2 = const true
+  assign_p_Bool(_2p, s_Bool_cons(true))
+  // goto -> bb4
+  goto bb_4
+label bb_4
+  // FakeRead(ForLet(None), _2)
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _5 = discriminant(_1)
+  assign_p_Int_isize(_5p, s_Int_isize_cons(unfolding p_Adt_Direction(_1p) in (_1p.p_Adt_Direction_discriminant)))
+  // switchInt(move _5) -> [1: bb6, otherwise: bb5]
+  var _tmp1: s_Int_isize
+  _tmp1 := p_Int_isize_snap(_5p)
+  exhale p_Int_isize(_5p)
+  if (_tmp1 == s_Int_isize_cons(1)) { goto bb_6 }
+  else { goto bb_5 }
+label bb_5
+  // _4 = const false
+  assign_p_Bool(_4p, s_Bool_cons(false))
+  // goto -> bb8
+  goto bb_8
+label bb_6
+  // falseEdge -> [real: bb7, imaginary: bb5]
+  goto bb_7
+label bb_7
+  // _4 = const true
+  assign_p_Bool(_4p, s_Bool_cons(true))
+  // goto -> bb8
+  goto bb_8
+label bb_8
+  // FakeRead(ForLet(None), _4)
+  // _8 = _2
+  assign_p_Bool(_8p, p_Bool_snap(_2p))
+  // switchInt(move _8) -> [0: bb9, otherwise: bb10]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_8p)
+  exhale p_Bool(_8p)
+  if (_tmp2 == s_Bool_cons(false)) { goto bb_9 }
+  else { goto bb_10 }
+label bb_9
+  // _7 = const true
+  assign_p_Bool(_7p, s_Bool_cons(true))
+  // goto -> bb11
+  goto bb_11
+label bb_10
+  // _9 = _4
+  assign_p_Bool(_9p, p_Bool_snap(_4p))
+  // _7 = Not(move _9)
+  var _tmp3: s_Bool
+  _tmp3 := p_Bool_snap(_9p)
+  exhale p_Bool(_9p)
+  assign_p_Bool(_7p, mir_unop_Not_bool(_tmp3))
+  // goto -> bb11
+  goto bb_11
+label bb_11
+  // _6 = assert(move _7) -> [return: bb12, unwind: bb13]
+  m_assert_CALLER_0_15(_6p, _7p)
+  goto bb_12
+label bb_12
+  // _0 = const ()
+  assign_p_Tuple0(_0p, s_Tuple0_cons())
+  // return
+  exhale p_Adt_Direction(_1p)
+  goto end
+label bb_13
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_assert_CALLER_0_16(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_val((let _0_1s_0 == (p_Bool_snap(_1p)) in
+(let _0_2s_1 == (_0_1s_0) in
+(let _0_0s_0 == (_0_2s_1) in
+_0_0s_0))))
+  ensures p_Tuple0(_0p)
+
+method m_test_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  ensures p_Tuple0(_0p)
+{
+label start
+  var _2p: Ref
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  var _11p: Ref
+  var _12p: Ref
+  var _13p: Ref
+  var _14p: Ref
+  var _15p: Ref
+  var _16p: Ref
+  goto bb_0
+label bb_0
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _3 = discriminant(_1)
+  assign_p_Int_isize(_3p, s_Int_isize_cons(unfolding p_Adt_Direction(_1p) in (_1p.p_Adt_Direction_discriminant)))
+  // switchInt(move _3) -> [0: bb1, otherwise: bb2]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_3p)
+  exhale p_Int_isize(_3p)
+  if (_tmp0 == s_Int_isize_cons(0)) { goto bb_1 }
+  else { goto bb_2 }
+label bb_1
+  // falseEdge -> [real: bb3, imaginary: bb2]
+  goto bb_3
+label bb_2
+  // _2 = Direction::Up
+  assign_p_Adt_Direction(_2p, s_Adt_Direction_0_Up_cons())
+  // goto -> bb4
+  goto bb_4
+label bb_3
+  // _2 = Direction::Down
+  assign_p_Adt_Direction(_2p, s_Adt_Direction_1_Down_cons())
+  // goto -> bb4
+  goto bb_4
+label bb_4
+  // FakeRead(ForLet(None), _2)
+  // FakeRead(ForMatchedPlace(None), _2)
+  // _5 = discriminant(_2)
+  assign_p_Int_isize(_5p, s_Int_isize_cons(unfolding p_Adt_Direction(_2p) in (_2p.p_Adt_Direction_discriminant)))
+  // switchInt(move _5) -> [2: bb6, otherwise: bb5]
+  var _tmp1: s_Int_isize
+  _tmp1 := p_Int_isize_snap(_5p)
+  exhale p_Int_isize(_5p)
+  if (_tmp1 == s_Int_isize_cons(2)) { goto bb_6 }
+  else { goto bb_5 }
+label bb_5
+  // _4 = const ()
+  assign_p_Tuple0(_4p, s_Tuple0_cons())
+  // goto -> bb8
+  goto bb_8
+label bb_6
+  // falseEdge -> [real: bb7, imaginary: bb5]
+  goto bb_7
+label bb_7
+  // _4 = assert(const false) -> [return: bb8, unwind: bb25]
+  var _tmp2: Ref
+  assign_p_Bool(_tmp2, s_Bool_cons(false))
+  m_assert_CALLER_0_16(_4p, _tmp2)
+  goto bb_8
+label bb_8
+  // FakeRead(ForMatchedPlace(None), _2)
+  // _7 = discriminant(_2)
+  assign_p_Int_isize(_7p, s_Int_isize_cons(unfolding p_Adt_Direction(_2p) in (_2p.p_Adt_Direction_discriminant)))
+  // switchInt(move _7) -> [0: bb9, otherwise: bb10]
+  var _tmp3: s_Int_isize
+  _tmp3 := p_Int_isize_snap(_7p)
+  exhale p_Int_isize(_7p)
+  if (_tmp3 == s_Int_isize_cons(0)) { goto bb_9 }
+  else { goto bb_10 }
+label bb_9
+  // falseEdge -> [real: bb11, imaginary: bb10]
+  goto bb_11
+label bb_10
+  // _6 = const false
+  assign_p_Bool(_6p, s_Bool_cons(false))
+  // goto -> bb12
+  goto bb_12
+label bb_11
+  // _6 = const true
+  assign_p_Bool(_6p, s_Bool_cons(true))
+  // goto -> bb12
+  goto bb_12
+label bb_12
+  // FakeRead(ForLet(None), _6)
+  // FakeRead(ForMatchedPlace(None), _2)
+  // _9 = discriminant(_2)
+  assign_p_Int_isize(_9p, s_Int_isize_cons(unfolding p_Adt_Direction(_2p) in (_2p.p_Adt_Direction_discriminant)))
+  // switchInt(move _9) -> [1: bb14, otherwise: bb13]
+  var _tmp4: s_Int_isize
+  _tmp4 := p_Int_isize_snap(_9p)
+  exhale p_Int_isize(_9p)
+  if (_tmp4 == s_Int_isize_cons(1)) { goto bb_14 }
+  else { goto bb_13 }
+label bb_13
+  // _8 = const false
+  assign_p_Bool(_8p, s_Bool_cons(false))
+  // goto -> bb16
+  goto bb_16
+label bb_14
+  // falseEdge -> [real: bb15, imaginary: bb13]
+  goto bb_15
+label bb_15
+  // _8 = const true
+  assign_p_Bool(_8p, s_Bool_cons(true))
+  // goto -> bb16
+  goto bb_16
+label bb_16
+  // FakeRead(ForLet(None), _8)
+  // _12 = _6
+  assign_p_Bool(_12p, p_Bool_snap(_6p))
+  // switchInt(move _12) -> [0: bb17, otherwise: bb18]
+  var _tmp5: s_Bool
+  _tmp5 := p_Bool_snap(_12p)
+  exhale p_Bool(_12p)
+  if (_tmp5 == s_Bool_cons(false)) { goto bb_17 }
+  else { goto bb_18 }
+label bb_17
+  // _11 = const true
+  assign_p_Bool(_11p, s_Bool_cons(true))
+  // goto -> bb19
+  goto bb_19
+label bb_18
+  // _13 = _8
+  assign_p_Bool(_13p, p_Bool_snap(_8p))
+  // _11 = Not(move _13)
+  var _tmp6: s_Bool
+  _tmp6 := p_Bool_snap(_13p)
+  exhale p_Bool(_13p)
+  assign_p_Bool(_11p, mir_unop_Not_bool(_tmp6))
+  // goto -> bb19
+  goto bb_19
+label bb_19
+  // _10 = assert(move _11) -> [return: bb20, unwind: bb25]
+  m_assert_CALLER_0_16(_10p, _11p)
+  goto bb_20
+label bb_20
+  // _16 = _6
+  assign_p_Bool(_16p, p_Bool_snap(_6p))
+  // switchInt(move _16) -> [0: bb22, otherwise: bb21]
+  var _tmp7: s_Bool
+  _tmp7 := p_Bool_snap(_16p)
+  exhale p_Bool(_16p)
+  if (_tmp7 == s_Bool_cons(false)) { goto bb_22 }
+  else { goto bb_21 }
+label bb_21
+  // _15 = const true
+  assign_p_Bool(_15p, s_Bool_cons(true))
+  // goto -> bb23
+  goto bb_23
+label bb_22
+  // _15 = _8
+  assign_p_Bool(_15p, p_Bool_snap(_8p))
+  // goto -> bb23
+  goto bb_23
+label bb_23
+  // _14 = assert(move _15) -> [return: bb24, unwind: bb25]
+  m_assert_CALLER_0_16(_14p, _15p)
+  goto bb_24
+label bb_24
+  // _0 = const ()
+  assign_p_Tuple0(_0p, s_Tuple0_cons())
+  // return
+  exhale p_Adt_Direction(_1p)
+  goto end
+label bb_25
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_unwrap_or_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Adt_IntOption(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_Int_i32(_0p)
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_IntOption_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_Int_i32_snap(_0p)) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_5s_1 == (f_is_none_CALLER_0_45(_0_6s_1)) in
+(let _0_phi_0 == ((_0_5s_1) == (s_Bool_cons(false))
+  ? (let _0_4s_1 == (s_Bool_cons(true)) in
+    _0_4s_1)
+  : (let _0_7s_1 == (_0_3s_0) in
+    (let _0_8s_1 == (_0_2s_0) in
+    (let _0_4s_2 == (s_Bool_cons((s_Int_i32_val(_0_7s_1)) == (s_Int_i32_val(_0_8s_1)))) in
+    _0_4s_2)))) in
+(let _0_4s_3 == (_0_phi_0) in
+(let _0_0s_0 == (_0_4s_3) in
+_0_0s_0)))))))))
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_IntOption_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_Int_i32_snap(_0p)) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_12s_0 == ((let _1_1s_0 == (s_Adt_IntOption_1_None_cons()) in
+  (let _1_0s_0 == (_1_1s_0) in
+  _1_0s_0))) in
+(let _0_8s_1 == (_0_12s_0) in
+(let _0_7s_1 == (_0_8s_1) in
+(let _0_5s_1 == (s_Bool_cons((_0_6s_1) == (_0_7s_1))) in
+(let _0_phi_0 == ((_0_5s_1) == (s_Bool_cons(false))
+  ? (let _0_4s_1 == (s_Bool_cons(true)) in
+    _0_4s_1)
+  : (let _0_10s_1 == (_0_3s_0) in
+    (let _0_11s_1 == (_0_2s_0) in
+    (let _0_4s_2 == (s_Bool_cons((s_Int_i32_val(_0_10s_1)) == (s_Int_i32_val(_0_11s_1)))) in
+    _0_4s_2)))) in
+(let _0_4s_3 == (_0_phi_0) in
+(let _0_0s_0 == (_0_4s_3) in
+_0_0s_0))))))))))))
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  goto bb_0
+label bb_0
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _3 = discriminant(_1)
+  assign_p_Int_isize(_3p, s_Int_isize_cons(unfolding p_Adt_IntOption(_1p) in (_1p.p_Adt_IntOption_discriminant)))
+  // switchInt(move _3) -> [0: bb1, 1: bb2, otherwise: bb3]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_3p)
+  exhale p_Int_isize(_3p)
+  if (_tmp0 == s_Int_isize_cons(0)) { goto bb_1 }
+  elseif (_tmp0 == s_Int_isize_cons(1)) { goto bb_2 }
+  else { goto bb_3 }
+label bb_1
+  // falseEdge -> [real: bb4, imaginary: bb2]
+  goto bb_4
+label bb_2
+  // _0 = _2
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_2p))
+  // goto -> bb5
+  goto bb_5
+label bb_3
+  // unreachable
+  assert false // terminator unreachable
+label bb_4
+  // _4 = ((_1 as Some).0: i32)
+  unfold p_Adt_IntOption(_1p)
+  unfold p_Adt_IntOption_0_Some(_1p)
+  assign_p_Int_i32(_4p, p_Int_i32_snap(p_Adt_IntOption_0_Some_field_0(_1p)))
+  // _0 = _4
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_4p))
+  // goto -> bb5
+  fold p_Adt_IntOption_0_Some(_1p)
+  fold p_Adt_IntOption(_1p)
+  goto bb_5
+label bb_5
+  // return
+  exhale p_Adt_IntOption(_1p)
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_none_CALLER_(
+  _0p: Ref
+)
+  ensures p_Adt_IntOption(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = IntOption::None
+  assign_p_Adt_IntOption(_0p, s_Adt_IntOption_1_None_cons())
+  // return
+  goto end
+label end
+  // return
+}
+
+method m_some_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Int_i32(_1p)
+  ensures p_Adt_IntOption(_0p)
+{
+label start
+  var _2p: Ref
+  goto bb_0
+label bb_0
+  // _2 = _1
+  assign_p_Int_i32(_2p, p_Int_i32_snap(_1p))
+  // _0 = IntOption::Some(move _2)
+  var _tmp0: s_Int_i32
+  _tmp0 := p_Int_i32_snap(_2p)
+  exhale p_Int_i32(_2p)
+  assign_p_Adt_IntOption(_0p, s_Adt_IntOption_0_Some_cons(_tmp0))
+  // return
+  exhale p_Int_i32(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_CALLER_0_24(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_val((let _0_1s_0 == (p_Bool_snap(_1p)) in
+(let _0_2s_1 == (_0_1s_0) in
+(let _0_0s_0 == (_0_2s_1) in
+_0_0s_0))))
+  ensures p_Tuple0(_0p)
+
+method m_f3_CALLER_(
+  _0p: Ref
+)
+  ensures p_Tuple0(_0p)
+{
+label start
+  var _1p: Ref
+  var _2p: Ref
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  goto bb_0
+label bb_0
+  // _1 = IntOption::Some(const 3_i32)
+  assign_p_Adt_IntOption(_1p, s_Adt_IntOption_0_Some_cons(s_Int_i32_cons(3)))
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _2 = discriminant(_1)
+  assign_p_Int_isize(_2p, s_Int_isize_cons(unfolding p_Adt_IntOption(_1p) in (_1p.p_Adt_IntOption_discriminant)))
+  // switchInt(move _2) -> [0: bb1, 1: bb2, otherwise: bb3]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_2p)
+  exhale p_Int_isize(_2p)
+  if (_tmp0 == s_Int_isize_cons(0)) { goto bb_1 }
+  elseif (_tmp0 == s_Int_isize_cons(1)) { goto bb_2 }
+  else { goto bb_3 }
+label bb_1
+  // _3 = ((_1 as Some).0: i32)
+  unfold p_Adt_IntOption(_1p)
+  unfold p_Adt_IntOption_0_Some(_1p)
+  assign_p_Int_i32(_3p, p_Int_i32_snap(p_Adt_IntOption_0_Some_field_0(_1p)))
+  // _5 = _3
+  assign_p_Int_i32(_5p, p_Int_i32_snap(_3p))
+  // _4 = Eq(move _5, const 3_i32)
+  var _tmp1: s_Int_i32
+  _tmp1 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  assign_p_Bool(_4p, mir_binop_Eq_i32_i32(_tmp1, s_Int_i32_cons(3)))
+  // _0 = assert(move _4) -> [return: bb5, unwind: bb7]
+  m_assert_CALLER_0_24(_0p, _4p)
+  goto bb_5
+label bb_2
+  // falseEdge -> [real: bb4, imaginary: bb1]
+  goto bb_4
+label bb_3
+  // unreachable
+  assert false // terminator unreachable
+label bb_4
+  // _0 = assert(const false) -> [return: bb6, unwind: bb7]
+  var _tmp2: Ref
+  assign_p_Bool(_tmp2, s_Bool_cons(false))
+  m_assert_CALLER_0_24(_0p, _tmp2)
+  goto bb_6
+label bb_5
+  // goto -> bb6
+  fold p_Adt_IntOption_0_Some(_1p)
+  fold p_Adt_IntOption(_1p)
+  goto bb_6
+label bb_6
+  // return
+  goto end
+label bb_7
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_inverse_CALLER_0_25(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  ensures p_Adt_Direction(_0p)
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Direction_snap(_1p))) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_0p)) in
+(let _0_5s_1 == (_0_2s_0) in
+(let _0_7s_1 == (_0_1s_0) in
+(let _0_6s_1 == (_0_7s_1) in
+(let _0_4s_1 == (s_Bool_cons((_0_5s_1) == (_0_6s_1))) in
+(let _0_3s_1 == (s_Bool_cons(!(s_Bool_val(_0_4s_1)))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0)))))))))
+
+method m_id_CALLER_0_25(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  ensures p_Adt_Direction(_0p)
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Direction_snap(_1p))) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_0p)) in
+(let _0_4s_1 == (_0_2s_0) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_5s_1 == (_0_6s_1) in
+(let _0_3s_1 == (s_Bool_cons((_0_4s_1) == (_0_5s_1))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0))))))))
+
+method m_assert_neq_dir_CALLER_0_25(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Adt_Direction(_1p)
+  requires p_Adt_Direction(_2p)
+  requires s_Bool_val((let _0_1s_0 == (p_Adt_Direction_snap(_1p)) in
+(let _0_2s_0 == (p_Adt_Direction_snap(_2p)) in
+(let _0_5s_1 == (_0_1s_0) in
+(let _0_7s_1 == (_0_2s_0) in
+(let _0_6s_1 == (_0_7s_1) in
+(let _0_4s_1 == (s_Bool_cons((_0_5s_1) == (_0_6s_1))) in
+(let _0_3s_1 == (s_Bool_cons(!(s_Bool_val(_0_4s_1)))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0)))))))))
+  ensures p_Tuple0(_0p)
+
+method m_unwrap_or_CALLER_0_25(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Adt_IntOption(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_Int_i32(_0p)
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_IntOption_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_Int_i32_snap(_0p)) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_5s_1 == (f_is_none_CALLER_0_45(_0_6s_1)) in
+(let _0_phi_0 == ((_0_5s_1) == (s_Bool_cons(false))
+  ? (let _0_4s_1 == (s_Bool_cons(true)) in
+    _0_4s_1)
+  : (let _0_7s_1 == (_0_3s_0) in
+    (let _0_8s_1 == (_0_2s_0) in
+    (let _0_4s_2 == (s_Bool_cons((s_Int_i32_val(_0_7s_1)) == (s_Int_i32_val(_0_8s_1)))) in
+    _0_4s_2)))) in
+(let _0_4s_3 == (_0_phi_0) in
+(let _0_0s_0 == (_0_4s_3) in
+_0_0s_0)))))))))
+  ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_IntOption_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_Int_i32_snap(_0p)) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_12s_0 == ((let _1_1s_0 == (s_Adt_IntOption_1_None_cons()) in
+  (let _1_0s_0 == (_1_1s_0) in
+  _1_0s_0))) in
+(let _0_8s_1 == (_0_12s_0) in
+(let _0_7s_1 == (_0_8s_1) in
+(let _0_5s_1 == (s_Bool_cons((_0_6s_1) == (_0_7s_1))) in
+(let _0_phi_0 == ((_0_5s_1) == (s_Bool_cons(false))
+  ? (let _0_4s_1 == (s_Bool_cons(true)) in
+    _0_4s_1)
+  : (let _0_10s_1 == (_0_3s_0) in
+    (let _0_11s_1 == (_0_2s_0) in
+    (let _0_4s_2 == (s_Bool_cons((s_Int_i32_val(_0_10s_1)) == (s_Int_i32_val(_0_11s_1)))) in
+    _0_4s_2)))) in
+(let _0_4s_3 == (_0_phi_0) in
+(let _0_0s_0 == (_0_4s_3) in
+_0_0s_0))))))))))))
+
+method m_assert_CALLER_0_25(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_val((let _0_1s_0 == (p_Bool_snap(_1p)) in
+(let _0_2s_1 == (_0_1s_0) in
+(let _0_0s_0 == (_0_2s_1) in
+_0_0s_0))))
+  ensures p_Tuple0(_0p)
+
+method m_main_CALLER_(
+  _0p: Ref
+)
+  ensures p_Tuple0(_0p)
+{
+label start
+  var _1p: Ref
+  var _2p: Ref
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  var _11p: Ref
+  var _12p: Ref
+  var _13p: Ref
+  var _14p: Ref
+  var _15p: Ref
+  var _16p: Ref
+  goto bb_0
+label bb_0
+  // _2 = Direction::Up
+  assign_p_Adt_Direction(_2p, s_Adt_Direction_0_Up_cons())
+  // _1 = Person { name: const 42_i32, address: const 9_u8, facing: move _2 }
+  var _tmp0: s_Adt_Direction
+  _tmp0 := p_Adt_Direction_snap(_2p)
+  exhale p_Adt_Direction(_2p)
+  assign_p_Adt_Person(_1p, s_Adt_Person_cons(s_Int_i32_cons(42), s_Uint_u8_cons(9), _tmp0))
+  // FakeRead(ForLet(None), _1)
+  // _3 = Direction::Down
+  assign_p_Adt_Direction(_3p, s_Adt_Direction_1_Down_cons())
+  // FakeRead(ForLet(None), _3)
+  // _6 = move _3
+  var _tmp1: s_Adt_Direction
+  _tmp1 := p_Adt_Direction_snap(_3p)
+  exhale p_Adt_Direction(_3p)
+  assign_p_Adt_Direction(_6p, _tmp1)
+  // _5 = Direction::inverse(move _6) -> [return: bb1, unwind: bb8]
+  m_inverse_CALLER_0_25(_5p, _6p)
+  goto bb_1
+label bb_1
+  // _4 = Direction::id(move _5) -> [return: bb2, unwind: bb8]
+  m_id_CALLER_0_25(_4p, _5p)
+  goto bb_2
+label bb_2
+  // FakeRead(ForLet(None), _4)
+  // _8 = move _4
+  var _tmp2: s_Adt_Direction
+  _tmp2 := p_Adt_Direction_snap(_4p)
+  exhale p_Adt_Direction(_4p)
+  assign_p_Adt_Direction(_8p, _tmp2)
+  // _9 = Direction::Down
+  assign_p_Adt_Direction(_9p, s_Adt_Direction_1_Down_cons())
+  // _7 = assert_neq_dir(move _8, move _9) -> [return: bb3, unwind: bb8]
+  m_assert_neq_dir_CALLER_0_25(_7p, _8p, _9p)
+  goto bb_3
+label bb_3
+  // _11 = IntOption::None
+  assign_p_Adt_IntOption(_11p, s_Adt_IntOption_1_None_cons())
+  // _10 = IntOption::unwrap_or(move _11, const 22_i32) -> [return: bb4, unwind: bb8]
+  var _tmp3: Ref
+  assign_p_Int_i32(_tmp3, s_Int_i32_cons(22))
+  m_unwrap_or_CALLER_0_25(_10p, _11p, _tmp3)
+  goto bb_4
+label bb_4
+  // FakeRead(ForLet(None), _10)
+  // _14 = _10
+  assign_p_Int_i32(_14p, p_Int_i32_snap(_10p))
+  // _13 = Eq(move _14, const 22_i32)
+  var _tmp4: s_Int_i32
+  _tmp4 := p_Int_i32_snap(_14p)
+  exhale p_Int_i32(_14p)
+  assign_p_Bool(_13p, mir_binop_Eq_i32_i32(_tmp4, s_Int_i32_cons(22)))
+  // _12 = assert(move _13) -> [return: bb5, unwind: bb8]
+  m_assert_CALLER_0_25(_12p, _13p)
+  goto bb_5
+label bb_5
+  // _15 = IntOption::none() -> [return: bb6, unwind: bb8]
+  assign_p_Adt_IntOption(_15p, f_none_CALLER_0_25())
+  goto bb_6
+label bb_6
+  // _16 = IntOption::some(const 3_i32) -> [return: bb7, unwind: bb8]
+  assign_p_Adt_IntOption(_16p, f_some_CALLER_0_25(s_Int_i32_cons(3)))
+  goto bb_7
+label bb_7
+  // _0 = const ()
+  assign_p_Tuple0(_0p, s_Tuple0_cons())
+  // return
+  goto end
+label bb_8
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+// -----------------------------
+// functions
+// -----------------------------
+function f_is_none_CALLER_0_45(
+  _1p: s_Adt_IntOption
+): s_Bool
+  ensures s_Bool_val((let _0_1s_0 == (_1p) in
+(let _0_2s_0 == (result) in
+(let _0_4s_1 == (_0_2s_0) in
+(let _0_6s_1 == (_0_1s_0) in
+(let _0_10s_0 == ((let _1_1s_0 == (s_Adt_IntOption_1_None_cons()) in
+  (let _1_0s_0 == (_1_1s_0) in
+  _1_0s_0))) in
+(let _0_8s_1 == (_0_10s_0) in
+(let _0_7s_1 == (_0_8s_1) in
+(let _0_5s_1 == (s_Bool_cons((_0_6s_1) == (_0_7s_1))) in
+(let _0_3s_1 == (s_Bool_cons((s_Bool_val(_0_4s_1)) == (s_Bool_val(_0_5s_1)))) in
+(let _0_0s_0 == (_0_3s_1) in
+_0_0s_0)))))))))))
+
+function f_none_CALLER_0_25(
+): s_Adt_IntOption
+{
+  (let _0_0s_0 == (s_Adt_IntOption_1_None_cons()) in
+_0_0s_0)
+}
+
+function f_some_CALLER_0_25(
+  _1p: s_Int_i32
+): s_Adt_IntOption
+{
+  (let _0_1s_0 == (_1p) in
+(let _0_2s_1 == (_0_1s_0) in
+(let _0_0s_0 == (s_Adt_IntOption_0_Some_cons(_0_2s_1)) in
+_0_0s_0)))
+}
+
+// -----------------------------
+// MIR builtins
+// -----------------------------
+function mir_unop_Not_bool(
+  arg: s_Bool
+): s_Bool
+{
+  s_Bool_cons(!(s_Bool_val(arg)))
+}
+
+function mir_binop_Eq_i32_i32(
+  arg1: s_Int_i32,
+  arg2: s_Int_i32
+): s_Bool
+{
+  s_Bool_cons((s_Int_i32_val(arg1)) == (s_Int_i32_val(arg2)))
+}
+
+// -----------------------------
+// generics
+// -----------------------------
+// -----------------------------
+// types
+// -----------------------------
+field p_Adt_Direction_discriminant: Int
+domain s_Adt_Direction {
+  axiom ax_s_Adt_Direction_0_Up_cons_0_discr {
+    (s_Adt_Direction_discriminant(s_Adt_Direction_0_Up_cons())) == (0)
+  }
+  axiom ax_s_Adt_Direction_1_Down_cons_1_discr {
+    (s_Adt_Direction_discriminant(s_Adt_Direction_1_Down_cons())) == (1)
+  }
+  axiom ax_s_Adt_Direction_2_Left_cons_2_discr {
+    (s_Adt_Direction_discriminant(s_Adt_Direction_2_Left_cons())) == (2)
+  }
+  axiom ax_s_Adt_Direction_3_Right_cons_3_discr {
+    (s_Adt_Direction_discriminant(s_Adt_Direction_3_Right_cons())) == (3)
+  }
+  axiom ax_s_Adt_Direction_discriminant_bounds {
+    forall self: s_Adt_Direction :: ((s_Adt_Direction_discriminant(self)) >= (0)) && ((s_Adt_Direction_discriminant(self)) < (4))
+  }
+  function s_Adt_Direction_discriminant(s_Adt_Direction): Int
+  function s_Adt_Direction_0_Up_cons(): s_Adt_Direction
+  function s_Adt_Direction_1_Down_cons(): s_Adt_Direction
+  function s_Adt_Direction_2_Left_cons(): s_Adt_Direction
+  function s_Adt_Direction_3_Right_cons(): s_Adt_Direction
+}
+
+function s_Adt_Direction_unreachable(
+): s_Adt_Direction
+  requires false
+
+function p_Adt_Direction_snap(
+  self_p: Ref
+): s_Adt_Direction
+  requires p_Adt_Direction(self_p)
+{
+  unfolding p_Adt_Direction(self_p) in ((self_p.p_Adt_Direction_discriminant) == (3)
+? unfolding p_Adt_Direction_3_Right(self_p) in (s_Adt_Direction_3_Right_cons())
+: (self_p.p_Adt_Direction_discriminant) == (2)
+  ? unfolding p_Adt_Direction_2_Left(self_p) in (s_Adt_Direction_2_Left_cons())
+  : (self_p.p_Adt_Direction_discriminant) == (1)
+    ? unfolding p_Adt_Direction_1_Down(self_p) in (s_Adt_Direction_1_Down_cons())
+    : (self_p.p_Adt_Direction_discriminant) == (0)
+      ? unfolding p_Adt_Direction_0_Up(self_p) in (s_Adt_Direction_0_Up_cons())
+      : s_Adt_Direction_unreachable())
+}
+
+predicate p_Adt_Direction(self_p: Ref) {
+  (((acc(self_p.p_Adt_Direction_discriminant)) && ((self_p.p_Adt_Direction_discriminant) >= (0))) && ((self_p.p_Adt_Direction_discriminant) < (4))) && ((self_p.p_Adt_Direction_discriminant) == (3)
+? p_Adt_Direction_3_Right(self_p)
+: (self_p.p_Adt_Direction_discriminant) == (2)
+  ? p_Adt_Direction_2_Left(self_p)
+  : (self_p.p_Adt_Direction_discriminant) == (1)
+    ? p_Adt_Direction_1_Down(self_p)
+    : (self_p.p_Adt_Direction_discriminant) == (0)
+      ? p_Adt_Direction_0_Up(self_p)
+      : false)
+}
+
+predicate p_Adt_Direction_0_Up(self_p: Ref) {
+  true
+}
+
+predicate p_Adt_Direction_1_Down(self_p: Ref) {
+  true
+}
+
+predicate p_Adt_Direction_2_Left(self_p: Ref) {
+  true
+}
+
+predicate p_Adt_Direction_3_Right(self_p: Ref) {
+  true
+}
+
+method assign_p_Adt_Direction(
+  _p: Ref,
+  _s_new: s_Adt_Direction
+)
+  ensures p_Adt_Direction(_p)
+  ensures (p_Adt_Direction_snap(_p)) == (_s_new)
+
+field f_s_Int_isize: s_Int_isize
+domain s_Int_isize {
+  axiom ax_inverse_s_Int_isize_val_s_Int_isize_cons {
+    forall val: Int :: {s_Int_isize_cons(val)} (s_Int_isize_val(s_Int_isize_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Int_isize_cons_s_Int_isize_val {
+    forall val: s_Int_isize :: {s_Int_isize_val(val)} (s_Int_isize_cons(s_Int_isize_val(val))) == (val)
+  }
+  function s_Int_isize_cons(Int): s_Int_isize
+  function s_Int_isize_val(s_Int_isize): Int
+}
+
+function s_Int_isize_unreachable(
+): s_Int_isize
+  requires false
+
+function p_Int_isize_snap(
+  self: Ref
+): s_Int_isize
+  requires p_Int_isize(self)
+{
+  unfolding p_Int_isize(self) in (self.f_s_Int_isize)
+}
+
+predicate p_Int_isize(self_p: Ref) {
+  acc(self_p.f_s_Int_isize)
+}
+
+method assign_p_Int_isize(
+  _p: Ref,
+  _s_new: s_Int_isize
+)
+  ensures p_Int_isize(_p)
+  ensures (p_Int_isize_snap(_p)) == (_s_new)
+
+field f_Bool: s_Bool
+domain s_Bool {
+  axiom ax_inverse_s_Bool_val_s_Bool_cons {
+    forall val: Bool :: {s_Bool_cons(val)} (s_Bool_val(s_Bool_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Bool_cons_s_Bool_val {
+    forall val: s_Bool :: {s_Bool_val(val)} (s_Bool_cons(s_Bool_val(val))) == (val)
+  }
+  function s_Bool_cons(Bool): s_Bool
+  function s_Bool_val(s_Bool): Bool
+}
+
+function s_Bool_unreachable(
+): s_Bool
+  requires false
+
+function p_Bool_snap(
+  self: Ref
+): s_Bool
+  requires p_Bool(self)
+{
+  unfolding p_Bool(self) in (self.f_Bool)
+}
+
+predicate p_Bool(self_p: Ref) {
+  acc(self_p.f_Bool)
+}
+
+method assign_p_Bool(
+  _p: Ref,
+  _s_new: s_Bool
+)
+  ensures p_Bool(_p)
+  ensures (p_Bool_snap(_p)) == (_s_new)
+
+domain s_Tuple0 {
+  function s_Tuple0_cons(): s_Tuple0
+}
+
+function s_Tuple0_unreachable(
+): s_Tuple0
+  requires false
+
+function p_Tuple0_snap(
+  self_p: Ref
+): s_Tuple0
+  requires p_Tuple0(self_p)
+{
+  unfolding p_Tuple0(self_p) in (s_Tuple0_cons())
+}
+
+predicate p_Tuple0(self_p: Ref) {
+  true
+}
+
+method assign_p_Tuple0(
+  _p: Ref,
+  _s_new: s_Tuple0
+)
+  ensures p_Tuple0(_p)
+  ensures (p_Tuple0_snap(_p)) == (_s_new)
+
+field f_s_Int_i32: s_Int_i32
+domain s_Int_i32 {
+  axiom ax_inverse_s_Int_i32_val_s_Int_i32_cons {
+    forall val: Int :: {s_Int_i32_cons(val)} (s_Int_i32_val(s_Int_i32_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Int_i32_cons_s_Int_i32_val {
+    forall val: s_Int_i32 :: {s_Int_i32_val(val)} (s_Int_i32_cons(s_Int_i32_val(val))) == (val)
+  }
+  function s_Int_i32_cons(Int): s_Int_i32
+  function s_Int_i32_val(s_Int_i32): Int
+}
+
+function s_Int_i32_unreachable(
+): s_Int_i32
+  requires false
+
+function p_Int_i32_snap(
+  self: Ref
+): s_Int_i32
+  requires p_Int_i32(self)
+{
+  unfolding p_Int_i32(self) in (self.f_s_Int_i32)
+}
+
+predicate p_Int_i32(self_p: Ref) {
+  acc(self_p.f_s_Int_i32)
+}
+
+method assign_p_Int_i32(
+  _p: Ref,
+  _s_new: s_Int_i32
+)
+  ensures p_Int_i32(_p)
+  ensures (p_Int_i32_snap(_p)) == (_s_new)
+
+field p_Adt_IntOption_discriminant: Int
+domain s_Adt_IntOption {
+  axiom ax_s_Adt_IntOption_0_Some_cons_read_0 {
+    forall f0: s_Int_i32 :: {s_Adt_IntOption_0_Some_read_0(s_Adt_IntOption_0_Some_cons(f0))} (s_Adt_IntOption_0_Some_read_0(s_Adt_IntOption_0_Some_cons(f0))) == (f0)
+  }
+  axiom ax_s_Adt_IntOption_0_Some_cons {
+    forall self: s_Adt_IntOption :: {s_Adt_IntOption_0_Some_cons(s_Adt_IntOption_0_Some_read_0(self))} (s_Adt_IntOption_0_Some_cons(s_Adt_IntOption_0_Some_read_0(self))) == (self)
+  }
+  axiom ax_s_Adt_IntOption_0_Some_cons_0_discr {
+    forall f0: s_Int_i32 :: {s_Adt_IntOption_0_Some_cons(f0)} (s_Adt_IntOption_discriminant(s_Adt_IntOption_0_Some_cons(f0))) == (0)
+  }
+  axiom ax_s_Adt_IntOption_0_Some_write_0_read_0 {
+    forall self: s_Adt_IntOption, val: s_Int_i32 :: {s_Adt_IntOption_0_Some_read_0(s_Adt_IntOption_0_Some_write_0(self, val))} (s_Adt_IntOption_0_Some_read_0(s_Adt_IntOption_0_Some_write_0(self, val))) == (val)
+  }
+  axiom ax_s_Adt_IntOption_0_Some_discriminant_write_0 {
+    forall self: s_Adt_IntOption, val: s_Int_i32 :: {s_Adt_IntOption_discriminant(s_Adt_IntOption_0_Some_write_0(self, val))} (s_Adt_IntOption_discriminant(s_Adt_IntOption_0_Some_write_0(self, val))) == (0)
+  }
+  axiom ax_s_Adt_IntOption_1_None_cons_1_discr {
+    (s_Adt_IntOption_discriminant(s_Adt_IntOption_1_None_cons())) == (1)
+  }
+  axiom ax_s_Adt_IntOption_discriminant_bounds {
+    forall self: s_Adt_IntOption :: ((s_Adt_IntOption_discriminant(self)) >= (0)) && ((s_Adt_IntOption_discriminant(self)) < (2))
+  }
+  function s_Adt_IntOption_discriminant(s_Adt_IntOption): Int
+  function s_Adt_IntOption_0_Some_read_0(s_Adt_IntOption): s_Int_i32
+  function s_Adt_IntOption_0_Some_write_0(s_Adt_IntOption, s_Int_i32): s_Adt_IntOption
+  function s_Adt_IntOption_0_Some_cons(s_Int_i32): s_Adt_IntOption
+  function s_Adt_IntOption_1_None_cons(): s_Adt_IntOption
+}
+
+function p_Adt_IntOption_0_Some_field_0(
+  self: Ref
+): Ref
+function s_Adt_IntOption_unreachable(
+): s_Adt_IntOption
+  requires false
+
+function p_Adt_IntOption_snap(
+  self_p: Ref
+): s_Adt_IntOption
+  requires p_Adt_IntOption(self_p)
+{
+  unfolding p_Adt_IntOption(self_p) in ((self_p.p_Adt_IntOption_discriminant) == (1)
+? unfolding p_Adt_IntOption_1_None(self_p) in (s_Adt_IntOption_1_None_cons())
+: (self_p.p_Adt_IntOption_discriminant) == (0)
+  ? unfolding p_Adt_IntOption_0_Some(self_p) in (s_Adt_IntOption_0_Some_cons(p_Int_i32_snap(p_Adt_IntOption_0_Some_field_0(self_p))))
+  : s_Adt_IntOption_unreachable())
+}
+
+predicate p_Adt_IntOption(self_p: Ref) {
+  (((acc(self_p.p_Adt_IntOption_discriminant)) && ((self_p.p_Adt_IntOption_discriminant) >= (0))) && ((self_p.p_Adt_IntOption_discriminant) < (2))) && ((self_p.p_Adt_IntOption_discriminant) == (1)
+? p_Adt_IntOption_1_None(self_p)
+: (self_p.p_Adt_IntOption_discriminant) == (0)
+  ? p_Adt_IntOption_0_Some(self_p)
+  : false)
+}
+
+predicate p_Adt_IntOption_0_Some(self_p: Ref) {
+  p_Int_i32(p_Adt_IntOption_0_Some_field_0(self_p))
+}
+
+predicate p_Adt_IntOption_1_None(self_p: Ref) {
+  true
+}
+
+method assign_p_Adt_IntOption(
+  _p: Ref,
+  _s_new: s_Adt_IntOption
+)
+  ensures p_Adt_IntOption(_p)
+  ensures (p_Adt_IntOption_snap(_p)) == (_s_new)
+
+field f_s_Uint_u8: s_Uint_u8
+domain s_Uint_u8 {
+  axiom ax_inverse_s_Uint_u8_val_s_Uint_u8_cons {
+    forall val: Int :: {s_Uint_u8_cons(val)} (s_Uint_u8_val(s_Uint_u8_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Uint_u8_cons_s_Uint_u8_val {
+    forall val: s_Uint_u8 :: {s_Uint_u8_val(val)} (s_Uint_u8_cons(s_Uint_u8_val(val))) == (val)
+  }
+  function s_Uint_u8_cons(Int): s_Uint_u8
+  function s_Uint_u8_val(s_Uint_u8): Int
+}
+
+function s_Uint_u8_unreachable(
+): s_Uint_u8
+  requires false
+
+function p_Uint_u8_snap(
+  self: Ref
+): s_Uint_u8
+  requires p_Uint_u8(self)
+{
+  unfolding p_Uint_u8(self) in (self.f_s_Uint_u8)
+}
+
+predicate p_Uint_u8(self_p: Ref) {
+  acc(self_p.f_s_Uint_u8)
+}
+
+method assign_p_Uint_u8(
+  _p: Ref,
+  _s_new: s_Uint_u8
+)
+  ensures p_Uint_u8(_p)
+  ensures (p_Uint_u8_snap(_p)) == (_s_new)
+
+domain s_Adt_Person {
+  axiom ax_s_Adt_Person_write_0_read_0 {
+    forall self: s_Adt_Person, val: s_Int_i32 :: {s_Adt_Person_read_0(s_Adt_Person_write_0(self, val))} (s_Adt_Person_read_0(s_Adt_Person_write_0(self, val))) == (val)
+  }
+  axiom ax_s_Adt_Person_write_0_read_1 {
+    forall self: s_Adt_Person, val: s_Int_i32 :: {s_Adt_Person_read_1(s_Adt_Person_write_0(self, val))} (s_Adt_Person_read_1(s_Adt_Person_write_0(self, val))) == (s_Adt_Person_read_1(self))
+  }
+  axiom ax_s_Adt_Person_write_0_read_2 {
+    forall self: s_Adt_Person, val: s_Int_i32 :: {s_Adt_Person_read_2(s_Adt_Person_write_0(self, val))} (s_Adt_Person_read_2(s_Adt_Person_write_0(self, val))) == (s_Adt_Person_read_2(self))
+  }
+  axiom ax_s_Adt_Person_write_1_read_0 {
+    forall self: s_Adt_Person, val: s_Uint_u8 :: {s_Adt_Person_read_0(s_Adt_Person_write_1(self, val))} (s_Adt_Person_read_0(s_Adt_Person_write_1(self, val))) == (s_Adt_Person_read_0(self))
+  }
+  axiom ax_s_Adt_Person_write_1_read_1 {
+    forall self: s_Adt_Person, val: s_Uint_u8 :: {s_Adt_Person_read_1(s_Adt_Person_write_1(self, val))} (s_Adt_Person_read_1(s_Adt_Person_write_1(self, val))) == (val)
+  }
+  axiom ax_s_Adt_Person_write_1_read_2 {
+    forall self: s_Adt_Person, val: s_Uint_u8 :: {s_Adt_Person_read_2(s_Adt_Person_write_1(self, val))} (s_Adt_Person_read_2(s_Adt_Person_write_1(self, val))) == (s_Adt_Person_read_2(self))
+  }
+  axiom ax_s_Adt_Person_write_2_read_0 {
+    forall self: s_Adt_Person, val: s_Adt_Direction :: {s_Adt_Person_read_0(s_Adt_Person_write_2(self, val))} (s_Adt_Person_read_0(s_Adt_Person_write_2(self, val))) == (s_Adt_Person_read_0(self))
+  }
+  axiom ax_s_Adt_Person_write_2_read_1 {
+    forall self: s_Adt_Person, val: s_Adt_Direction :: {s_Adt_Person_read_1(s_Adt_Person_write_2(self, val))} (s_Adt_Person_read_1(s_Adt_Person_write_2(self, val))) == (s_Adt_Person_read_1(self))
+  }
+  axiom ax_s_Adt_Person_write_2_read_2 {
+    forall self: s_Adt_Person, val: s_Adt_Direction :: {s_Adt_Person_read_2(s_Adt_Person_write_2(self, val))} (s_Adt_Person_read_2(s_Adt_Person_write_2(self, val))) == (val)
+  }
+  axiom ax_s_Adt_Person_cons_read_0 {
+    forall f0: s_Int_i32, f1: s_Uint_u8, f2: s_Adt_Direction :: {s_Adt_Person_read_0(s_Adt_Person_cons(f0, f1, f2))} (s_Adt_Person_read_0(s_Adt_Person_cons(f0, f1, f2))) == (f0)
+  }
+  axiom ax_s_Adt_Person_cons_read_1 {
+    forall f0: s_Int_i32, f1: s_Uint_u8, f2: s_Adt_Direction :: {s_Adt_Person_read_1(s_Adt_Person_cons(f0, f1, f2))} (s_Adt_Person_read_1(s_Adt_Person_cons(f0, f1, f2))) == (f1)
+  }
+  axiom ax_s_Adt_Person_cons_read_2 {
+    forall f0: s_Int_i32, f1: s_Uint_u8, f2: s_Adt_Direction :: {s_Adt_Person_read_2(s_Adt_Person_cons(f0, f1, f2))} (s_Adt_Person_read_2(s_Adt_Person_cons(f0, f1, f2))) == (f2)
+  }
+  axiom ax_s_Adt_Person_cons {
+    forall self: s_Adt_Person :: {s_Adt_Person_cons(s_Adt_Person_read_0(self), s_Adt_Person_read_1(self), s_Adt_Person_read_2(self))} (s_Adt_Person_cons(s_Adt_Person_read_0(self), s_Adt_Person_read_1(self), s_Adt_Person_read_2(self))) == (self)
+  }
+  function s_Adt_Person_cons(s_Int_i32, s_Uint_u8, s_Adt_Direction): s_Adt_Person
+  function s_Adt_Person_read_0(s_Adt_Person): s_Int_i32
+  function s_Adt_Person_write_0(s_Adt_Person, s_Int_i32): s_Adt_Person
+  function s_Adt_Person_read_1(s_Adt_Person): s_Uint_u8
+  function s_Adt_Person_write_1(s_Adt_Person, s_Uint_u8): s_Adt_Person
+  function s_Adt_Person_read_2(s_Adt_Person): s_Adt_Direction
+  function s_Adt_Person_write_2(s_Adt_Person, s_Adt_Direction): s_Adt_Person
+}
+
+function p_Adt_Person_field_0(
+  self: Ref
+): Ref
+function p_Adt_Person_field_1(
+  self: Ref
+): Ref
+function p_Adt_Person_field_2(
+  self: Ref
+): Ref
+function s_Adt_Person_unreachable(
+): s_Adt_Person
+  requires false
+
+function p_Adt_Person_snap(
+  self_p: Ref
+): s_Adt_Person
+  requires p_Adt_Person(self_p)
+{
+  unfolding p_Adt_Person(self_p) in (s_Adt_Person_cons(p_Int_i32_snap(p_Adt_Person_field_0(self_p)), p_Uint_u8_snap(p_Adt_Person_field_1(self_p)), p_Adt_Direction_snap(p_Adt_Person_field_2(self_p))))
+}
+
+predicate p_Adt_Person(self_p: Ref) {
+  ((p_Int_i32(p_Adt_Person_field_0(self_p))) && (p_Uint_u8(p_Adt_Person_field_1(self_p)))) && (p_Adt_Direction(p_Adt_Person_field_2(self_p)))
+}
+
+method assign_p_Adt_Person(
+  _p: Ref,
+  _s_new: s_Adt_Person
+)
+  ensures p_Adt_Person(_p)
+  ensures (p_Adt_Person_snap(_p)) == (_s_new)
+
+// -----------------------------
+// utility types
+// -----------------------------
+domain Tuple_1[T0] {
+  axiom ax_Tuple_1_elem {
+    forall elem0: T0 :: {Tuple_1_cons(elem0)} (Tuple_1_elem_0(Tuple_1_cons(elem0))) == (elem0)
+  }
+  function Tuple_1_elem_0(Tuple_1[T0]): T0
+  function Tuple_1_cons(T0): Tuple_1[T0]
+}
+
