@@ -1,14 +1,15 @@
-#![feature(core_intrinsics, rustc_attrs)]
 
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
+#[repr(i16)]
 enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
+    Up = -100,
+    Down = 8,
+    Left = -23123,
+    Right= 0,
 }
+
 
 #[pure]
 #[trusted]
@@ -111,7 +112,6 @@ impl IntOption {
         matches!(self, IntOption::Some(..))
     }
 
-    #[rustc_mir(borrowck_graphviz_postflow="log/analysis/fn_name/fn_name.dot")]
     #[ensures(self.is_none() ==> result == default)]
     #[ensures(self === IntOption::None ==> result == default)]
     fn unwrap_or(self, default: i32) -> i32 {
