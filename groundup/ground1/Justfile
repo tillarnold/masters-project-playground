@@ -20,6 +20,11 @@ export RUST_LOG := "debug,mir_state_analysis=warn"
 export PRUSTI_LOG_TRACING := "false"
 export PRUSTI_CHECK_OVERFLOWS := "false"
 
+
+_default:
+  @just --list --unsorted
+
+
 build-prusti:
 	mkdir -p local-testing
 	cd {{prusti_dev_dir}}/prusti && cargo build

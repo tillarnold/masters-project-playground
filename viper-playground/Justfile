@@ -1,0 +1,17 @@
+
+
+
+java_exe := "/usr/lib/jvm/java-17-openjdk-17.0.8.0.7-1.fc38.x86_64/bin/java"
+classfile_dir := "/home/till/software/VSCodium-linux-x64-1.80.1.23194/data/user-data/User/globalStorage/viper-admin.viper/Stable/ViperTools/backends"
+
+export Z3_EXE := "/home/till/software/VSCodium-linux-x64-1.80.1.23194/data/user-data/User/globalStorage/viper-admin.viper/Stable/ViperTools/z3/bin/z3"
+
+
+
+_default:
+  @just --list --unsorted
+
+run_viper_with_extension file:
+    {{java_exe}} -Xmx2048m -Xss128m \
+    -cp :"{{classfile_dir}}/silver-sif-extension.jar":"{{classfile_dir}}/viperserver.jar" viper.silicon.SiliconRunner \
+    --plugin viper.silver.sif.SIFPlugin {{file}}

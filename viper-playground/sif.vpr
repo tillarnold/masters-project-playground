@@ -1,0 +1,18 @@
+
+
+
+
+
+method is_female(person: Int)
+        returns (res: Int)
+    // Level of result depends on level of input
+    // Only the level of the first bit of person matters
+    ensures low(person % 2) ==> low(res)
+{
+  var gender: Int := person % 2 // gender encoded in first bit
+  if (gender == 0) {
+    res := 1
+  }else{
+    res := 0
+  }
+}
