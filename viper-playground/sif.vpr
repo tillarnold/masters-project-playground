@@ -16,3 +16,11 @@ method is_female(person: Int)
     res := 0
   }
 }
+
+
+
+method id_1(a: Int, b: Int) returns (res: Int)
+  ensures( rel(b,0) == rel(b,1) ==> rel(res,0) == rel(res, 1))
+{
+  res := b;
+}

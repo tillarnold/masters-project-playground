@@ -1,0 +1,71 @@
+
+
+// This looks like it has an ensures that guarantees that the retunrned value is the same in every execution
+// But that is  not what the postcondition really claims
+method m_verifies(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_Int_i32(_0p)
+  ensures 
+(let x == (p_Int_i32_snap(_0p)) in rel((x), 0) == rel((x), 1) )
+{
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_1p))
+}
+
+
+// This is the postcondition that really claims that the result is always the same
+method m_fails(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_Int_i32(_0p)
+  ensures 
+(rel((p_Int_i32_snap(_0p)), 0) == rel((p_Int_i32_snap(_0p)), 1) )
+{
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_1p))
+}
+
+
+
+field f_s_Int_i32: s_Int_i32
+domain s_Int_i32 {
+  axiom ax_inverse_s_Int_i32_val_s_Int_i32_cons {
+    forall val: Int :: {s_Int_i32_cons(val)} (s_Int_i32_val(s_Int_i32_cons(val))) == (val)
+  }
+  axiom ax_inverse_s_Int_i32_cons_s_Int_i32_val {
+    forall val: s_Int_i32 :: {s_Int_i32_val(val)} (s_Int_i32_cons(s_Int_i32_val(val))) == (val)
+  }
+  function s_Int_i32_cons(Int): s_Int_i32
+  function s_Int_i32_val(s_Int_i32): Int
+}
+
+function s_Int_i32_unreachable(
+): s_Int_i32
+  requires false
+
+function p_Int_i32_snap(
+  self: Ref
+): s_Int_i32
+  requires p_Int_i32(self)
+{
+  unfolding p_Int_i32(self) in (self.f_s_Int_i32)
+}
+
+predicate p_Int_i32(self_p: Ref) {
+  acc(self_p.f_s_Int_i32)
+}
+
+method assign_p_Int_i32(
+  _p: Ref,
+  _s_new: s_Int_i32
+)
+  ensures p_Int_i32(_p)
+  ensures (p_Int_i32_snap(_p)) == (_s_new)
+
