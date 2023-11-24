@@ -1,7 +1,7 @@
 
 
-// This looks like it has an ensures that guarantees that the retunrned value is the same in every execution
-// But that is  not what the postcondition really claims
+// This looks like it has an ensures that guarantees that the returned value is the same in every execution
+// But that is not what the postcondition really claims
 method m_verifies(
   _0p: Ref,
   _1p: Ref,
