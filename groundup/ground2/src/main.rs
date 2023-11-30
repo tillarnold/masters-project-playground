@@ -33,7 +33,7 @@ impl/*<T>*/ Vector/*<T>*/ {
     #[requires(self.len >= 0)]
     #[ensures(self.len == result.len)]
     #[ensures(result.get(idx) === value)]
-    //#[ensures(forall(|i : i32| (i >= 0  && i < self.len && !(i == idx)) ==> result.get(i) == self.get(i)))]
+    #[ensures(forall(|i : usize| ((i >= 0)  & (i < self.len) & (i != idx)) ==> result.get(i) == self.get(i)))]
     fn set(self, idx: usize, value: i32/*T*/) -> Self {
         unimplemented!()
     }
@@ -52,7 +52,7 @@ struct ClampTransform {
 #[requires(transform.bounds.lower < transform.bounds.upper)]
 #[ensures(result.0.len === data.len)]
 #[ensures(result.1 === transform)]
-//#[ensures(forall(|ip: i32| (0<= ip && ip < data.len) ==> result.0.get(ip) == transform.do_transform(data.get(ip))))]
+#[ensures(forall(|ip: usize| (0<= ip) & (ip < data.len) ==> result.0.get(ip) == transform.do_transform(data.get(ip))))]
 fn apply_row_by_row(transform: ClampTransform, data: Vector/*<i32>*/) -> (Vector/*<i32>*/, ClampTransform) {
     if data.len <= 0 {
         return (data, transform);
@@ -70,8 +70,8 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector/*<i32>*/) -> (Vector
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.0.len === data.len)]
-//#[ensures(forall(|i: i32| (i >= 0 && i > idx && i < data.len) ==> result.0.get(i) == data.get(i)))]
-//#[ensures(forall(|i: i32| (i >= 0 && i <= idx && i < data.len) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
+#[ensures(forall(|i: usize| (i >= 0) & (i > idx) & (i < data.len) ==> result.0.get(i) == data.get(i)))]
+#[ensures(forall(|i: usize| (i >= 0) & (i <= idx) & (i < data.len) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
 fn apply_row_by_row_rec(transform: ClampTransform, data: Vector/*<i32>*/, idx: usize) -> (Vector/*<i32>*/, ClampTransform) {
     let (modified, transform) = if idx >= 1 {
         apply_row_by_row_rec(transform, data, idx - 1)
@@ -163,7 +163,7 @@ fn between(val: i32, lower: i32, upper: i32) -> bool {
 }
 
 #[pure]
-//#[requires(forall(|i: i32| (0<= i && i< res.len) ==> between(res.get(i), lower, upper)))]
+#[requires(forall(|i: usize| (0<= i) & (i< res.len) ==> between(res.get(i), lower, upper)))]
 fn final_assert(res: Vector/*<i32>*/, lower: i32, upper: i32) {}
 
 #[requires(data.len >= 10)]
@@ -186,14 +186,6 @@ pub fn client2(data1: Vector, data2: Vector) {
     assert_true(false);
 }
 
-// #[requires(data.len >= 0)]
-// #[requires(idx >= 0 && idx < data.len)]
-// fn clone_client(data: Vector, idx: i32) {
-//     let (v1, v2) = data.clone();
-
-//     assert_eq(v1.impure_get(idx).0, v2.impure_get(idx).0)
-//     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
-// }
 
 fn main() {
 
