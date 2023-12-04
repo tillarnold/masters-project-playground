@@ -27,7 +27,7 @@ impl/*<T>*/ Vector/*<T>*/ {
         unimplemented!()
     }
 
-    #[trusted]
+    #[trusted]  
     #[requires(idx >= 0)]
     #[requires(idx < self.len)]
     #[requires(self.len >= 0)]
@@ -70,8 +70,9 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector/*<i32>*/) -> (Vector
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.0.len === data.len)]
-#[ensures(forall(|i: usize| (i >= 0) & (i > idx) & (i < data.len) ==> result.0.get(i) == data.get(i)))]
-#[ensures(forall(|i: usize| (i >= 0) & (i <= idx) & (i < data.len) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
+#[ensures(result.1 === transform)]
+#[ensures(forall(|i: usize| ((i >= 0) && (i > idx) && (i < data.len)) ==> result.0.get(i) == data.get(i)))]
+#[ensures(forall(|i: usize| ((i >= 0) && (i <= idx) && (i < data.len)) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
 fn apply_row_by_row_rec(transform: ClampTransform, data: Vector/*<i32>*/, idx: usize) -> (Vector/*<i32>*/, ClampTransform) {
     let (modified, transform) = if idx >= 1 {
         apply_row_by_row_rec(transform, data, idx - 1)
