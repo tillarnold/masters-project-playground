@@ -13,8 +13,18 @@ viper_tools := clean(prusti_bins_dir / "../../viper_tools")
 main_rs := absolute_path("src/main.rs")
 
 
-classfile_dir := "/home/till/software/VSCodium-linux-x64-1.80.1.23194/data/user-data/User/globalStorage/viper-admin.viper/Stable/ViperTools/backends"
+# The dirs where viper and the sif plugin are on the different machines
+classfile_dir_candidate_1 := user_home_dir / "software/VSCodium-linux-x64-1.80.1.23194/data/user-data/User/globalStorage/viper-admin.viper/Stable/ViperTools/backends"
+classfile_dir_candidate_2 := user_home_dir / ".config/VSCodium/User/globalStorage/viper-admin.viper/Stable/ViperTools/backends/"
 
+
+classfile_dir := if path_exists(classfile_dir_candidate_1) == "true" {
+        classfile_dir_candidate_1
+    } else if path_exists(classfile_dir_candidate_2) == "true" {
+        classfile_dir_candidate_2
+    } else {
+        error("None of the classfile dirs exists")
+    }
 
 # Env vars
 export RUST_BACKTRACE := "1"
