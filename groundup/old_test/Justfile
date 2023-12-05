@@ -48,7 +48,12 @@ cargo-prusti: (build-prusti)
 
 prusti: (build_all_prusti)
 	{{prusti_bins_dir}}/prusti-rustc -Z dump-mir=F {{main_rs}}
-	just run_viper_with_extension ./local-testing/simple.vpr
+	mkdir -p log
+	rm -f log/viper_with_plugin.log
+	just run_viper_with_extension ./local-testing/simple.vpr > log/viper_with_plugin.log
+	@echo --------------
+	tail log/viper_with_plugin.log
+	@echo --------------
 
 
 
