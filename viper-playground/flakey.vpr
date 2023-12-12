@@ -1,0 +1,97 @@
+field vecs: Seq[Int]
+
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+
+function get(v: Ref, idx: Int): Int 
+    requires(Vec(v))
+    requires(len(v) > idx)    
+    requires(idx >= 0)
+    {
+        (unfolding Vec(v) in v.vecs[idx])
+    }
+
+
+function len(v: Ref): Int
+    requires(Vec(v))
+    ensures(result >= 0) 
+    {
+        (unfolding Vec(v) in |v.vecs| )
+    }
+
+method set(v: Ref, idx: Int, val: Int)
+    requires(Vec(v))
+    requires(len(v) > idx)
+    requires(idx >= 0)    
+    ensures(Vec(v))
+    ensures(len(v) == old(len(v)))
+    ensures(len(v) > idx)
+    ensures(get(v, idx) == val)
+    ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+    {
+        unfold Vec(v)
+        var old_seq : Seq[Int] := v.vecs;
+        var new_seq : Seq[Int] := old_seq[ idx := val]
+        v.vecs := new_seq;
+        fold Vec(v)
+        assert len(v) > idx
+    }
+
+
+
+function valid_index(v: Ref, idx: Int): Bool
+    requires(Vec(v))
+{
+    0 <= idx && idx < len(v) 
+}
+
+
+function clamp(v: Int): Int
+{
+    8
+}
+
+
+
+
+
+domain Mapping {
+  function eval(m: Mapping, idx: Int): Int
+}
+
+
+method apply_clamp(A: Ref, B: Ref, m: Map[Int, Int])
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B))
+    requires(forall i: Int :: valid_index(A, i) ==> valid_index(A, eval(m,i)))
+    requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, eval(m, i)))
+
+    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+    ensures true
+{
+
+    var i: Int := 0;
+
+    while(i < len(A))
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: {get(A, x)}  (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: {get(B, x)}  (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+    {
+        set(B, i, clamp(get(B, i)))
+
+        set(A, i, clamp(get(A, i)))
+
+        i := i + 1;
+    }
+}
