@@ -42,6 +42,12 @@ method set(v: Ref, idx: Int, val: Int)
 
 
 
+function valid_index(v: Ref, idx: Int): Bool
+    requires(Vec(v))
+{
+    0 <= idx && idx < len(v) 
+}
+
 method test(v: Ref)
     requires(Vec(v))
     requires(len(v) > 123)
@@ -85,11 +91,9 @@ method copy_a_to_b(A: Ref, B: Ref)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B))
-    ensures(Vec(A))
-    ensures(Vec(B))
-    ensures(old(len(B)) == len(B))
-    ensures(old(len(A)) == len(A))
-    ensures(forall i: Int :: i >= 0 && i < len(A) ==> get(A, i) == get(B, i))
+    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == get(B, i))
 {
 
     var i: Int := 0;
@@ -101,10 +105,9 @@ method copy_a_to_b(A: Ref, B: Ref)
         invariant len(A) == old(len(A))
         invariant len(B) == old(len(B))
         invariant i >= 0
-        invariant forall x: Int :: (x >= 0 && x < len(A) && x < i) ==> get(A, x) == get(B, x)
+        invariant forall x: Int :: (valid_index(A, x) &&  x < i) ==> get(A, x) == get(B, x)
 
     {
-        assert len(A) == old(len(A))
 
         set(A, i, get(B, i))
         i := i + 1;
@@ -115,15 +118,12 @@ method apply_clamp(A: Ref, B: Ref)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B))
-    ensures(Vec(A))
-    ensures(Vec(B))
-    ensures(old(len(B)) == len(B))
-    ensures(old(len(A)) == len(A))
-    ensures(forall i: Int :: i >= 0 && i < len(A) ==> get(A, i) == get(B, i))
+    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
 {
 
     var i: Int := 0;
-    assert len(A) == len(B)
 
     while(i < len(A))
         invariant Vec(A)
@@ -131,12 +131,14 @@ method apply_clamp(A: Ref, B: Ref)
         invariant len(A) == old(len(A))
         invariant len(B) == old(len(B))
         invariant i >= 0
-        invariant forall x: Int :: (x >= 0 && x < len(A) && x < i) ==> get(A, x) == get(B, x)
-
+        invariant forall x: Int :: (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: {get(A, x)}  (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+        invariant forall x: Int :: (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: {get(B, x)}  (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
     {
-        assert len(A) == old(len(A))
+        set(A, i, clamp(get(A, i)))
+        set(B, i, clamp(get(B, i)))
 
-        set(A, i, get(B, i))
         i := i + 1;
     }
 }
