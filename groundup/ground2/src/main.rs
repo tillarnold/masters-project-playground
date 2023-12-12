@@ -23,6 +23,7 @@ impl/*<T>*/ Vector/*<T>*/ {
     #[requires(self.len >= 0)]
     #[ensures(result.0 === self.get(idx))]
     #[ensures(result.1 === self)]
+    #[pure]
     fn impure_get(self, idx: usize) -> (i32/*T*/, Self) {
         unimplemented!()
     }
@@ -37,6 +38,135 @@ impl/*<T>*/ Vector/*<T>*/ {
     fn set(self, idx: usize, value: i32/*T*/) -> Self {
         unimplemented!()
     }
+
+    #[trusted]
+    #[requires(self.len >= 0)]
+    //#[ensures(self.len + 1 == result.len )]
+    #[ensures(self.len < result.len )]
+    #[ensures(forall(|i : usize| ((i >= 0)  & (i < self.len)) ==> result.get(i) == self.get(i)))]
+    #[ensures({let len = self.len; result.get( len) === value})]
+    fn push(self, value: i32) -> Self {
+        unimplemented!()
+    }
+
+    #[trusted]
+    #[ensures(result.len === 0)]
+    #[pure]
+    fn empty() -> Self {
+        unimplemented!()
+
+    }
+}
+
+pub struct VectorUsize {
+    len: usize,
+    contents: i32, // dummy variable encoding the contents of the vector
+}
+
+impl VectorUsize {
+    #[pure]
+    #[trusted]
+    #[requires(idx >= 0)]
+    #[requires(idx < self.len)]
+    #[requires(self.len >= 0)]
+    fn us_get(self, idx: usize) -> usize {
+        unimplemented!()
+    }
+
+    #[trusted]
+    #[requires(idx >= 0)]
+    #[requires(idx < self.len)]
+    #[requires(self.len >= 0)]
+    #[ensures(result.0 === self.us_get(idx))]
+    #[ensures(result.1 === self)]
+    #[pure]
+    fn us_impure_get(self, idx: usize) -> (usize, Self) {
+        unimplemented!()
+    }
+
+    #[trusted]  
+    #[requires(idx >= 0)]
+    #[requires(idx < self.len)]
+    #[requires(self.len >= 0)]
+    #[ensures(self.len == result.len)]
+    #[ensures(result.us_get(idx) === value)]
+    #[ensures(forall(|i : usize| ((i >= 0)  & (i < self.len) & (i != idx)) ==> result.us_get(i) == self.us_get(i)))]
+    fn us_set(self, idx: usize, value: usize) -> Self {
+        unimplemented!()
+    }
+
+    #[trusted]
+    #[requires(self.len >= 0)]
+    //#[ensures(self.len + 1 == result.len )]
+    #[ensures(self.len < result.len )]
+    #[ensures(forall(|i : usize| ((i >= 0)  & (i < self.len)) ==> result.us_get(i) == self.us_get(i)))]
+    #[ensures({let len = self.len; result.us_get( len) === value})]
+    fn us_push(self, value: usize) -> Self {
+        unimplemented!()
+    }
+
+    #[trusted]
+    #[ensures(result.len === 0)]
+    #[pure]
+    fn us_empty() -> Self {
+        unimplemented!()
+
+    }
+}
+
+
+
+#[requires(vec.len == 10)]
+fn count_client(vec: Vector) {
+
+}
+
+#[ensures(result.0 === vec)]
+#[ensures(forall(|i : usize| ((i >= 0)  & (i < result.1.len)) ==> vec.get(result.1.us_get(i)) == el  ))]
+fn find_all(el: i32, vec: Vector) -> (Vector, VectorUsize) {
+    find_all_rec(el, vec, 0, VectorUsize::us_empty())
+}
+
+fn find_all_rec(el: i32, vec: Vector, idx: usize, res: VectorUsize) -> (Vector, VectorUsize) {
+
+    if idx >= vec.len {
+        return (vec, res);
+    }
+
+    let (val_at_idx, vec) = vec.impure_get(idx);
+    let res = if (val_at_idx == el) {
+        res.us_push(idx)
+    }
+    else {
+        res
+    };
+
+    return find_all_rec(el, vec, idx + 1, res);
+}
+
+fn count(el: i32, vec: Vector) -> (usize, Vector) {
+    count_rec(el, vec, 0)
+}
+
+
+fn count_rec(el: i32, vec: Vector, idx: usize) -> (usize, Vector) {
+    if idx >= vec.len {
+        return (0, vec);
+    }
+
+    let (el_at_idx, vec) = vec.impure_get(idx);
+    let add = if el_at_idx == el {
+        1
+    }
+    else {
+        0
+    };
+
+
+    let (val, vec) = count_rec(el, vec, idx + 1);
+
+    (val + 1, vec)
+
 }
 
 struct Bounds<TA> {

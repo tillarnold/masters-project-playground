@@ -2,8 +2,29 @@
 function count(s: Seq[Int], el: Int) : Int 
     ensures result >= 0
     ensures el in s <==> result >= 1
+    ensures result == count_idx(s, el)
+
 {
      |s| == 0 ? 0 : ((s[0] == el ? 1  :  0) + (count(s[1..], el)))
+}
+
+
+function count_idx(s: Seq[Int], el: Int) : Int
+    ensures result >= 0
+    ensures el in s <==> result >= 1
+    ensures result == count(s, el)
+{
+    count_idx_rec(s, el, 0)
+}
+
+function count_idx_rec(s: Seq[Int], el: Int, idx: Int) : Int
+    requires idx >= 0
+    requires idx <= |s|
+    ensures result >= 0
+    ensures idx < |s| ==> s[idx] == el ==> result >= 1
+    ensures el in s[idx..] <==> result >= 1
+{
+     idx == |s| ? 0 : ((s[idx] == el ? 1  :  0) + (count_idx_rec(s, el, idx + 1)))
 }
 
 
@@ -31,4 +52,18 @@ method count_test2() {
 }
 
 function to_multiset(s: Seq[Int]): Multiset[Int] 
-    ensures forall i:Int :: count(s,i) == i in result
+    ensures forall i:Int :: count(s,i) == (i in result) 
+
+
+
+function foo(i: Int) : Int
+    ensures result % 2 == 0
+{
+     i % 4 == 0 ?
+        i 
+    :
+        2
+    
+}
+
+

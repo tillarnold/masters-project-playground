@@ -5,7 +5,10 @@ method m_main_CALLER_( )
   var _3p: Ref
   var _4p: Ref
 
-  assign_p_Tuple2_s_Int_i32_s_Bool(_4p, mir_checkedbinop_Add_i32_i32(s_Int_i32_cons(1), s_Int_i32_cons(1)))
+  var x : s_Tuple2_s_Int_i32_s_Bool := mir_checkedbinop_Add_i32_i32(s_Int_i32_cons(1), s_Int_i32_cons(1))
+
+  assert s_Tuple2_s_Int_i32_s_Bool_read_1(x) == s_Bool_cons(false)
+  assign_p_Tuple2_s_Int_i32_s_Bool(_4p,x)
   unfold p_Tuple2_s_Int_i32_s_Bool(_4p)
 
   exhale s_Bool_val(p_Bool_snap(p_Tuple2_s_Int_i32_s_Bool_field_1(_4p))) == false
@@ -122,10 +125,10 @@ domain s_Tuple2_s_Int_i32_s_Bool {
     forall self: s_Tuple2_s_Int_i32_s_Bool, val: s_Bool :: {s_Tuple2_s_Int_i32_s_Bool_read_1(s_Tuple2_s_Int_i32_s_Bool_write_1(self, val))} (s_Tuple2_s_Int_i32_s_Bool_read_1(s_Tuple2_s_Int_i32_s_Bool_write_1(self, val))) == (val)
   }
   axiom ax_s_Tuple2_s_Int_i32_s_Bool_cons_read_0 {
-    forall f0: s_Int_i32, f1: s_Bool :: {s_Tuple2_s_Int_i32_s_Bool_read_0(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))} (s_Tuple2_s_Int_i32_s_Bool_read_0(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))) == (f0)
+    forall f0: s_Int_i32, f1: s_Bool :: {(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))} (s_Tuple2_s_Int_i32_s_Bool_read_0(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))) == (f0)
   }
   axiom ax_s_Tuple2_s_Int_i32_s_Bool_cons_read_1 {
-    forall f0: s_Int_i32, f1: s_Bool :: {s_Tuple2_s_Int_i32_s_Bool_read_1(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))} (s_Tuple2_s_Int_i32_s_Bool_read_1(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))) == (f1)
+    forall f0: s_Int_i32, f1: s_Bool :: {(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))} (s_Tuple2_s_Int_i32_s_Bool_read_1(s_Tuple2_s_Int_i32_s_Bool_cons(f0, f1))) == (f1)
   }
   axiom ax_s_Tuple2_s_Int_i32_s_Bool_cons {
     forall self: s_Tuple2_s_Int_i32_s_Bool :: {s_Tuple2_s_Int_i32_s_Bool_cons(s_Tuple2_s_Int_i32_s_Bool_read_0(self), s_Tuple2_s_Int_i32_s_Bool_read_1(self))} (s_Tuple2_s_Int_i32_s_Bool_cons(s_Tuple2_s_Int_i32_s_Bool_read_0(self), s_Tuple2_s_Int_i32_s_Bool_read_1(self))) == (self)

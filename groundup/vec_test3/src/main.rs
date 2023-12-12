@@ -41,9 +41,9 @@ fn apply_id_rec_s(data: Vector, idx: i32) -> Vector {
 #[requires(idx < data.len)]
 #[ensures(result.len === data.len)]
 #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {( result.get(i) === data.get(i))  }))] // should not be needed
-#[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {(((i > idx) | (i <= idx)) ==> result.get(i) === data.get(i)) }))]
-#[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {let v = data.get(i); let r = result.get(i); ((i > idx || i <= idx) ==> r === v) }))]
-#[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {let v = data.get(i); let r = result.get(i); (i > idx ==> r === v) && (i <= idx ==> r === v)  }))]
+// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {(((i > idx) | (i <= idx)) ==> result.get(i) === data.get(i)) }))]
+// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {let v = data.get(i); let r = result.get(i); ((i > idx || i <= idx) ==> r === v) }))]
+// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {let v = data.get(i); let r = result.get(i); (i > idx ==> r === v) && (i <= idx ==> r === v)  }))]
 #[ensures(forall(|i: i32| (i >= 0 && i > idx && i < data.len)  ==> result.get(i) === data.get(i)))]
 #[ensures(forall(|i: i32| (i >= 0 && i <= idx && i < data.len)  ==> result.get(i) === data.get(i)))]
 fn apply_id_rec(data: Vector, idx: i32) -> Vector {
