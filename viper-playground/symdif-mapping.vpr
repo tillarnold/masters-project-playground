@@ -1,0 +1,142 @@
+field vecs: Seq[Int]
+
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+
+function get(v: Ref, idx: Int): Int 
+    requires(Vec(v))
+    requires(len(v) > idx)    
+    requires(idx >= 0)
+    {
+        (unfolding Vec(v) in v.vecs[idx])
+    }
+
+
+function len(v: Ref): Int
+    requires(Vec(v))
+    ensures(result >= 0) 
+    {
+        (unfolding Vec(v) in |v.vecs| )
+    }
+
+method set(v: Ref, idx: Int, val: Int)
+    requires(Vec(v))
+    requires(len(v) > idx)
+    requires(idx >= 0)    
+    ensures(Vec(v))
+    ensures(len(v) == old(len(v)))
+    ensures(len(v) > idx)
+    ensures(get(v, idx) == val)
+    ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+    {
+        unfold Vec(v)
+        var old_seq : Seq[Int] := v.vecs;
+        var new_seq : Seq[Int] := old_seq[ idx := val]
+        v.vecs := new_seq;
+        fold Vec(v)
+        assert len(v) > idx
+    }
+
+
+
+method test(v: Ref)
+    requires(Vec(v))
+    requires(len(v) > 123)
+{
+    var lens : Int := len(v)
+    set(v, 12, 100);
+    assert len(v) == lens
+
+    var x : Int := get(v, 12);
+    assert len(v) == lens
+    assert x == 100; 
+}
+
+
+method blackbox(B: Ref)
+    requires(Vec(B))
+    ensures(Vec(B))
+
+
+method test_imp(B: Ref)
+    requires(Vec(B))
+{
+    blackbox(B)
+    assert len(B) == len(old(B))
+}
+
+
+
+function clamp(v: Int): Int
+    ensures -100 <= result <= 100
+    ensures (-100 <= v <= 100) ==> (result == v)
+    ensures v <= -100 ==> result == -100
+    ensures v >= 100 ==> result == 100
+{
+    v > 100 ? 100 : (v< -100)? -100: v
+}
+
+
+
+method copy_a_to_b(A: Ref, B: Ref)
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B))
+    ensures(Vec(A))
+    ensures(Vec(B))
+    ensures(old(len(B)) == len(B))
+    ensures(old(len(A)) == len(A))
+    ensures(forall i: Int :: i >= 0 && i < len(A) ==> get(A, i) == get(B, i))
+{
+
+    var i: Int := 0;
+    assert len(A) == len(B)
+
+    while(i < len(A))
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant forall x: Int :: (x >= 0 && x < len(A) && x < i) ==> get(A, x) == get(B, x)
+
+    {
+        assert len(A) == old(len(A))
+
+        set(A, i, get(B, i))
+        i := i + 1;
+    }
+}
+
+method apply_clamp(A: Ref, B: Ref)
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B))
+    ensures(Vec(A))
+    ensures(Vec(B))
+    ensures(old(len(B)) == len(B))
+    ensures(old(len(A)) == len(A))
+    ensures(forall i: Int :: i >= 0 && i < len(A) ==> get(A, i) == get(B, i))
+{
+
+    var i: Int := 0;
+    assert len(A) == len(B)
+
+    while(i < len(A))
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant forall x: Int :: (x >= 0 && x < len(A) && x < i) ==> get(A, x) == get(B, x)
+
+    {
+        assert len(A) == old(len(A))
+
+        set(A, i, get(B, i))
+        i := i + 1;
+    }
+}
