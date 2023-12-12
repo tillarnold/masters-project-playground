@@ -114,10 +114,24 @@ method copy_a_to_b(A: Ref, B: Ref)
     }
 }
 
-method apply_clamp(A: Ref, B: Ref)
+
+domain Mapping {
+  function eval(m: Mapping, idx: Int): Int
+
+//   axiom mapping_is_perm {
+//     forall m: Mapping, j: Int, i: Int ::
+//         eval(m, j) == eval(m, i) <==> i == j
+//   }
+}
+
+
+method apply_clamp(A: Ref, B: Ref, m: Mapping)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B))
+    requires(forall i: Int :: valid_index(A, i) ==> valid_index(A, eval(m,i)))
+    requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, eval(m, i)))
+
     ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
     ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
     ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
@@ -131,9 +145,9 @@ method apply_clamp(A: Ref, B: Ref)
         invariant len(A) == old(len(A))
         invariant len(B) == old(len(B))
         invariant i >= 0
-        invariant forall x: Int :: (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
         invariant forall x: Int :: {get(A, x)}  (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
-        invariant forall x: Int :: (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
         invariant forall x: Int :: {get(B, x)}  (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
     {
         set(A, i, clamp(get(A, i)))
