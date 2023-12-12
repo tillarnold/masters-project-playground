@@ -116,6 +116,65 @@ impl VectorUsize {
 
 
 
+//#[requires(|vl.len - vs.len| == 1)] //needs pure addition
+fn has_sym_diff_1(v1: Vector, v2: Vector) -> bool{
+    let (vl, vs) = if v1.len > v2.len {
+        (v1, v2)
+    }   
+    else {
+        (v2, v1)
+    };
+
+    matches!(has_sym_diff_1_rec(vl, vs, 0),SymDif::One(_))
+}
+
+
+enum SymDif{
+ Zero,
+ One(i32),
+ MoreThanOne,
+}
+
+//#[requires(vl.len == vs.len + 1)] //needs pure addition
+fn has_sym_diff_1_rec(vl: Vector, vs: Vector, idx: usize) -> SymDif {
+    let (el, vl) : (i32, Vector) = vl.impure_get(idx);
+
+    let (count_l, vl) = count(el, vl);
+    let (count_s, vs) = count(el, vs);
+    let diff = count_l - count_s;
+
+    let rest = has_sym_diff_1_rec(vl, vs, idx + 1);
+
+    match rest {
+        SymDif::Zero => {
+            if diff == 0 {
+                SymDif::Zero
+            }
+            else if diff == 1 {
+                SymDif::One(el)
+            }
+            else {
+                SymDif::MoreThanOne
+            }
+        }
+        SymDif::One(matched_el) => {
+            if el == matched_el {
+                SymDif::One(matched_el)
+            }
+            else if diff == 0 {
+                SymDif::One(matched_el)
+            }
+            else {
+                SymDif::MoreThanOne
+            }
+        }
+        SymDif::MoreThanOne => SymDif::MoreThanOne
+    }
+
+
+}
+
+
 #[requires(vec.len == 10)]
 fn count_client(vec: Vector) {
 
@@ -123,6 +182,7 @@ fn count_client(vec: Vector) {
 
 #[ensures(result.0 === vec)]
 #[ensures(forall(|i : usize| ((i >= 0)  & (i < result.1.len)) ==> vec.get(result.1.us_get(i)) == el  ))]
+//#[ensures(result.1.len == count(el, vec).0)] // needs pure addition
 fn find_all(el: i32, vec: Vector) -> (Vector, VectorUsize) {
     find_all_rec(el, vec, 0, VectorUsize::us_empty())
 }
