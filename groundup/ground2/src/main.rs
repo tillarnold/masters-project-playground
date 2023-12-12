@@ -17,6 +17,15 @@ impl/*<T>*/ Vector/*<T>*/ {
         unimplemented!()
     }
 
+    #[pure]
+    #[trusted]
+    #[requires(idx >= 0)]
+    #[requires(idx < self.len)]
+    #[requires(self.len >= 0)]
+    fn get_ref(&self, idx: usize) -> i32/*T*/ {
+        unimplemented!()
+    }
+
     #[trusted]
     #[requires(idx >= 0)]
     #[requires(idx < self.len)]
@@ -125,7 +134,7 @@ fn has_sym_diff_1(v1: Vector, v2: Vector) -> bool{
         (v2, v1)
     };
 
-    matches!(has_sym_diff_1_rec(vl, vs, 0),SymDif::One(_))
+    matches!(has_sym_diff_1_rec(&vl, &vs, 0),SymDif::One(_))
 }
 
 
@@ -136,14 +145,17 @@ enum SymDif{
 }
 
 //#[requires(vl.len == vs.len + 1)] //needs pure addition
-fn has_sym_diff_1_rec(vl: Vector, vs: Vector, idx: usize) -> SymDif {
-    let (el, vl) : (i32, Vector) = vl.impure_get(idx);
+#[pure]
+fn has_sym_diff_1_rec(vl: &Vector, vs: &Vector, idx: usize) -> SymDif {
+    let el = vl.get_ref(idx);
 
-    let (count_l, vl) = count(el, vl);
-    let (count_s, vs) = count(el, vs);
-    let diff = count_l - count_s;
+    let count_l = count(el, vl);
+    let count_s = count(el, vs);
+    let diff = count_l ; // SHOULD BE     let diff = count_l - count_s;
 
-    let rest = has_sym_diff_1_rec(vl, vs, idx + 1);
+
+    // SHOULD BE let rest = has_sym_diff_1_rec(vl, vs, idx + 1);
+    let rest = has_sym_diff_1_rec(vl, vs, idx);
 
     match rest {
         SymDif::Zero => {
@@ -180,41 +192,43 @@ fn count_client(vec: Vector) {
 
 }
 
-#[ensures(result.0 === vec)]
-#[ensures(forall(|i : usize| ((i >= 0)  & (i < result.1.len)) ==> vec.get(result.1.us_get(i)) == el  ))]
-//#[ensures(result.1.len == count(el, vec).0)] // needs pure addition
-fn find_all(el: i32, vec: Vector) -> (Vector, VectorUsize) {
-    find_all_rec(el, vec, 0, VectorUsize::us_empty())
-}
+// #[ensures(result.0 === vec)]
+// #[ensures(forall(|i : usize| ((i >= 0)  & (i < result.1.len)) ==> vec.get(result.1.us_get(i)) == el  ))]
+// //#[ensures(result.1.len == count(el, vec).0)] // needs pure addition
+// fn find_all(el: i32, vec: Vector) -> (Vector, VectorUsize) {
+//     find_all_rec(el, vec, 0, VectorUsize::us_empty())
+// }
 
-fn find_all_rec(el: i32, vec: Vector, idx: usize, res: VectorUsize) -> (Vector, VectorUsize) {
+// fn find_all_rec(el: i32, vec: Vector, idx: usize, res: VectorUsize) -> (Vector, VectorUsize) {
 
-    if idx >= vec.len {
-        return (vec, res);
-    }
+//     if idx >= vec.len {
+//         return (vec, res);
+//     }
 
-    let (val_at_idx, vec) = vec.impure_get(idx);
-    let res = if (val_at_idx == el) {
-        res.us_push(idx)
-    }
-    else {
-        res
-    };
+//     let (val_at_idx, vec) = vec.impure_get(idx);
+//     let res = if (val_at_idx == el) {
+//         res.us_push(idx)
+//     }
+//     else {
+//         res
+//     };
 
-    return find_all_rec(el, vec, idx + 1, res);
-}
+//     return find_all_rec(el, vec, idx + 1, res);
+// }
 
-fn count(el: i32, vec: Vector) -> (usize, Vector) {
+#[pure]
+fn count(el: i32, vec: &Vector) -> usize {
     count_rec(el, vec, 0)
 }
 
 
-fn count_rec(el: i32, vec: Vector, idx: usize) -> (usize, Vector) {
+#[pure]
+fn count_rec(el: i32, vec: &Vector, idx: usize) -> usize {
     if idx >= vec.len {
-        return (0, vec);
+        return 0;
     }
 
-    let (el_at_idx, vec) = vec.impure_get(idx);
+    let el_at_idx = vec.get_ref(idx);
     let add = if el_at_idx == el {
         1
     }
@@ -223,9 +237,9 @@ fn count_rec(el: i32, vec: Vector, idx: usize) -> (usize, Vector) {
     };
 
 
-    let (val, vec) = count_rec(el, vec, idx + 1);
+    let val = count_rec(el, vec, idx ); // SHOULD BE let val = count_rec(el, vec, idx + 1);
 
-    (val + 1, vec)
+    val // SHOULD BE val + 1
 
 }
 
@@ -263,6 +277,7 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector/*<i32>*/) -> (Vector
 #[ensures(result.1 === transform)]
 #[ensures(forall(|i: usize| ((i >= 0) && (i > idx) && (i < data.len)) ==> result.0.get(i) == data.get(i)))]
 #[ensures(forall(|i: usize| ((i >= 0) && (i <= idx) && (i < data.len)) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
+#[ensures( has_sym_diff_1_rec(rel0(&data), rel1(&data), idx) === has_sym_diff_1_rec(rel0(&result.0), rel1(&result.0),idx) )]
 fn apply_row_by_row_rec(transform: ClampTransform, data: Vector/*<i32>*/, idx: usize) -> (Vector/*<i32>*/, ClampTransform) {
     let (modified, transform) = if idx >= 1 {
         apply_row_by_row_rec(transform, data, idx - 1)
