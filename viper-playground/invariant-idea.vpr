@@ -1,0 +1,57 @@
+//valid_index(V, i) is a function that returns true iff i >= 0 && i< |V|
+
+
+method apply_clamp(A: Vec, B: Vec, m: Map[Int,Int])
+    requires(len(A) == len(B) == |m|)
+    requires(is_permutation(m)) // is_permutation returns true iff domain(m) == range(m) which is the case if m is a bijection onto iteself
+    requires(forall i: Int :: valid_index(A, i) ==> i in m)
+    requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is 0
+
+    ensures(old(len(B)) == len(B) && old(len(A)) == len(A))
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is still 0
+{
+    var i: Int := 0;
+
+    while(i < len(A))
+        invariant len(A) == old(len(A)) && len(B) == old(len(B))
+        invariant i >= 0
+        
+        // invariant for clamping
+        invariant forall x: Int :: (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+        invariant forall x: Int :: (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+        
+        // Invariant for dsym
+        invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
+            (
+              m[x] < i ==> get(A,x) == get(B, m[x]) 
+              &&
+              m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])) 
+            )
+
+       // alternativley since clamp is idempotent
+        invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
+            (
+              get(A,x) ==  clamp(get(B, m[x])) 
+            )
+    {
+        set(A, i, clamp(get(A, i)))
+        set(B, i, clamp(get(B, i)))
+
+        i := i + 1;
+    }
+    
+    // after the loop invariant holds for i = len(A)
+    assert forall x: Int :: (valid_index(A, x) && x < len(A)) ==>
+            (
+              m[x] < len(A) ==> get(A,x) == get(B, m[x]) 
+              &&
+              m[x] >= len(A) ==> get(A,x) == clamp(get(B, m[x])) 
+            )
+  // Which is the same as 
+  assert forall x: Int :: (valid_index(A, x)) ==> get(A,x) == get(B, m[x])
+            
+}
