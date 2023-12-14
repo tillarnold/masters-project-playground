@@ -6,21 +6,52 @@ predicate Vec(v: Ref) {
 }
 
 
+// function get(v: Ref, idx: Int): Int 
+//     requires(Vec(v))
+//     requires(len(v) > idx)    
+//     requires(idx >= 0)
+//     {
+//         (unfolding Vec(v) in v.vecs[idx])
+//     }
+
+
+// function len(v: Ref): Int
+//     requires(Vec(v))
+//     ensures(result >= 0) 
+//     {
+//         (unfolding Vec(v) in |v.vecs| )
+//     }
+
+// method set(v: Ref, idx: Int, val: Int)
+//     requires(Vec(v))
+//     requires(len(v) > idx)
+//     requires(idx >= 0)    
+//     ensures(Vec(v))
+//     ensures(len(v) == old(len(v)))
+//     ensures(len(v) > idx)
+//     ensures(get(v, idx) == val)
+//     ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+//     {
+//         unfold Vec(v)
+//         var old_seq : Seq[Int] := v.vecs;
+//         var new_seq : Seq[Int] := old_seq[ idx := val]
+//         v.vecs := new_seq;
+//         fold Vec(v)
+//         assert len(v) > idx
+//     }
+
+
 function get(v: Ref, idx: Int): Int 
     requires(Vec(v))
     requires(len(v) > idx)    
     requires(idx >= 0)
-    {
-        (unfolding Vec(v) in v.vecs[idx])
-    }
+
 
 
 function len(v: Ref): Int
     requires(Vec(v))
     ensures(result >= 0) 
-    {
-        (unfolding Vec(v) in |v.vecs| )
-    }
+
 
 method set(v: Ref, idx: Int, val: Int)
     requires(Vec(v))
@@ -31,14 +62,6 @@ method set(v: Ref, idx: Int, val: Int)
     ensures(len(v) > idx)
     ensures(get(v, idx) == val)
     ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
-    {
-        unfold Vec(v)
-        var old_seq : Seq[Int] := v.vecs;
-        var new_seq : Seq[Int] := old_seq[ idx := val]
-        v.vecs := new_seq;
-        fold Vec(v)
-        assert len(v) > idx
-    }
 
 
 
@@ -231,12 +254,27 @@ method eq_len_mean_eq_valid(A: Ref, B: Ref)
         assert forall i: Int :: (valid_index(A,i) == valid_index(B,i))
 }
 
-function vec_eq(A: Ref, B: Ref) : Bool
-
-requires(Vec(A))
+method len_eq_idx_eq(A: Ref, B: Ref)
+    requires(Vec(A))
     requires(Vec(B))
-    {
-    len(A) == len(B) && forall i: Int :: (valid_index(A, i) && valid_index(B, i)) ==> get(A,i) == get(B, i)
+    requires(len(A) == len(B))
+
+    ensures(Vec(A))
+    ensures(Vec(B))
+{
+    assert forall i: Int :: valid_index(A, i) == valid_index(B, i)
+}
+
+function vec_eq(A: Ref, B: Ref) : Bool
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B))
+
+    ensures result ==> (forall i: Int :: (valid_index(A, i)) ==> get(A,i) == get(B, i))
+    ensures result ==> (forall i: Int :: (valid_index(B, i)) ==> get(A,i) == get(B, i))
+    ensures result ==> (forall i: Int :: ((valid_index(A, i)) && (valid_index(B, i))) ==> get(A,i) == get(B, i))
+{
+    forall i: Int :: (valid_index(A, i)) ==> get(A,i) == get(B, i)
 }
 
 method test_3(A: Ref, B: Ref, m: Map[Int,Int])
@@ -255,57 +293,60 @@ method test_3(A: Ref, B: Ref, m: Map[Int,Int])
     fold Vec(A)
     fold Vec(B)
     assume vec_eq(A, B)
-    assert forall i: Int :: (valid_index(A, i) && valid_index(B, i)) ==> get(A,i) == get(B, i)
+    //assert forall i: Int :: (valid_index(A, i) && valid_index(B, i)) ==> get(A,i) == get(B, i)
 
     // assert  (forall a: Int, j: Int :: valid_index(A, a) && valid_index(A, j) && a != j ==> m[a] != m[j])
     // assert (forall a: Int :: valid_index(A, a) ==> valid_index(A, m[a]))
 }
 
 
-method apply_clamp(A: Ref, B: Ref, m: Map[Int,Int])
-    requires(Vec(A))
-    requires(Vec(B))
-    requires(len(A) == len(B))
-    requires(|m| == len(B))
-    requires(is_permutation(m))
-    requires(forall i: Int :: valid_index(A, i) ==> i in m)
-    requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i]))
-
-    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
-    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
-    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
-    ensures(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is still 0
-
-{
-
-    assert  (forall a: Int, j: Int :: valid_index(A, a) && valid_index(A, j) && a != j ==> m[a] != m[j])
-    assert (forall a: Int :: valid_index(A, a) ==> valid_index(A, m[a]))
 
 
-    var i: Int := 0;
+// method apply_clamp(A: Ref, B: Ref, m: Map[Int,Int])
+//     requires(Vec(A))
+//     requires(Vec(B))
+//     requires(len(A) == len(B))
+//     requires(|m| == len(B))
+//     //requires(is_permutation(m))
+//     requires(forall i: Int :: valid_index(A, i) ==> i in m)
+//     requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i]))
 
-    while(i < len(A))
-        invariant Vec(A)
-        invariant Vec(B)
-        invariant len(A) == old(len(A))
-        invariant len(B) == old(len(B))
-        invariant i >= 0
-        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
-        invariant forall x: Int :: {get(A, x)}  (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
-        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
-        invariant forall x: Int :: {get(B, x)}  (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+//     ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+//     // ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+//     // ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
 
-        invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
-            (
-              m[x] < i ==> get(A,x) == get(B, m[x]) 
-              &&
-              m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])) 
-            )
+//    // ensures(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is still 0
 
-    {
-        set(A, i, clamp(get(A, i)))
-        set(B, i, clamp(get(B, i)))
+// {
 
-        i := i + 1;
-    }
-}
+//     assert  (forall a: Int, j: Int :: valid_index(A, a) && valid_index(A, j) && a != j ==> m[a] != m[j])
+//     assert (forall a: Int :: valid_index(A, a) ==> valid_index(A, m[a]))
+
+
+//     var i: Int := 0;
+
+//     while(i < len(A))
+//         invariant Vec(A)
+//         invariant Vec(B)
+//         invariant len(A) == old(len(A))
+//         invariant len(B) == old(len(B))
+//         invariant i >= 0
+//         // invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+//         // invariant forall x: Int :: {get(A, x)}  (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+//         // invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+//         // invariant forall x: Int :: {get(B, x)}  (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+
+//         invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
+//             (
+//               m[x] < i ==> get(A,x) == get(B, m[x]) 
+//               &&
+//               m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])) 
+//             )
+
+//     {
+//         set(A, i, clamp(get(A, i)))
+//         set(B, i, clamp(get(B, i)))
+
+//         i := i + 1;
+//     }
+// }

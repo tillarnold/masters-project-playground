@@ -3,20 +3,17 @@
 
 method apply_clamp(A: Vec, B: Vec, m: Map[Int,Int])
     requires(len(A) == len(B) == |m|)
-    requires(is_permutation(m)) // is_permutation returns true iff domain(m) == range(m) which is the case if m is a bijection onto iteself
-    requires(forall i: Int :: valid_index(A, i) ==> i in m)
-    requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is 0
+    requires(domain(m) == range(m)) // which is the case if m is a bijection onto iteself
+    requires(forall i: Int :: valid_index(A, i) ==> i in m) // domain(m) == {0,..,len(A)  - 1}
+    requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is 0 originally
 
-    ensures(old(len(B)) == len(B) && old(len(A)) == len(A))
-    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
-    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i)))) // clamp is applied to A
+    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))))// slamp is applied to B
     ensures(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is still 0
 {
     var i: Int := 0;
 
     while(i < len(A))
-        invariant len(A) == old(len(A)) && len(B) == old(len(B))
-        invariant i >= 0
         
         // invariant for clamping
         invariant forall x: Int :: (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
@@ -32,11 +29,11 @@ method apply_clamp(A: Vec, B: Vec, m: Map[Int,Int])
               m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])) 
             )
 
-       // alternativley since clamp is idempotent
-        invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
-            (
-              get(A,x) ==  clamp(get(B, m[x])) 
-            )
+       // alternativley since clamp is idempotent ?
+        // invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
+        //     (
+        //       get(A,x) ==  clamp(get(B, m[x])) 
+        //     )
     {
         set(A, i, clamp(get(A, i)))
         set(B, i, clamp(get(B, i)))
