@@ -1,0 +1,8 @@
+
+method test(m: Map[Int,Int])
+requires(range(m) == domain(m))
+{
+    assume forall i: Int, j: Int :: i in m && j in m ==> (i != j ==> (m[i] != m[j]))
+    assert forall i: Int, j: Int :: i in m && j in m ==> (i != j ==> (m[i] != m[j]))
+}
+
