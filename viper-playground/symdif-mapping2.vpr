@@ -198,12 +198,13 @@ method apply_clamp(A: Ref, B: Ref, m: Map[Int,Int])
     requires(len(A) == len(B))
     requires(|m| == len(B))
     requires(is_permutation(m))
+
     requires(forall i: Int :: valid_index(A, i) <==> i in m)
     requires(forall i: Int :: valid_index(B, i) <==> i in m)
     requires(forall i: Int :: valid_index(A, i) <==> i in domain(m))
     requires(forall i: Int :: valid_index(B, i) <==> i in domain(m))
 
-
+    
     requires(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i]))
 
     ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
@@ -213,19 +214,7 @@ method apply_clamp(A: Ref, B: Ref, m: Map[Int,Int])
    ensures(forall i: Int :: valid_index(A, i) ==> get(A,i) == get(B, m[i])) // the mapping shows that dsym is still 0
 
 {
-
-    assert  (forall a: Int, j: Int :: valid_index(A, a) && valid_index(A, j) && a != j ==> m[a] != m[j])
-    assert (forall a: Int :: valid_index(A, a) ==> valid_index(A, m[a]))
-
-
     var i: Int := 0;
-
-   assert forall x: Int :: (valid_index(A, x)) ==>
-            (
-             get(A,x) == get(B, m[x])
-             
-            )
-
 
     while(i < len(A))
         invariant Vec(A)
@@ -237,67 +226,12 @@ method apply_clamp(A: Ref, B: Ref, m: Map[Int,Int])
         invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
         invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
         invariant forall x: Int ::   (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
-
-        // invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
-        //     (
-        //       (m[x] < i ==> get(A,x) == get(B, m[x]))
-        //       &&
-        //       (m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])))
-        //     )
-
     {
-        // assert forall x: Int :: (valid_index(A, x) && x < i) ==>
-        //     (
-        //       (m[x] < i ==> get(A,x) == get(B, m[x]))
-        //       &&
-        //       (m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])))
-        //     )
-
         set(A, i, clamp(get(A, i)))
-
-        assert get(A,i) == old(clamp((get(A, i))))
-
-        //  assert forall x: Int :: (valid_index(A, x) && x < i -1) ==>
-        //     (
-        //       (m[x] < i ==> get(A,x) == get(B, m[x]))
-        //       &&
-        //       (m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])))
-        //     )
-
         set(B, i, clamp(get(B, i)))
-
         i := i + 1;
     }
 
-//     assert forall x: Int :: (valid_index(A, x) && x < i) ==>
-//             (
-//               (m[x] < len(A) ==> get(A,x) == get(B, m[x]) )
-//               &&
-//               (m[x] >= len(A) ==> get(A,x) ==  clamp(get(B, m[x])))
-//             )
-            
-//   assert forall x: Int :: (valid_index(A, x) && x < i) ==>
-//             (
-//               (true ==> get(A,x) == get(B, m[x]) )
-//               &&
-//               (false ==> get(A,x) ==  clamp(get(B, m[x])))
-//             )
-
-//         assert forall x: Int :: (valid_index(A, x) && x < i) ==>
-//     (
-//         (true ==> get(A,x) == get(B, m[x]))
-//         &&
-//         (false ==> false)
-//     )
-
-//             assert forall x: Int :: (valid_index(A, x) && x < i) ==>
-//     (
-//         get(A,x) == get(B, m[x]) 
-//         &&
-//         (false ==> false)
-//     )
-
-//     assert (false ==> false) == true
 
     assert forall x: Int :: (valid_index(A, x) && x < i) ==>
     (
