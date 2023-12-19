@@ -148,5 +148,8 @@ method client(A: Ref, B: Ref)
         assert range(m) == Set(1,0,3);
 
         assert |domain(m)| == |range(m)|
-       apply_clamp_1_any(A, B, m, 2)
+        apply_clamp_1_any(A, B, m, 2)
+
+
+       assert get(A, 0) == get(B, 1)
 }
