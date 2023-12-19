@@ -64,6 +64,8 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     requires valid_index(A, extra_A_index)
     requires ! (extra_A_index in range(m))
 
+  //  requires (|domain(m)| == |range(m)|) // should be true but makes verificaiton fail?
+
     requires(forall i: Int :: i in domain(m) <==> valid_index(B, i))
 
     requires(forall i: Int :: i in range(m) ==> valid_index(A, i))
@@ -146,5 +148,9 @@ method apply_clamp_1_end_any(A: Ref, B: Ref)
 
         var m : Map[Int, Int] := Map(0 := 1, 1 := 0, 2 := 3);
 
+        assert domain(m) == Set(0,1,2);
+        assert range(m) == Set(1,0,3);
+
+        assert |domain(m)| == |range(m)|
        apply_clamp_1_any(A, B, m, 2)
 }
