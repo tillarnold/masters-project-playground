@@ -162,10 +162,15 @@ method apply_clamp_1(A: Ref, B: Ref, m: Map[Int,Int])
         invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
         invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
 
-                invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
+        invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
             (
               (m[x] < i ==> get(A,x) == get(B, m[x]))
-              &&
+             
+            )
+
+            invariant forall x: Int :: (valid_index(A, x) && x < i) ==>
+            (
+            
               (m[x] >= i ==> get(A,x) ==  clamp(get(B, m[x])))
             )
     {
