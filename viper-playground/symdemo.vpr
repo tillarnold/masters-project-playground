@@ -1,5 +1,5 @@
 
-// Moderling a Vec from a sequence
+// Modeling a Vec from a sequence
 field vecs: Seq[Int]
 
 predicate Vec(v: Ref) {
