@@ -61,27 +61,34 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     requires(len(A) == len(B) + 1) // A is longer by one
     requires(|m| == len(B))
 
-    requires valid_index(A, extra_A_index)
-    requires ! (extra_A_index in range(m))
+    //requires valid_index(A, extra_A_index)
+   // requires ! (extra_A_index in range(m))
 
-  //  requires (|domain(m)| == |range(m)|) // should be true but makes verificaiton fail?
+    //  requires (|domain(m)| == |range(m)|) // should be true but makes verificaiton fail?
 
+
+    // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
+    // range(m) = domain(m) + {len(B)} \ {extra_element}
+    // domain(m) = {0,1,..., len(B) - 1}
     requires(forall i: Int :: i in domain(m) <==> valid_index(B, i))
-
     requires(forall i: Int :: i in range(m) ==> valid_index(A, i))
     requires(forall i: Int :: i in range(m) ==> (valid_index(B, i) || i == len(B)) )
-
     requires(forall i: Int :: valid_index(A, i) ==> (i in range(m) ||  i == extra_A_index) )
     requires(forall i: Int :: valid_index(B, i) ==> (i in range(m) ||  i == extra_A_index) )
 
+    // The mapping is valid (dsym is 1)
     requires(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) 
 
 
+    // Lists same length
     ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+
+    // Clamping was done
     ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
     ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
 
-    ensures(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) // the mapping shows that dsym is still 0
+    // the mapping shows that dsym is still 1
+    ensures(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) 
 {
 
     assert valid_index(A, len(B)) // Somehow required
@@ -89,6 +96,7 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     var i: Int := 0;
 
     while(i < len(B))
+        // Generic loop invariant things
         invariant Vec(A)
         invariant Vec(B)
         invariant len(A) == old(len(A))
@@ -96,30 +104,23 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
         invariant i >= 0
         invariant i <= len(B)
         invariant i <= len(A)
+
+        // Invariants for clamping
         invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
         invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
         invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
         invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
 
+        // invariants for the mapping
         invariant forall x: Int :: (valid_index(B, x) && x < i ) ==>
-        (
             (m[x] < i ==> get(B,x) == get(A, m[x])) 
-        )
-
         invariant forall x: Int :: (valid_index(B, x) && x < i) ==>
-        (
             (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x])))
-        )
-
     {
-
         set(B, i, clamp(get(B, i)))
         
-
         assert forall x: Int :: (valid_index(B, x) && x < i) ==>
-        (
-            (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x])))
-        ) // also required
+            (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x]))) // also required
 
         set(A, i, clamp(get(A, i)))
 
@@ -131,7 +132,7 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
 }
 
 
-method apply_clamp_1_end_any(A: Ref, B: Ref) 
+method client(A: Ref, B: Ref) 
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == 4)
