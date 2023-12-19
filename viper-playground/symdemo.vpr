@@ -1,0 +1,150 @@
+
+// Moderling a Vec from a sequence
+field vecs: Seq[Int]
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+function get(v: Ref, idx: Int): Int 
+    requires(Vec(v))
+    requires(len(v) > idx)    
+    requires(idx >= 0)
+    {
+        (unfolding Vec(v) in v.vecs[idx])
+    }
+
+
+function len(v: Ref): Int
+    requires(Vec(v))
+    ensures(result >= 0) 
+    {
+        (unfolding Vec(v) in |v.vecs| )
+    }
+
+method set(v: Ref, idx: Int, val: Int)
+    requires(Vec(v))
+    requires(len(v) > idx)
+    requires(idx >= 0)    
+    ensures(Vec(v))
+    ensures(len(v) == old(len(v)))
+    ensures(len(v) > idx)
+    ensures(get(v, idx) == val)
+    ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+    {
+        unfold Vec(v)
+        var old_seq : Seq[Int] := v.vecs;
+        var new_seq : Seq[Int] := old_seq[ idx := val]
+        v.vecs := new_seq;
+        fold Vec(v)
+        assert len(v) > idx
+    }
+
+
+
+function valid_index(v: Ref, idx: Int): Bool
+    requires(Vec(v))
+{
+    0 <= idx && idx < len(v) 
+}
+
+
+
+// Underspecified function that could do anything but it is pure
+function clamp(v: Int): Int
+
+
+
+method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B) + 1) // A is longer by one
+    requires(|m| == len(B))
+
+    requires valid_index(A, extra_A_index)
+    requires ! (extra_A_index in range(m))
+
+    requires(forall i: Int :: i in domain(m) <==> valid_index(B, i))
+
+    requires(forall i: Int :: i in range(m) ==> valid_index(A, i))
+    requires(forall i: Int :: i in range(m) ==> (valid_index(B, i) || i == len(B)) )
+
+    requires(forall i: Int :: valid_index(A, i) ==> (i in range(m) ||  i == extra_A_index) )
+    requires(forall i: Int :: valid_index(B, i) ==> (i in range(m) ||  i == extra_A_index) )
+
+    requires(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) 
+
+
+    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
+
+    ensures(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) // the mapping shows that dsym is still 0
+{
+
+    assert valid_index(A, len(B)) // Somehow required
+
+    var i: Int := 0;
+
+    while(i < len(B))
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant i <= len(B)
+        invariant i <= len(A)
+        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+
+        invariant forall x: Int :: (valid_index(B, x) && x < i ) ==>
+        (
+            (m[x] < i ==> get(B,x) == get(A, m[x])) 
+        )
+
+        invariant forall x: Int :: (valid_index(B, x) && x < i) ==>
+        (
+            (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x])))
+        )
+
+    {
+
+        set(B, i, clamp(get(B, i)))
+        
+
+        assert forall x: Int :: (valid_index(B, x) && x < i) ==>
+        (
+            (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x])))
+        ) // also required
+
+        set(A, i, clamp(get(A, i)))
+
+
+        i := i + 1;
+    }
+
+    set(A, len(B)  , clamp(get(A, len(B)  )))
+}
+
+
+method apply_clamp_1_end_any(A: Ref, B: Ref) 
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == 4)
+    requires(len(B) == 3)
+    {
+        set(A, 0, 200)
+        set(A, 1, 100)
+        set(A, 2, 400)
+        set(A, 3, 300)
+
+        set(B, 0, 100)
+        set(B, 1, 200)
+        set(B, 2, 300)
+
+        var m : Map[Int, Int] := Map(0 := 1, 1 := 0, 2 := 3);
+
+       apply_clamp_1_any(A, B, m, 2)
+}
