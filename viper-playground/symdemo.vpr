@@ -61,9 +61,6 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     requires(len(A) == len(B) + 1) // A is longer by one
     requires(|m| == len(B))
 
-    //requires valid_index(A, extra_A_index)
-   // requires ! (extra_A_index in range(m))
-
     //  requires (|domain(m)| == |range(m)|) // should be true but makes verificaiton fail?
 
 
@@ -103,7 +100,6 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
         invariant len(B) == old(len(B))
         invariant i >= 0
         invariant i <= len(B)
-        invariant i <= len(A)
 
         // Invariants for clamping
         invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
@@ -123,7 +119,6 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
             (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x]))) // also required
 
         set(A, i, clamp(get(A, i)))
-
 
         i := i + 1;
     }
