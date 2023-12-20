@@ -61,7 +61,7 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     requires(len(A) == len(B) + 1) // A is longer by one
     requires(|m| == len(B))
 
-    //  requires (|domain(m)| == |range(m)|) // should be true but makes verificaiton fail?
+    requires (|domain(m)| == |range(m)|)
 
 
     // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
@@ -71,7 +71,6 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     requires(forall i: Int :: i in range(m) ==> valid_index(A, i))
     requires(forall i: Int :: i in range(m) ==> (valid_index(B, i) || i == len(B)) )
     requires(forall i: Int :: valid_index(A, i) ==> (i in range(m) ||  i == extra_A_index) )
-    requires(forall i: Int :: valid_index(B, i) ==> (i in range(m) ||  i == extra_A_index) )
 
     // The mapping is valid (dsym is 1)
     requires(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) 
@@ -88,7 +87,7 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
     ensures(forall i: Int :: valid_index(B, i) ==> (get(A,m[i]) == get(B, i))) 
 {
 
-    assert valid_index(A, len(B)) // Somehow required
+   // assert valid_index(A, len(B)) // Somehow required
 
     var i: Int := 0;
 
@@ -108,15 +107,15 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Map[Int,Int], extra_A_index: Int)
         invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
 
         // invariants for the mapping
-        invariant forall x: Int :: (valid_index(B, x) && x < i ) ==>
-            (m[x] < i ==> get(B,x) == get(A, m[x])) 
-        invariant forall x: Int :: (valid_index(B, x) && x < i) ==>
-            (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x])))
+        // invariant forall x: Int :: (valid_index(B, x) && x < i ) ==>
+        //     (m[x] < i ==> get(B,x) == get(A, m[x])) 
+        // invariant forall x: Int :: (valid_index(B, x) && x < i) ==>
+        //     (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x])))
     {
         set(B, i, clamp(get(B, i)))
         
-        assert forall x: Int :: (valid_index(B, x) && x < i) ==>
-            (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x]))) // also required
+        // assert forall x: Int :: (valid_index(B, x) && x < i) ==>
+        //     (m[x] >= i ==> get(B,x) ==  clamp(get(A, m[x]))) // also required
 
         set(A, i, clamp(get(A, i)))
 
