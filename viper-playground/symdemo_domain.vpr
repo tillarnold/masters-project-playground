@@ -1,0 +1,169 @@
+
+// Modeling a Vec from a sequence
+field vecs: Seq[Int]
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+function get(v: Ref, idx: Int): Int 
+    requires(Vec(v))
+    requires(len(v) > idx)    
+    requires(idx >= 0)
+    {
+        (unfolding Vec(v) in v.vecs[idx])
+    }
+
+
+function len(v: Ref): Int
+    requires(Vec(v))
+    ensures(result >= 0) 
+    {
+        (unfolding Vec(v) in |v.vecs| )
+    }
+
+method set(v: Ref, idx: Int, val: Int)
+    requires(Vec(v))
+    requires(len(v) > idx)
+    requires(idx >= 0)    
+    ensures(Vec(v))
+    ensures(len(v) == old(len(v)))
+    ensures(len(v) > idx)
+    ensures(get(v, idx) == val)
+    ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+    {
+        unfold Vec(v)
+        var old_seq : Seq[Int] := v.vecs;
+        var new_seq : Seq[Int] := old_seq[ idx := val]
+        v.vecs := new_seq;
+        fold Vec(v)
+        assert len(v) > idx
+    }
+
+
+
+function valid_index(v: Ref, idx: Int): Bool
+    requires(Vec(v))
+{
+    0 <= idx && idx < len(v) 
+}
+
+
+
+// Underspecified function that could do anything but it is pure
+function clamp(v: Int): Int
+
+
+
+domain Mapping {
+    function keys(self: Mapping) : Set[Int]
+    function values(self: Mapping): Set[Int]
+}
+
+
+function translate(m: Mapping, key: Int) : Int 
+    requires(key in keys(m))
+    ensures(result in values(m))
+
+
+// function insert(m: Mapping, key: Int, value: Int ) : Mapping
+//     requires !(key in keys(m))
+//     ensures key in keys(result)
+//     // ensures (((keys(m)) union ({key})) == keys(result))
+//     ensures value in values(result)
+//     ensures translate(result, key) == value
+//     ensures forall other_k : Int :: ((other_k in keys(m)) ==> (other_k in keys(result)))
+//     ensures forall other_k : Int :: ((other_k in keys(m)) ==> translate(m, other_k) == translate(result, other_k) )
+
+
+method apply_clamp_1_any(A: Ref, B: Ref, m: Mapping, extra_A_index: Int)
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B) + 1) // A is longer by one
+
+    requires (|keys(m)| == |values(m)|)
+
+    // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
+    // range(m) = domain(m) + {len(B)} \ {extra_element}
+    // domain(m) = {0,1,..., len(B) - 1}
+    requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
+    requires(forall i: Int :: i in values(m) ==> valid_index(A, i))
+
+    // The mapping is valid (dsym is 1)
+    requires(forall i: Int :: valid_index(B, i) ==> (get(A,translate(m,i)) == get(B, i))) 
+
+
+    // Lists same length
+    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+
+    // Clamping was done
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
+
+    // the mapping shows that dsym is still 1
+    ensures(forall i: Int :: valid_index(B, i) ==> (get(A,translate(m,i)) == get(B, i))) 
+{
+
+    var i: Int := 0;
+
+    while(i < len(B))
+        // Generic loop invariant things
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant i <= len(B)
+
+        // Invariants for clamping
+        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+
+    {
+        set(B, i, clamp(get(B, i)))
+
+        set(A, i, clamp(get(A, i)))
+
+        i := i + 1;
+    }
+
+    set(A, len(B)  , clamp(get(A, len(B)  )))
+}
+
+
+function Mapping_from_Map(m: Map[Int, Int]) : Mapping 
+    ensures keys(result) == domain(m)
+    ensures values(result) == range(m)
+    ensures (forall k : Int :: (k in domain(m) ==> translate(result, k) == m[k]))
+
+method client(A: Ref, B: Ref) 
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == 4)
+    requires(len(B) == 3)
+    {
+        set(A, 0, 200)
+        set(A, 1, 100)
+        set(A, 2, 400)
+        set(A, 3, 300)
+
+        set(B, 0, 100)
+        set(B, 1, 200)
+        set(B, 2, 300)
+
+        var m : Map[Int, Int] := Map(0 := 1, 1 := 0, 2 := 3);
+
+        assert domain(m) == Set(0,1,2);
+        assert range(m) == Set(1,0,3);
+
+        assert |domain(m)| == |range(m)|
+
+        var mapping : Mapping := Mapping_from_Map(m);
+
+        apply_clamp_1_any(A, B, mapping, 2)
+
+
+       assert get(A, 0) == get(B, 1)
+}
