@@ -76,6 +76,9 @@ function translate(m: Mapping, key: Int) : Int
 //     ensures forall other_k : Int :: ((other_k in keys(m)) ==> translate(m, other_k) == translate(result, other_k) )
 
 
+// Apply clamp to two vecs.
+// requrires that A is longer by one single element ant that all oher elements of A are in B
+// Thus the symd between a and B is 1
 method apply_clamp_1_any(A: Ref, B: Ref, m: Mapping, extra_A_index: Int)
     requires(Vec(A))
     requires(Vec(B))
@@ -133,12 +136,78 @@ method apply_clamp_1_any(A: Ref, B: Ref, m: Mapping, extra_A_index: Int)
 }
 
 
+// Requires that A and B have same length and that exactly one elemnt in A is not in B and exactyl one in B is not in A
+//
+method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_A_index: Int, extra_B_index: Int)
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == len(B)) 
+
+    requires (keys(m) == values(m))
+
+    requires (|keys(m)| == |values(m)|)
+
+    // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
+    // range(m) = domain(m) + {len(B)} \ {extra_element}
+    // domain(m) = {0,1,..., len(B) - 1}
+    requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
+    requires(forall i: Int :: i in values(m) <==> valid_index(B, i))
+
+    requires valid_index(A, extra_A_index)
+    requires valid_index(B, extra_B_index)
+
+
+    // The mapping is valid (dsym is 1)
+    requires(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
+    requires translate(m, extra_B_index) == extra_A_index
+
+    // Lists same length
+    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+
+    // Clamping was done
+    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
+    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
+
+    // the mapping shows that dsym is still 1
+    ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
+{
+
+    var i: Int := 0;
+
+    while(i < len(B))
+        // Generic loop invariant things
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant i <= len(B)
+
+        // Invariants for clamping
+        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
+        invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+
+    {
+        set(B, i, clamp(get(B, i)))
+
+        set(A, i, clamp(get(A, i)))
+
+        i := i + 1;
+    }
+
+}
+
+
+
+
 function Mapping_from_Map(m: Map[Int, Int]) : Mapping 
     ensures keys(result) == domain(m)
     ensures values(result) == range(m)
     ensures (forall k : Int :: (k in domain(m) ==> translate(result, k) == m[k]))
 
-method client(A: Ref, B: Ref) 
+method client_1(A: Ref, B: Ref) 
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == 4)
@@ -167,3 +236,43 @@ method client(A: Ref, B: Ref)
 
        assert get(A, 0) == get(B, 1)
 }
+
+
+method asserttest() {
+        assert(forall i: Int :: i in Set(0,1,2,3) <==> 0 <= i <= 3)
+
+}
+
+method client_same(A: Ref, B: Ref) 
+    requires(Vec(A))
+    requires(Vec(B))
+    requires(len(A) == 4)
+    requires(len(B) == 4)
+    {
+        set(A, 0, 1)
+        set(A, 1, 2)
+        set(A, 2, 3)
+        set(A, 3, 100)
+
+        set(B, 0, 1)
+        set(B, 1, 2)
+        set(B, 2, 3)
+        set(B, 3, 500)
+
+        var m : Map[Int, Int] := Map(1 := 1, 2 := 2, 0 := 0, 3 := 3);
+
+        var mapping : Mapping := Mapping_from_Map(m);
+
+
+
+    // great speedup
+    assert(forall i: Int :: i in keys(mapping) <==> valid_index(B, i))
+    assert(forall i: Int :: i in values(mapping) <==> valid_index(B, i))
+    assert(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(mapping,i)) == get(B, i)) || i == 3)) 
+
+        apply_clamp_same(A, B, mapping, 3, 3)
+
+
+     //   assert get(A, 0) == get(B, 0)
+}
+
