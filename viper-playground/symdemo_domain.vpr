@@ -82,7 +82,7 @@ function translate(m: Mapping, key: Int) : Int
 //
 // I have an isabelle proof that shows that (for multisets) the only way for the symd to be 1 is if A and B differe in size by one.
 // So this covers all possible cases for symd=1 except for A and B being swaped (so the case where B is longer by 1)
-method apply_clamp_1(A: Ref, B: Ref, m: Mapping, extra_A_index: Int)
+method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B) + 1) // A is longer by one
@@ -139,15 +139,13 @@ method apply_clamp_1(A: Ref, B: Ref, m: Mapping, extra_A_index: Int)
 }
 
 
-method apply_clamp_0(A: Ref, B: Ref,m: Mapping)
+method apply_clamp_0(A: Ref, B: Ref, m: Mapping)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B)) 
     requires (keys(m) == values(m))
-    requires (|keys(m)| == |values(m)|)
 
     requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
-    requires(forall i: Int :: i in values(m) <==> valid_index(B, i))
 
 
     //mapping holds ==> sdif is 0
@@ -165,21 +163,17 @@ method apply_clamp_0(A: Ref, B: Ref,m: Mapping)
     ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)))) 
 
 {
-    if (len(A) != 0) {
-        apply_clamp_same(A, B, m, translate(m,0), 0)
-    }
+    apply_clamp_same(A, B, m, -1)
 }
 
 // Requires that A and B have same length and that exactly one element in A is not in B and exactly one in B is not in A
 // the mapping mapps all the matching elemens and also matches the two non matching ones.
 // 
 // 
-method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_A_index: Int, extra_B_index: Int)
+method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_B_index: Int)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B)) 
-
-    requires (keys(m) == values(m))
 
     requires (|keys(m)| == |values(m)|)
 
@@ -189,13 +183,9 @@ method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_A_index: Int, extra_B_
     requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
     requires(forall i: Int :: i in values(m) <==> valid_index(B, i))
 
-    requires valid_index(A, extra_A_index)
-    requires valid_index(B, extra_B_index)
 
-
-    // The mapping is valid (dsym is 1)
+    // The mapping is valid (dsym is 2)
     requires(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
-    requires translate(m, extra_B_index) == extra_A_index
 
     // Lists same length
     ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
@@ -204,7 +194,7 @@ method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_A_index: Int, extra_B_
     ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
     ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
 
-    // the mapping shows that dsym is still 1
+    // the mapping shows that dsym is still 2
     ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
 {
 
@@ -266,7 +256,7 @@ method client_1(A: Ref, B: Ref)
 
         var mapping : Mapping := Mapping_from_Map(m);
 
-        apply_clamp_1(A, B, mapping, 2)
+        apply_clamp_1(A, B, mapping)
 
 
        assert get(A, 0) == get(B, 1)
@@ -294,7 +284,7 @@ method client_1_without_map(A: Ref, B: Ref,mapping: Mapping)
         set(B, 2, 300)
 
 
-        apply_clamp_1(A, B, mapping, 2)
+        apply_clamp_1(A, B, mapping)
 
 
         assert get(A, 0) == get(B, 1)
@@ -328,7 +318,7 @@ method client_same(A: Ref, B: Ref)
 
 
 
-        apply_clamp_same(A, B, mapping, 3, 1)
+        apply_clamp_same(A, B, mapping, 1)
 
 
          assert get(A, 0) == get(B, 0)
