@@ -60,6 +60,10 @@ domain Mapping {
     function values(self: Mapping): Set[Int]
 }
 
+function valid_mapping(m: Mapping) : Bool
+{
+    forall v : Int :: (v in values(m) ==> (exists k:Int :: (k in keys(m)) ==> (translate(m, k) == v)))
+}
 
 function translate(m: Mapping, key: Int) : Int 
     requires(key in keys(m))
@@ -87,7 +91,7 @@ method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
     requires(Vec(B))
     requires(len(A) == len(B) + 1) // A is longer by one
 
-    requires (|keys(m)| == |values(m)|)
+    requires valid_mapping(m)
 
     // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
     // range(m) = domain(m) + {len(B)} \ {extra_element}
@@ -139,10 +143,13 @@ method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
 }
 
 
+// if sdif is 0
 method apply_clamp_0(A: Ref, B: Ref, m: Mapping)
     requires(Vec(A))
     requires(Vec(B))
-    requires(len(A) == len(B)) 
+    requires(len(A) == len(B))
+    requires valid_mapping(m)
+
     requires (keys(m) == values(m))
 
     requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
@@ -174,8 +181,10 @@ method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_B_index: Int)
     requires(Vec(A))
     requires(Vec(B))
     requires(len(A) == len(B)) 
+    requires valid_mapping(m)
 
     requires (|keys(m)| == |values(m)|)
+    requires keys(m) == values(m)
 
     // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
     // range(m) = domain(m) + {len(B)} \ {extra_element}
@@ -184,7 +193,7 @@ method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_B_index: Int)
     requires(forall i: Int :: i in values(m) <==> valid_index(B, i))
 
 
-    // The mapping is valid (dsym is 2)
+    // The mapping is valid (dsym is at most 2)
     requires(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
 
     // Lists same length
@@ -194,7 +203,7 @@ method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_B_index: Int)
     ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
     ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
 
-    // the mapping shows that dsym is still 2
+    // the mapping shows that dsym is still at most 2
     ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
 {
 
