@@ -112,6 +112,9 @@ method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
 
     // the mapping shows that dsym is still at most 1
     ensures(forall i: Int :: valid_index(B, i) ==> (get(A,translate(m,i)) == get(B, i))) 
+
+    ensures valid_mapping(m)
+
 {
 
     var i: Int := 0;
@@ -169,6 +172,7 @@ method apply_clamp_0(A: Ref, B: Ref, m: Mapping)
     // mapping still holds
     ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)))) 
 
+    ensures valid_mapping(m)
 {
     apply_clamp_same(A, B, m, -1)
 }
@@ -205,6 +209,7 @@ method apply_clamp_same(A: Ref, B: Ref, m: Mapping, extra_B_index: Int)
 
     // the mapping shows that dsym is still at most 2
     ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)) || i == extra_B_index)) 
+    ensures valid_mapping(m)
 {
 
     var i: Int := 0;
