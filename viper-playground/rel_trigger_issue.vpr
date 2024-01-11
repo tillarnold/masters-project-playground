@@ -1,0 +1,4 @@
+function get(v: Ref, idx: Int): Bool  { true }
+
+method t(r: Ref)
+    { assert forall i: Int :: {get(rel(r,0), i)}  get(rel(r,0), i) }
