@@ -1,11 +1,7 @@
 method x()
     ensures (forall q: Bool :: id(q == q))
-{
-  
-}
+{}
 
 
-function id(a : Bool): Bool {
-    a
-}
+function id(a : Bool): Bool { a }
 
