@@ -11,7 +11,7 @@ function get(v: Ref, idx: Int): Int
     requires(len(v) > idx)    
     requires(idx >= 0)
     {
-        (unfolding Vec(v) in v.vecs[idx])
+        unfolding Vec(v) in v.vecs[idx]
     }
 
 
@@ -19,7 +19,7 @@ function len(v: Ref): Int
     requires(Vec(v))
     ensures(result >= 0) 
     {
-        (unfolding Vec(v) in |v.vecs| )
+        unfolding Vec(v) in |v.vecs|
     }
 
 method set(v: Ref, idx: Int, val: Int)
@@ -33,11 +33,8 @@ method set(v: Ref, idx: Int, val: Int)
     ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
     {
         unfold Vec(v)
-        var old_seq : Seq[Int] := v.vecs;
-        var new_seq : Seq[Int] := old_seq[ idx := val]
-        v.vecs := new_seq;
+        v.vecs := v.vecs[ idx := val];
         fold Vec(v)
-        assert len(v) > idx
     }
 
 
@@ -92,6 +89,7 @@ method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
     requires(len(A) == len(B) + 1) // A is longer by one
 
     requires valid_mapping(m)
+    requires |keys(m)| == |values(m)|
 
     // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
     // range(m) = domain(m) + {len(B)} \ {extra_element}

@@ -112,10 +112,10 @@ method insert_client(m: Mapping, k: Int, v: Int)  returns(a: Mapping)
 }
 
 
-method b(m: Mapping)
-    requires valid_mapping(m) {
-        assert valid_mapping(m)
-    }
+// method b(m: Mapping)
+//     requires valid_mapping(m) {
+//         assert forall k : Int :: (k in keys(m) ==> translate_invert(m,translate(m, k)) == k)
+//     }
 
 
 // function insert(m: Mapping, key: Int, value: Int ) : Mapping
