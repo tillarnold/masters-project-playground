@@ -2,9 +2,9 @@
 
 method test()
   ensures (forall q: Int :: id(let x == (q) in (true)))
+  {}
 
 
-  function id(b: Bool): Bool 
-
-
-
+function id(b: Bool): Bool  {
+    b
+}

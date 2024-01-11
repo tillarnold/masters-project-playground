@@ -1,9 +1,11 @@
-function x(): Bool {
-   forall q: Bool :: f(q == q)
+method x()
+    ensures (forall q: Bool :: id(q == q))
+{
+  
 }
 
 
-function f(a :Bool): Bool {
-    true
+function id(a : Bool): Bool {
+    a
 }
 
