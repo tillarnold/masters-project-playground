@@ -173,18 +173,27 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
 
 
      // Lists same length
+    ensures Vec(X)
     ensures(Vec(rel(X,0)) && Vec(rel(X,1)) && old(len(rel(X,1))) == len(rel(X,1)) && old(len(rel(X,0))) == len(rel(X,0)))
     ensures(len(rel(X,0)) == len(rel(X,1)))
+    ensures(len(rel(X,0)) == len(X))
+    ensures(len(rel(X,1)) == len(X))
+    ensures(len(X) == old(len(X)))
 
     // Clamping was done
-    ensures(forall i: Int :: rel( (valid_index(X, i) ==> get(X, i) == old(clamp(get(X, i))) ),0))
-    ensures(forall i: Int :: rel( (valid_index(X, i) ==> get(X, i) == old(clamp(get(X, i))) ),1))
+    ensures(forall i: Int ::  (valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ))
+
+    ensures(forall i: Int ::  rel((valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ),0))
+    ensures(forall i: Int ::  rel((valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ),1))
+
+    // ensures(forall i: Int :: (valid_index(rel(X,0), i) ==> (get(rel(X,0), i) == old(clamp(get(rel(X,0), i)))) ))
+    // ensures(forall i: Int :: (valid_index(rel(X,1), i) ==> (get(rel(X,1), i) == old(clamp(get(rel(X,1), i)))) ))
 
     // ensures(forall i: Int :: valid_index(X, i) ==> get(X, i) == old(clamp(get(X, i))) )
 
 
     // mapping still holds
-    ensures(forall i: Int :: valid_index(rel(X,0), i) ==> ((get(rel(X,0),translate(rel(m,0),i)) == get(rel(X,1), i)))) 
+    // ensures(forall i: Int :: valid_index(rel(X,0), i) ==> ((get(rel(X,0),translate(rel(m,0),i)) == get(rel(X,1), i)))) 
 
 {
      var i: Int := 0;
@@ -201,6 +210,8 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
         invariant i >= 0
         invariant i <= len(rel(X,1))
         invariant i <= len(rel(X,0))
+         invariant len(rel(X,1)) == len(rel(X,0))
+
 
         // Invariants for clamping
         invariant forall x: Int :: (valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x)))
@@ -209,16 +220,28 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
         invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x))),0)
         invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),0)
 
-         invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x))),1)
+        invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x))),1)
         invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),1)
+
+        // invariant forall x: Int :: (valid_index(rel(X,1), x) && x < rel(i,1)) ==> get(rel(X,1), x) == clamp(old(get(rel(X,1), x)))
+        // invariant forall x: Int :: (valid_index(rel(X,1), x) && x >= rel(i,1)) ==> get(rel(X,1), x) == old(get(rel(X,1), x))
 
 
     {
         set(X, i, clamp(get(X, i)))
 
 
+     
         i := i + 1;
     }
+
+    assert forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x))),1)
+    assert forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),1)
+
+    assert forall x: Int :: rel((valid_index(X, x) && x < len(X)) ==> get(X, x) == clamp(old(get(X, x))),1)
+
+    assert forall x: Int :: rel((valid_index(X, x)) ==> get(X, x) == clamp(old(get(X, x))),1)
+
 }
 
 
