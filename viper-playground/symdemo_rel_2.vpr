@@ -1,0 +1,111 @@
+
+// Modeling a Vec from a sequence
+field vecs: Seq[Int]
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+function get(v: Ref, idx: Int): Int 
+    requires(Vec(v))
+    requires(len(v) > idx)    
+    requires(idx >= 0)
+    {
+        (unfolding Vec(v) in v.vecs[idx])
+    }
+
+
+function len(v: Ref): Int
+    requires(Vec(v))
+    ensures(result >= 0) 
+    {
+        (unfolding Vec(v) in |v.vecs| )
+    }
+
+method set(v: Ref, idx: Int, val: Int)
+    requires(Vec(v))
+    requires(len(v) > idx)
+    requires(idx >= 0)    
+    ensures(Vec(v))
+    ensures(len(v) == old(len(v)))
+    ensures(len(v) > idx)
+    ensures(get(v, idx) == val)
+    ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+    {
+        unfold Vec(v)
+        var old_seq : Seq[Int] := v.vecs;
+        var new_seq : Seq[Int] := old_seq[ idx := val]
+        v.vecs := new_seq;
+        fold Vec(v)
+        assert len(v) > idx
+    }
+
+
+
+function valid_index(v: Ref, idx: Int): Bool
+    requires(Vec(v))
+{
+    0 <= idx && idx < len(v) 
+}
+
+
+
+
+method test(X: Ref) {
+    assert rel(X,0) == X
+}
+
+
+method apply_id(X: Ref)
+    requires(Vec(X))
+    requires(Vec(rel(X,0)))
+    requires(Vec(rel(X,1)))
+    requires(len(X) == len(rel(X,0)))
+    requires(len(X) == len(rel(X,1)))
+
+{
+     var i: Int := 0;
+
+    assert len(rel(X,1)) == len(rel(X,0))
+    assert forall x: Int :: (valid_index(rel(X,0), x)) ==> get(rel(X,0), x) == (old(get(rel(X,0), x)))
+    assert forall x: Int :: (valid_index(rel(X,1), x)) ==> get(rel(X,1), x) == (old(get(rel(X,1), x)))
+      
+
+    while(i < len(X))
+        // Generic loop invariant things
+        invariant Vec(rel(X,0))
+        invariant Vec(rel(X,1))
+        invariant Vec(X)
+
+        invariant len(rel(X,0)) == old(len(rel(X,0)))
+        invariant len(rel(X,1)) == old(len(rel(X,1)))
+        invariant len(rel(X,1)) == old(len(X))
+        invariant len(rel(X,0)) == old(len(X))
+
+        invariant len(X) == old(len(X))
+        invariant i >= 0
+        invariant i <= len(rel(X,1))
+        invariant i <= len(rel(X,0))
+
+        // Invariants for clamping
+
+       
+
+        invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == (old(get(X, x))),0)
+        invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),0)
+
+         invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == (old(get(X, x))),1)
+        invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),1)
+
+      
+    {
+
+        i := i + 1;
+    }
+}
+
+
+
+
+
+
