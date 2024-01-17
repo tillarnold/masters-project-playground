@@ -94,10 +94,14 @@ method apply_id(X: Ref)
         invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == (old(get(X, x))),0)
         invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),0)
 
-         invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == (old(get(X, x))),1)
+        invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == (old(get(X, x))),1)
         invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),1)
 
-      
+        invariant forall x: Int :: (rel(valid_index(X, x),1) && x < i) ==> rel(get(X, x),1) == (old(rel(get(X, x),1)))
+        invariant forall x: Int :: (rel(valid_index(X, x),1) && x >= i) ==> rel(get(X, x),1) == old(rel(get(X, x),1))
+
+
+
     {
 
         i := i + 1;
