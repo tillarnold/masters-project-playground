@@ -1,3 +1,26 @@
+// Tests for the rel keyword
+method rel_test(a: Int, b: Int) returns (ret: Int)
+ensures((rel( a,0) == rel(a,1)) ==> (rel(ret,0) == rel(ret,1)))
+
+{
+    ret := 12 + a; 
+
+}
+
+method rel_test2(a: Int, b: Int) returns (ret: Int)
+    requires((rel( a,0) == rel(a,1)))
+    ensures((rel(ret,0) == rel(ret,1)))
+
+{
+    ret := 12 + a;
+}
+
+
+method rel_test2_clinet() {
+    var x : Int := rel_test2(10,20);
+    var y : Int := rel_test2(50,20);
+}
+
 
 // Modeling a Vec from a sequence
 field vecs: Seq[Int]
@@ -55,29 +78,9 @@ function clamp(v: Int): Int
 
 
 
-method rel_test(a: Int, b: Int) returns (ret: Int)
-ensures((rel( a,0) == rel(a,1)) ==> (rel(ret,0) == rel(ret,1)))
-
-{
-    ret := 12 + a; 
-
-}
-
-method rel_test2(a: Int, b: Int) returns (ret: Int)
-    requires((rel( a,0) == rel(a,1)))
-    ensures((rel(ret,0) == rel(ret,1)))
-
-{
-    ret := 12 + a;
-}
 
 
-method rel_test2_clinet() {
-    var x : Int := rel_test2(10,20);
-    var y : Int := rel_test2(50,20);
-}
-
-
+// Modelign the mapping
 domain Mapping {
     function keys(self: Mapping) : Set[Int]
     function values(self: Mapping): Set[Int]
@@ -123,6 +126,7 @@ function translate_invert(m: Mapping, value: Int) : Int
     requires(value in values(m))
     ensures(result in keys(m))
 
+// testing the insert method
 method insert_client(m: Mapping, k: Int, v: Int)  returns(a: Mapping)
     requires valid_mapping(m)
      requires !(k in keys(m))
@@ -133,62 +137,6 @@ method insert_client(m: Mapping, k: Int, v: Int)  returns(a: Mapping)
      a  := insert(m,k,v);
      assert mapps(a, k, v)
 }
-
-
-
-// // if sdif is 0
-// method apply_clamp_0(A: Ref, B: Ref, m: Mapping)
-//     requires(Vec(A))
-//     requires(Vec(B))
-//     requires(len(A) == len(B))
-//     requires valid_mapping(m)
-
-//     requires (keys(m) == values(m))
-
-//     requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
-
-
-//     //mapping holds ==> sdif is 0
-//     requires(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)))) 
-
-
-//      // Lists same length
-//     ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
-
-//     // Clamping was done
-//     ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
-//     ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
-
-//     // mapping still holds
-//     ensures(forall i: Int :: valid_index(B, i) ==> ((get(A,translate(m,i)) == get(B, i)))) 
-
-// {
-//      var i: Int := 0;
-
-//     while(i < len(B))
-//         // Generic loop invariant things
-//         invariant Vec(A)
-//         invariant Vec(B)
-//         invariant len(A) == old(len(A))
-//         invariant len(B) == old(len(B))
-//         invariant i >= 0
-//         invariant i <= len(B)
-
-//         // Invariants for clamping
-//         invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
-//         invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
-//         invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
-//         invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
-
-//     {
-//         set(B, i, clamp(get(B, i)))
-
-//         set(A, i, clamp(get(A, i)))
-
-//         i := i + 1;
-//     }
-// }
-
 
 
 
