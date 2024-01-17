@@ -146,8 +146,7 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
     requires(Vec(X))
     requires(rel(Vec(X),0))
     requires(rel(Vec(X),1))
-    requires((Vec(rel(X,0))))
-    requires((Vec(rel(X,1))))
+
     requires(rel(len(X),0) == rel(len(X),1))
 
     requires valid_mapping(m)
@@ -171,7 +170,10 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
 
      // Lists same length
     ensures Vec(X)
-    ensures(Vec(rel(X,0)) && Vec(rel(X,1)) && old(rel(len(X),1)) == rel(len(X),1) && old(len(rel(X,0))) == len(rel(X,0)))
+    ensures(rel(Vec(X),0))
+    ensures(rel(Vec(X),1))
+
+    ensures(old(rel(len(X),1)) == rel(len(X),1) && old(len(rel(X,0))) == len(rel(X,0)))
     ensures(rel(len(X),0) == rel(len(X),1))
     ensures(rel(len(X),0) == len(X))
     ensures(rel(len(X),1) == len(X))
@@ -194,12 +196,11 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
 
     while(i < len(X))
         // Generic loop invariant things
+        invariant Vec(X)
         invariant rel(Vec(X),0)
         invariant rel(Vec(X),1)
-        invariant (Vec(rel(X,0)))
-        invariant (Vec(rel(X,1)))
+       
 
-        invariant Vec(X)
 
         invariant rel(len(X),0) == old(rel(len((X)),0))
         invariant rel(len(X),1) == old(rel(len((X)),1))
@@ -240,6 +241,8 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
 
 method apply_clamp_0_rel_client(A: Ref) 
     requires(Vec(A))
+    requires(rel(Vec(A),0))
+    requires(rel(Vec(A),1))
     requires(len(A) == 4)
     {
         set(A, 0, 200)
@@ -247,12 +250,15 @@ method apply_clamp_0_rel_client(A: Ref)
         set(A, 2, 400)
         set(A, 3, 300)
 
-        var mapping : Mapping := empty_mapping();
-        mapping := insert(mapping, 0, 1);
-        mapping := insert(mapping, 1, 0);
-        mapping := insert(mapping, 2, 3);
+        var m : Mapping := empty_mapping();
+        m := insert(m, 0, 1);
+        m := insert(m, 1, 0);
+        m := insert(m, 2, 2);
+        m := insert(m, 3, 3);
+        assume(forall i: Int :: rel(valid_index(A, i),0) ==> ( ( rel(get(A,translate(m,i)),0) == rel(get(rel(A,1), i),1)))) 
 
-        apply_clamp_0_rel(A,  mapping)
+
+        apply_clamp_0_rel(A,  m)
 
 
 }
