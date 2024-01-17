@@ -83,14 +83,56 @@ domain Mapping {
     function values(self: Mapping): Set[Int]
 }
 
+
+function empty_mapping() : Mapping 
+    ensures keys(result) == Set()
+    ensures values(result) == Set()
+
 function valid_mapping(m: Mapping) : Bool
 {
-    forall v : Int :: (v in values(m) ==> (exists k:Int :: (k in keys(m)) ==> (translate(m, k) == v)))
+    |keys(m)| == |values(m)| && forall v : Int :: (v in values(m) ==> translate(m,translate_invert(m, v)) == v)
 }
 
+function insert(m: Mapping, k: Int, v: Int) : Mapping 
+    requires !(k in keys(m))
+    requires !(v in values(m))
+    requires |keys(m)| == |values(m)|
+    ensures (keys(result) == ((keys(m)) union (Set(k))))
+    ensures (values(result) == ((values(m)) union (Set(v))))
+    ensures translate(result, k) == v
+    ensures translate_invert(result, v) == k
+    ensures forall kp: Int :: (kp in keys(m) && kp != k) ==> translate(result, kp) == translate(m, kp)
+    ensures translate_invert(result, v) == k
+    ensures forall vp: Int :: (vp in values(m) && vp != v) ==> translate_invert(result, vp) == translate_invert(m, vp)
+
+
+function mapps(m: Mapping, k: Int, v: Int): Bool {
+      |keys(m)| == |values(m)| && k in keys(m) && v in values(m) && translate(m, k) == v && translate_invert(m, v) == k
+}
+
+
+
 function translate(m: Mapping, key: Int) : Int 
+    requires |keys(m)| == |values(m)|
     requires(key in keys(m))
     ensures(result in values(m))
+
+
+function translate_invert(m: Mapping, value: Int) : Int
+    requires |keys(m)| == |values(m)|
+    requires(value in values(m))
+    ensures(result in keys(m))
+
+method insert_client(m: Mapping, k: Int, v: Int)  returns(a: Mapping)
+    requires valid_mapping(m)
+     requires !(k in keys(m))
+    requires !(v in values(m))
+    ensures valid_mapping(a)
+
+ {
+     a  := insert(m,k,v);
+     assert mapps(a, k, v)
+}
 
 
 
@@ -183,29 +225,21 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
     ensures Vec(X)
     ensures(Vec(rel(X,0)) && Vec(rel(X,1)) && old(rel(len(X),1)) == rel(len(X),1) && old(len(rel(X,0))) == len(rel(X,0)))
     ensures(rel(len(X),0) == rel(len(X),1))
-
     ensures(rel(len(X),0) == len(X))
     ensures(rel(len(X),1) == len(X))
     ensures(len(X) == old(len(X)))
 
     // Clamping was done
     ensures(forall i: Int ::  (valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ))
-
-    ensures(forall i: Int ::  rel((valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ),0))
-    ensures(forall i: Int ::  rel((valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ),1))
-
     ensures(forall i: Int ::  (( rel(valid_index(X, i),0) ==> ( rel(get(X, i),0) == old(  rel(clamp(get(X, i)),0) )) )))
     ensures(forall i: Int ::  (( rel(valid_index(X, i),1) ==> ( rel(get(X, i),1) == old(  rel(clamp(get(X, i)),1) )) )))
 
-    // ensures(forall i: Int :: (valid_index(rel(X,0), i) ==> (get(rel(X,0), i) == old(clamp(get(rel(X,0), i)))) ))
-    // ensures(forall i: Int :: (valid_index(rel(X,1), i) ==> (get(rel(X,1), i) == old(clamp(get(rel(X,1), i)))) ))
-
-    // ensures(forall i: Int :: valid_index(X, i) ==> get(X, i) == old(clamp(get(X, i))) )
-
 
     // mapping still holds
-    // ensures(forall i: Int :: valid_index(rel(X,0), i) ==> ((get(rel(X,0),translate(rel(m,0),i)) == get(rel(X,1), i)))) 
-    ensures(forall i: Int :: rel(valid_index(X, i),0) ==> ( ( rel(get(X,translate(m,i)),0) == rel(get(rel(X,1), i),1)))) 
+    ensures(forall i: Int :: rel(valid_index(X, i),0) ==> ( ( rel(get(X,translate(m,i)),0) == rel(get(rel(X,1), i),1))))
+    ensures valid_mapping(m)
+    ensures rel(valid_mapping(m),0)
+    ensures rel(valid_mapping(m),1)
 
 {
      var i: Int := 0;
@@ -238,44 +272,17 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
         invariant forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x))),1)
         invariant forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),1)
 
-        // invariant forall x: Int :: (valid_index(rel(X,1), x) && x < rel(i,1)) ==> get(rel(X,1), x) == clamp(old(get(rel(X,1), x)))
-        // invariant forall x: Int :: (valid_index(rel(X,1), x) && x >= rel(i,1)) ==> get(rel(X,1), x) == old(get(rel(X,1), x))
-
 
     {
-        assert rel(Vec(X),1)
  
         set(X, i, clamp(get(X, i)))
 
 
      
         i := i + 1;
-        assert rel(Vec(X),1)
 
     }
 
-    assert m == rel(m, 1)
-    assert m == rel(m, 0)
-     assert (keys(rel(m,0)) == values(rel(m,0)))
-    assert(forall x: Int :: x in keys(rel(m,0)) <==> valid_index(rel(X,0), x))
-    assert(forall x: Int :: x in rel(keys(m),1) <==> rel(valid_index(X, x),1))
-    assert(forall x: Int :: rel(x in keys(m) <==> valid_index(X, x),1))
-
-    assert forall x: Int :: rel((valid_index(X, x) && x < i) ==> get(X, x) == clamp(old(get(X, x))),1)
-    assert forall x: Int :: rel((valid_index(X, x) && x >= i) ==> get(X, x) == old(get(X, x)),1)
-
-    assert forall x: Int :: rel((valid_index(X, x) && x < len(X)) ==> get(X, x) == clamp(old(get(X, x))),1)
-
-    assert forall x: Int :: rel((valid_index(X, x)) ==> get(X, x) == clamp(old(get(X, x))),1)
-
-
-    // assert(forall x: Int :: valid_index(rel(X,0), x) ==> old(((get(rel(X,0),translate(rel(m,0),x))) == old(get(rel(X,1), x))))) 
-
-    assert(forall x: Int :: valid_index(rel(X,0), x) ==> ((get(rel(X,0),translate(rel(m,0),x)) == clamp(old(get(rel(X,0), translate(rel(m,0),x)))))))
-    assert(forall x: Int ::  rel((valid_index(X, x) ==> (get(X, x) == old(clamp(get(X, x)))) ),1))
-    assert(forall x: Int ::  rel((valid_index(X, x) ==> (get(X, translate(m,x)) == old(clamp(get(X, translate(m,x))))) ),1))
-
-    // assert(forall x: Int :: valid_index(rel(X,0), x) ==> ((get(rel(X,0),translate(rel(m,0),x)) == get(rel(X,1), x)))) 
 
 
 }
@@ -283,40 +290,21 @@ method apply_clamp_0_rel(X: Ref, m: Mapping)
 
 
 
+method apply_clamp_0_rel_client(A: Ref) 
+    requires(Vec(A))
+    requires(len(A) == 4)
+    {
+        set(A, 0, 200)
+        set(A, 1, 100)
+        set(A, 2, 400)
+        set(A, 3, 300)
+
+        var mapping : Mapping := empty_mapping();
+        mapping := insert(mapping, 0, 1);
+        mapping := insert(mapping, 1, 0);
+        mapping := insert(mapping, 2, 3);
+
+        apply_clamp_0_rel(A,  mapping)
 
 
-
-// function Mapping_from_Map(m: Map[Int, Int]) : Mapping 
-//     ensures keys(result) == domain(m)
-//     ensures values(result) == range(m)
-//     ensures (forall k : Int :: (k in domain(m) ==> translate(result, k) == m[k]))
-
-
-// method client_0(A: Ref, B: Ref) 
-//     requires(Vec(A))
-//     requires(Vec(B))
-//     requires(len(A) == 3)
-//     requires(len(B) == 3)
-//     {
-//         set(A, 0, 200)
-//         set(A, 1, 100)
-//         set(A, 2, 300)
-
-//         set(B, 0, 100)
-//         set(B, 1, 200)
-//         set(B, 2, 300)
-
-//         var m : Map[Int, Int] := Map(0 := 1, 1 := 0, 2 := 2);
-
-//         assert domain(m) == Set(0,1,2);
-//         assert range(m) == Set(1,0,2);
-
-//         var mapping : Mapping := Mapping_from_Map(m);
-
-//         apply_clamp_0(A, B, mapping)
-
-
-//        assert get(A, 0) == get(B, 1)
-// }
-
-
+}
