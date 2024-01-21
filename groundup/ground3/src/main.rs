@@ -47,62 +47,82 @@ struct ClampTransform {
     bounds: Bounds,
 }
 
-#[requires(data.len >= 0)]
-#[requires(transform.bounds.lower < transform.bounds.upper)]
-#[ensures(result.0.len === data.len)]
-#[ensures(result.1 === transform)]
-#[ensures(forall(|ip: usize| (0<= ip) & (ip < data.len) ==> result.0.get(ip) == transform.do_transform(data.get(ip))))]
-fn apply_row_by_row(transform: ClampTransform, data: Vector/*<i32>*/) -> (Vector/*<i32>*/, ClampTransform) {
-    if data.len <= 0 {
-        return (data, transform);
-    }
+// #[requires(data.len >= 0)]
+// #[requires(transform.bounds.lower < transform.bounds.upper)]
+// #[ensures(result.0.len === data.len)]
+// #[ensures(result.1 === transform)]
+// #[ensures(forall(|ip: usize| (0<= ip) & (ip < data.len) ==> result.0.get(ip) == transform.do_transform(data.get(ip))))]
+// fn apply_row_by_row(transform: ClampTransform, data: Vector/*<i32>*/) -> (Vector/*<i32>*/, ClampTransform) {
+//     if data.len <= 0 {
+//         return (data, transform);
+//     }
 
-    let l = data.len;
-    assert_true( l >= 1);
-    assert_true( l - 1 >= 0);
-    assert_true( l - 1 < l);
-    apply_row_by_row_rec(transform, data, l - 1)
-}
+//     let l = data.len;
+//     assert_true( l >= 1);
+//     assert_true( l - 1 >= 0);
+//     assert_true( l - 1 < l);
+//     apply_row_by_row_rec(transform, data, l - 1)
+// }
 
-#[requires(transform.bounds.lower < transform.bounds.upper)]
-#[requires(idx >= 0)]
-#[requires(data.len >= 1)]
-#[requires(idx < data.len)]
-#[ensures(result.0.len === data.len)]
-#[ensures(result.1 === transform)]
-#[ensures(forall(|i: usize| ((i >= 0) && (i > idx) && (i < data.len)) ==> result.0.get(i) == data.get(i)))]
-#[ensures(forall(|i: usize| ((i >= 0) && (i <= idx) && (i < data.len)) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
-fn apply_row_by_row_rec(transform: ClampTransform, data: Vector/*<i32>*/, idx: usize) -> (Vector/*<i32>*/, ClampTransform) {
-    let (modified, transform) = if idx >= 1 {
-        apply_row_by_row_rec(transform, data, idx - 1)
-    } else {
-        (data, transform)
-    };
+// #[requires(transform.bounds.lower < transform.bounds.upper)]
+// #[requires(idx >= 0)]
+// #[requires(data.len >= 1)]
+// #[requires(idx < data.len)]
+// #[ensures(result.0.len === data.len)]
+// #[ensures(result.1 === transform)]
+// #[ensures(forall(|i: usize| ((i >= 0) && (i > idx) && (i < data.len)) ==> result.0.get(i) == data.get(i)))]
+// #[ensures(forall(|i: usize| ((i >= 0) && (i <= idx) && (i < data.len)) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
+// fn apply_row_by_row_rec(transform: ClampTransform, data: Vector/*<i32>*/, idx: usize) -> (Vector/*<i32>*/, ClampTransform) {
+//     let (modified, transform) = if idx >= 1 {
+//         apply_row_by_row_rec(transform, data, idx - 1)
+//     } else {
+//         (data, transform)
+//     };
 
-    let (cur, data) = modified.impure_get(idx);
-    let (new, transform) = transform.do_transform_impure(cur);
-    let modified = data.set(idx, new);
-    (modified, transform)
-}
+//     let (cur, data) = modified.impure_get(idx);
+//     let (new, transform) = transform.do_transform_impure(cur);
+//     let modified = data.set(idx, new);
+//     (modified, transform)
+// }
 
 
+#[requires(idx < 1000)]
+#[requires(data.len == 2000)]
 #[requires(idx >= 0)]
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.len === data.len)]
-#[ensures(forall(|i: usize| ((i >= 0) && (i > idx) && (i < data.len)) ==> result.get(i) == data.get(i)))]
-#[ensures(forall(|i: usize| ((i >= 0) && (i <= idx) && (i < data.len)) ==> result.get(i) == (data.get(i))))]
-fn id_rec(data: Vector, idx: usize) -> Vector {
-    let (modified) = if idx >= 1 {
-        id_rec(data, idx - 1)
+#[ensures(forall(|i: usize| (i >= 0 && i < data.len) ==> ( result.get(i) === data.get(i))  ))] 
+#[ensures(forall(|i: usize| (i >= 0 && i > idx && i < data.len)  ==> result.get(i) === data.get(i)))]
+#[ensures(forall(|i: usize| (i >= 0 && i <= idx && i < data.len)  ==> result.get(i) === data.get(i)))]
+fn apply_id_rec(data: Vector, idx: usize) -> Vector {
+    if idx + 1 < 10 {
+        apply_id_rec(data, idx + 1)
     } else {
-        (data)
-    };
-
-    let (cur, data) = modified.impure_get(idx);
-    let modified = data.set(idx, cur);
-    (modified)
+        data
+    }
 }
+
+
+
+// #[requires(idx >= 0)]
+// #[requires(data.len >= 1)]
+// #[requires(idx < data.len)]
+// #[ensures(result.len === data.len)]
+// #[ensures(forall(|i: usize| ((i >= 0) && (i < data.len)) ==> result.get(i) == (data.get(i))))]
+// // #[ensures(forall(|i: usize| ((i >= 0) && (i > idx) && (i < data.len)) ==> result.get(i) == data.get(i)))]
+// // #[ensures(forall(|i: usize| ((i >= 0) && (i <= idx) && (i < data.len)) ==> result.get(i) == (data.get(i))))]
+// fn id_rec(data: Vector, idx: usize) -> Vector {
+//     let (modified) = if idx >= 1 {
+//         id_rec(data, idx - 1)
+//     } else {
+//         (data)
+//     };
+
+//     let (cur, data) = modified.impure_get(idx);
+//     let modified = data.set(idx, cur);
+//     (modified)
+// }
 
 
 
@@ -179,15 +199,15 @@ fn between(val: i32, lower: i32, upper: i32) -> bool {
 #[requires(forall(|i: usize| (0<= i && i< res.len) ==> between(res.get(i), lower, upper)))]
 fn final_assert(res: Vector, lower: i32, upper: i32) {}
 
-#[requires(data.len >= 10)]
-#[requires(lower < upper)]
-pub fn client(data: Vector, lower: i32, upper: i32) {
-    let t = ClampTransform::make_clamp(Bounds { lower, upper });
-    let (res, t2) = apply_row_by_row(t, data);
+// #[requires(data.len >= 10)]
+// #[requires(lower < upper)]
+// pub fn client(data: Vector, lower: i32, upper: i32) {
+//     let t = ClampTransform::make_clamp(Bounds { lower, upper });
+//     let (res, t2) = apply_row_by_row(t, data);
 
-    final_assert(res, lower, upper);
-    //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
-}
+//     final_assert(res, lower, upper);
+//     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
+// }
 
 
 /// This function shows that the second field in vector is required
