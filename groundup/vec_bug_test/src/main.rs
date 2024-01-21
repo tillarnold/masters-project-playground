@@ -27,8 +27,9 @@ impl Vector {
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.len === data.len)]
-#[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> ( result.get(i) === data.get(i))  ))] 
+// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> ( result.get(i) === data.get(i))  ))] 
 #[ensures(forall(|i: i32| (i >= 0 && i > idx && i < data.len)  ==> result.get(i) === data.get(i)))]
+#[ensures(forall(|i: i32| (i >= 0 && i <= idx && i < data.len)  ==> result.get(i) === data.get(i)))]
 fn apply_id_rec(data: Vector, idx: i32) -> Vector {
     if idx + 1 < 10 {
         apply_id_rec(data, idx + 1)

@@ -37,20 +37,24 @@ s_Bool_cons((_0_5s_1) == (_0_7s_1))))))))
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
 (let _0_3s_0 == (p_Adt_Vector_snap(_0p)) in
 (let _0_5s_1 == (s_Tuple0_cons()) in
-(let _0_6s_1 == (Tuple_2_cons(_0_1s_0, _0_3s_0)) in
-s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((let _1_5s_1 == (s_Bool_cons((s_Int_i32_val(qvar_0_0)) >= (s_Int_i32_val(s_Int_i32_cons(0))))) in
-(let _1_phi_0 == ((_1_5s_1) == (s_Bool_cons(false))
+(let _0_6s_1 == (Tuple_3_cons(_0_2s_0, _0_1s_0, _0_3s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((let _1_6s_1 == (s_Bool_cons((s_Int_i32_val(qvar_0_0)) >= (s_Int_i32_val(s_Int_i32_cons(0))))) in
+(let _1_phi_0 == ((_1_6s_1) == (s_Bool_cons(false))
   ? s_Bool_cons(false)
-  : (let _1_9s_1 == (s_Adt_Vector_read_0(Tuple_2_elem_0(_0_6s_1))) in
-    s_Bool_cons((s_Int_i32_val(qvar_0_0)) < (s_Int_i32_val(_1_9s_1))))) in
-(let _1_3s_1 == (s_Bool_cons(!(s_Bool_val(_1_phi_0)))) in
+  : (let _1_10s_1 == (Tuple_3_elem_0(_0_6s_1)) in
+    s_Bool_cons((s_Int_i32_val(qvar_0_0)) > (s_Int_i32_val(_1_10s_1))))) in
+(let _1_phi_1 == ((_1_phi_0) == (s_Bool_cons(false))
+  ? s_Bool_cons(false)
+  : (let _1_13s_1 == (s_Adt_Vector_read_0(Tuple_3_elem_1(_0_6s_1))) in
+    s_Bool_cons((s_Int_i32_val(qvar_0_0)) < (s_Int_i32_val(_1_13s_1))))) in
+(let _1_3s_1 == (s_Bool_cons(!(s_Bool_val(_1_phi_1)))) in
 (_1_3s_1) == (s_Bool_cons(false))
-? (let _1_13s_1 == (Tuple_2_elem_1(_0_6s_1)) in
-  (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
-  (let _1_18s_1 == (Tuple_2_elem_0(_0_6s_1)) in
-  (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
-  s_Bool_cons((_1_12s_1) == (_1_17s_1))))))
-: s_Bool_cons(true))))))))))))
+? (let _1_17s_1 == (Tuple_3_elem_2(_0_6s_1)) in
+  (let _1_16s_1 == (f_get(_1_17s_1, qvar_0_0)) in
+  (let _1_22s_1 == (Tuple_3_elem_1(_0_6s_1)) in
+  (let _1_21s_1 == (f_get(_1_22s_1, qvar_0_0)) in
+  s_Bool_cons((_1_16s_1) == (_1_21s_1))))))
+: s_Bool_cons(true)))))))))))))
   ensures s_Bool_val((let _0_1s_0 == (old(p_Adt_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
 (let _0_3s_0 == (p_Adt_Vector_snap(_0p)) in
@@ -60,7 +64,7 @@ s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_val((let _1_6s_1 == (s_Bool_con
 (let _1_phi_0 == ((_1_6s_1) == (s_Bool_cons(false))
   ? s_Bool_cons(false)
   : (let _1_10s_1 == (Tuple_3_elem_0(_0_6s_1)) in
-    s_Bool_cons((s_Int_i32_val(qvar_0_0)) > (s_Int_i32_val(_1_10s_1))))) in
+    s_Bool_cons((s_Int_i32_val(qvar_0_0)) <= (s_Int_i32_val(_1_10s_1))))) in
 (let _1_phi_1 == ((_1_phi_0) == (s_Bool_cons(false))
   ? s_Bool_cons(false)
   : (let _1_13s_1 == (s_Adt_Vector_read_0(Tuple_3_elem_1(_0_6s_1))) in
@@ -432,23 +436,6 @@ method assign_p_Tuple0(
 // -----------------------------
 // utility types
 // -----------------------------
-domain Tuple_2[T0, T1] {
-  axiom ax_Tuple_2_elem {
-    forall elem0: T0, elem1: T1 :: {Tuple_2_cons(elem0, elem1)} ((Tuple_2_elem_0(Tuple_2_cons(elem0, elem1))) == (elem0)) && ((Tuple_2_elem_1(Tuple_2_cons(elem0, elem1))) == (elem1))
-  }
-  function Tuple_2_elem_0(Tuple_2[T0, T1]): T0
-  function Tuple_2_elem_1(Tuple_2[T0, T1]): T1
-  function Tuple_2_cons(T0, T1): Tuple_2[T0, T1]
-}
-
-domain Tuple_1[T0] {
-  axiom ax_Tuple_1_elem {
-    forall elem0: T0 :: {Tuple_1_cons(elem0)} (Tuple_1_elem_0(Tuple_1_cons(elem0))) == (elem0)
-  }
-  function Tuple_1_elem_0(Tuple_1[T0]): T0
-  function Tuple_1_cons(T0): Tuple_1[T0]
-}
-
 domain Tuple_3[T0, T1, T2] {
   axiom ax_Tuple_3_elem {
     forall elem0: T0, elem1: T1, elem2: T2 :: {Tuple_3_cons(elem0, elem1, elem2)} (((Tuple_3_elem_0(Tuple_3_cons(elem0, elem1, elem2))) == (elem0)) && ((Tuple_3_elem_1(Tuple_3_cons(elem0, elem1, elem2))) == (elem1))) && ((Tuple_3_elem_2(Tuple_3_cons(elem0, elem1, elem2))) == (elem2))
@@ -457,5 +444,13 @@ domain Tuple_3[T0, T1, T2] {
   function Tuple_3_elem_1(Tuple_3[T0, T1, T2]): T1
   function Tuple_3_elem_2(Tuple_3[T0, T1, T2]): T2
   function Tuple_3_cons(T0, T1, T2): Tuple_3[T0, T1, T2]
+}
+
+domain Tuple_1[T0] {
+  axiom ax_Tuple_1_elem {
+    forall elem0: T0 :: {Tuple_1_cons(elem0)} (Tuple_1_elem_0(Tuple_1_cons(elem0))) == (elem0)
+  }
+  function Tuple_1_elem_0(Tuple_1[T0]): T0
+  function Tuple_1_cons(T0): Tuple_1[T0]
 }
 
