@@ -1,0 +1,2729 @@
+// -----------------------------
+// methods
+// -----------------------------
+method m_impure_get_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_5s_1)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_4s_1, s_Uint_usize_cons(0))))))
+  ensures p_2_Tuple_$_Int_i32_$_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_2_Tuple_read_0(_0_3s_0)) in
+(let _0_6s_1 == (f_get(_0_1s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_5s_1, _0_6s_1)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+
+method m_set_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires p_Int_i32(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_6s_1))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_5s_1, s_Uint_usize_cons(0)))))))
+  ensures p_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_1s_0)) in
+(let _0_7s_1 == (s_Vector_read_0(_0_4s_0)) in
+mir_binop_Eq_usize_usize(_0_6s_1, _0_7s_1))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (f_get(_0_4s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_6s_1, _0_3s_0)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_7s_1 == (s_3_Tuple_cons(_0_1s_0, _0_8s_1, _0_4s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Vector_read_0(s_3_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Eq_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? (let _1_12s_1 == (s_3_Tuple_read_2(_0_7s_1)) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_3_Tuple_read_0(_0_7s_1)) in
+      (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1)))))
+    : s_Bool_cons(true))))))))))))))))
+
+method m_assert_true_CALLER_0_40(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_read_0(p_Bool_snap(_1p))
+  ensures p_0_Tuple(_0p)
+
+method m_apply_row_by_row_rec_CALLER_0_40(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Vector(_2p)
+  requires p_Uint_usize(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_5s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_6s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_5s_1, _0_6s_1)))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+mir_binop_Ge_usize_usize(_0_3s_0, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Ge_usize_usize(_0_5s_1, s_Uint_usize_cons(1)))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Lt_usize_usize(_0_3s_0, _0_6s_1))))))
+  ensures p_2_Tuple_$_Vector_$_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Vector_read_0(s_2_Tuple_read_0(_0_4s_0)))) in
+(let _0_8s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_2s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_8s_1))) in
+s_Bool_cons((_0_6s_1) == (_0_7s_1))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_4s_0))) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_8s_1))) in
+s_Bool_cons((_0_6s_1) == (_0_7s_1))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_7s_1 == (s_3_Tuple_cons(_0_8s_1, _0_2s_0, _0_4s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_12s_1 == (s_2_Tuple_read_0(s_3_Tuple_read_2(_0_7s_1))) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_3_Tuple_read_1(_0_7s_1)) in
+      (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1))))))))))))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_7s_1 == (s_4_Tuple_cons(_0_8s_1, _0_2s_0, _0_4s_0, _0_1s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_4_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_4_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_12s_1 == (s_2_Tuple_read_0(s_4_Tuple_read_2(_0_7s_1))) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_4_Tuple_read_3(_0_7s_1)) in
+      (let _1_17s_1 == (s_4_Tuple_read_1(_0_7s_1)) in
+      (let _1_16s_1 == (f_get(_1_17s_1, qvar_0_0)) in
+      (let _1_14s_1 == (f_do_transform(_1_15s_1, _1_16s_1)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1))))))))))))))))))))))
+
+method m_apply_row_by_row_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Vector(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Ge_usize_usize(_0_4s_1, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_4s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_5s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1))))))
+  ensures p_2_Tuple_$_Vector_$_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_Vector_read_0(s_2_Tuple_read_0(_0_3s_0)))) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_2s_0))) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_0_Tuple_cons()) in
+(let _0_6s_1 == (s_3_Tuple_cons(_0_2s_0, _0_3s_0, _0_1s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_4s_1 == (mir_binop_Le_usize_usize(s_Uint_usize_cons(0), qvar_0_0)) in
+(let _1_8s_1 == (s_Vector_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+(let _1_6s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_8s_1)) in
+(let _1_3s_1 == (mir_binop_BitAnd_bool_bool(_1_4s_1, _1_6s_1)) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_10s_1 == (s_2_Tuple_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+  (let _1_9s_1 == (f_get(_1_10s_1, qvar_0_0)) in
+  (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+  (let _1_15s_1 == (s_3_Tuple_read_0(_0_6s_1)) in
+  (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+  (let _1_12s_1 == (f_do_transform(_1_13s_1, _1_14s_1)) in
+  mir_binop_Eq_i32_i32(_1_9s_1, _1_12s_1)))))))))))))))))))
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  var _11p: Ref
+  var _12p: Ref
+  var _13p: Ref
+  var _14p: Ref
+  var _15p: Ref
+  var _16p: Ref
+  var _17p: Ref
+  var _18p: Ref
+  var _19p: Ref
+  var _20p: Ref
+  var _21p: Ref
+  var _22p: Ref
+  var _23p: Ref
+  var _24p: Ref
+  var _25p: Ref
+  var _26p: Ref
+  var _27p: Ref
+  var _28p: Ref
+  goto bb_0
+label bb_0
+  // _5 = (_2.0: usize)
+  unfold p_Vector(_2p)
+  assign_p_Uint_usize(_5p, p_Uint_usize_snap(p_Vector_field_0(_2p)))
+  // _4 = Le(move _5, const 0_usize)
+  var _tmp0: s_Uint_usize
+  _tmp0 := p_Uint_usize_snap(_5p)
+  exhale p_Uint_usize(_5p)
+  assign_p_Bool(_4p, mir_binop_Le_usize_usize(_tmp0, s_Uint_usize_cons(0)))
+  // switchInt(move _4) -> [0: bb2, otherwise: bb1]
+  var _tmp1: s_Bool
+  _tmp1 := p_Bool_snap(_4p)
+  exhale p_Bool(_4p)
+  if (s_Bool_read_0(_tmp1) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _7 = move _2
+  fold p_Vector(_2p)
+  var _tmp2: s_Vector
+  _tmp2 := p_Vector_snap(_2p)
+  exhale p_Vector(_2p)
+  assign_p_Vector(_7p, _tmp2)
+  // _8 = move _1
+  var _tmp3: s_ClampTransform
+  _tmp3 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_8p, _tmp3)
+  // _0 = (move _7, move _8)
+  var _tmp4: s_Vector
+  _tmp4 := p_Vector_snap(_7p)
+  exhale p_Vector(_7p)
+  var _tmp5: s_ClampTransform
+  _tmp5 := p_ClampTransform_snap(_8p)
+  exhale p_ClampTransform(_8p)
+  assign_p_2_Tuple_$_Vector_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp4, _tmp5))
+  // goto -> bb10
+  goto bb_10
+label bb_2
+  // _3 = const ()
+  assign_p_0_Tuple(_3p, s_0_Tuple_cons())
+  // _9 = (_2.0: usize)
+  assign_p_Uint_usize(_9p, p_Uint_usize_snap(p_Vector_field_0(_2p)))
+  // FakeRead(ForLet(None), _9)
+  // _12 = _9
+  assign_p_Uint_usize(_12p, p_Uint_usize_snap(_9p))
+  // _11 = Ge(move _12, const 1_usize)
+  var _tmp6: s_Uint_usize
+  _tmp6 := p_Uint_usize_snap(_12p)
+  exhale p_Uint_usize(_12p)
+  assign_p_Bool(_11p, mir_binop_Ge_usize_usize(_tmp6, s_Uint_usize_cons(1)))
+  // _10 = assert_true(move _11) -> [return: bb3, unwind: bb11]
+  m_assert_true_CALLER_0_40(_10p, _11p)
+  goto bb_3
+label bb_3
+  // _16 = _9
+  assign_p_Uint_usize(_16p, p_Uint_usize_snap(_9p))
+  // _17 = CheckedSub(_16, const 1_usize)
+  assign_p_2_Tuple_$_Uint_usize_$_Bool(_17p, mir_checkedbinop_Sub_usize_usize(p_Uint_usize_snap(_16p), s_Uint_usize_cons(1)))
+  // assert(!move (_17.1: bool), "attempt to compute `{} - {}`, which would overflow", move _16, const 1_usize) -> [success: bb4, unwind: bb11]
+  unfold p_2_Tuple_$_Uint_usize_$_Bool(_17p)
+  var _tmp7: s_Bool
+  _tmp7 := p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_17p))
+  exhale p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_17p))
+  exhale (s_Bool_read_0(_tmp7)) == (false)
+  if (s_Bool_read_0(_tmp7) == false) { goto bb_4 }
+  else { goto bb_11 }
+label bb_4
+  // _15 = move (_17.0: usize)
+  var _tmp8: s_Uint_usize
+  _tmp8 := p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_17p))
+  exhale p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_17p))
+  assign_p_Uint_usize(_15p, _tmp8)
+  // _14 = Ge(move _15, const 0_usize)
+  var _tmp9: s_Uint_usize
+  _tmp9 := p_Uint_usize_snap(_15p)
+  exhale p_Uint_usize(_15p)
+  assign_p_Bool(_14p, mir_binop_Ge_usize_usize(_tmp9, s_Uint_usize_cons(0)))
+  // _13 = assert_true(move _14) -> [return: bb5, unwind: bb11]
+  m_assert_true_CALLER_0_40(_13p, _14p)
+  goto bb_5
+label bb_5
+  // _21 = _9
+  assign_p_Uint_usize(_21p, p_Uint_usize_snap(_9p))
+  // _22 = CheckedSub(_21, const 1_usize)
+  assign_p_2_Tuple_$_Uint_usize_$_Bool(_22p, mir_checkedbinop_Sub_usize_usize(p_Uint_usize_snap(_21p), s_Uint_usize_cons(1)))
+  // assert(!move (_22.1: bool), "attempt to compute `{} - {}`, which would overflow", move _21, const 1_usize) -> [success: bb6, unwind: bb11]
+  unfold p_2_Tuple_$_Uint_usize_$_Bool(_22p)
+  var _tmp10: s_Bool
+  _tmp10 := p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_22p))
+  exhale p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_22p))
+  exhale (s_Bool_read_0(_tmp10)) == (false)
+  if (s_Bool_read_0(_tmp10) == false) { goto bb_6 }
+  else { goto bb_11 }
+label bb_6
+  // _20 = move (_22.0: usize)
+  var _tmp11: s_Uint_usize
+  _tmp11 := p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_22p))
+  exhale p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_22p))
+  assign_p_Uint_usize(_20p, _tmp11)
+  // _23 = _9
+  assign_p_Uint_usize(_23p, p_Uint_usize_snap(_9p))
+  // _19 = Lt(move _20, move _23)
+  var _tmp12: s_Uint_usize
+  _tmp12 := p_Uint_usize_snap(_20p)
+  exhale p_Uint_usize(_20p)
+  var _tmp13: s_Uint_usize
+  _tmp13 := p_Uint_usize_snap(_23p)
+  exhale p_Uint_usize(_23p)
+  assign_p_Bool(_19p, mir_binop_Lt_usize_usize(_tmp12, _tmp13))
+  // _18 = assert_true(move _19) -> [return: bb7, unwind: bb11]
+  m_assert_true_CALLER_0_40(_18p, _19p)
+  goto bb_7
+label bb_7
+  // _24 = move _1
+  var _tmp14: s_ClampTransform
+  _tmp14 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_24p, _tmp14)
+  // _25 = move _2
+  fold p_Vector(_2p)
+  var _tmp15: s_Vector
+  _tmp15 := p_Vector_snap(_2p)
+  exhale p_Vector(_2p)
+  assign_p_Vector(_25p, _tmp15)
+  // _27 = _9
+  assign_p_Uint_usize(_27p, p_Uint_usize_snap(_9p))
+  // _28 = CheckedSub(_27, const 1_usize)
+  assign_p_2_Tuple_$_Uint_usize_$_Bool(_28p, mir_checkedbinop_Sub_usize_usize(p_Uint_usize_snap(_27p), s_Uint_usize_cons(1)))
+  // assert(!move (_28.1: bool), "attempt to compute `{} - {}`, which would overflow", move _27, const 1_usize) -> [success: bb8, unwind: bb11]
+  unfold p_2_Tuple_$_Uint_usize_$_Bool(_28p)
+  var _tmp16: s_Bool
+  _tmp16 := p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_28p))
+  exhale p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_28p))
+  exhale (s_Bool_read_0(_tmp16)) == (false)
+  if (s_Bool_read_0(_tmp16) == false) { goto bb_8 }
+  else { goto bb_11 }
+label bb_8
+  // _26 = move (_28.0: usize)
+  var _tmp17: s_Uint_usize
+  _tmp17 := p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_28p))
+  exhale p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_28p))
+  assign_p_Uint_usize(_26p, _tmp17)
+  // _0 = apply_row_by_row_rec(move _24, move _25, move _26) -> [return: bb9, unwind: bb11]
+  m_apply_row_by_row_rec_CALLER_0_40(_0p, _24p, _25p, _26p)
+  goto bb_9
+label bb_9
+  // goto -> bb10
+  goto bb_10
+label bb_10
+  // return
+  goto end
+label bb_11
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_apply_row_by_row_rec_CALLER_0_51(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Vector(_2p)
+  requires p_Uint_usize(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_5s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_6s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_5s_1, _0_6s_1)))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+mir_binop_Ge_usize_usize(_0_3s_0, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Ge_usize_usize(_0_5s_1, s_Uint_usize_cons(1)))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Lt_usize_usize(_0_3s_0, _0_6s_1))))))
+  ensures p_2_Tuple_$_Vector_$_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Vector_read_0(s_2_Tuple_read_0(_0_4s_0)))) in
+(let _0_8s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_2s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_8s_1))) in
+s_Bool_cons((_0_6s_1) == (_0_7s_1))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_4s_0))) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_8s_1))) in
+s_Bool_cons((_0_6s_1) == (_0_7s_1))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_7s_1 == (s_3_Tuple_cons(_0_8s_1, _0_2s_0, _0_4s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_12s_1 == (s_2_Tuple_read_0(s_3_Tuple_read_2(_0_7s_1))) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_3_Tuple_read_1(_0_7s_1)) in
+      (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1))))))))))))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_7s_1 == (s_4_Tuple_cons(_0_8s_1, _0_2s_0, _0_4s_0, _0_1s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_4_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_4_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_12s_1 == (s_2_Tuple_read_0(s_4_Tuple_read_2(_0_7s_1))) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_4_Tuple_read_3(_0_7s_1)) in
+      (let _1_17s_1 == (s_4_Tuple_read_1(_0_7s_1)) in
+      (let _1_16s_1 == (f_get(_1_17s_1, qvar_0_0)) in
+      (let _1_14s_1 == (f_do_transform(_1_15s_1, _1_16s_1)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1))))))))))))))))))))))
+
+method m_impure_get_CALLER_0_51(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_5s_1)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_4s_1, s_Uint_usize_cons(0))))))
+  ensures p_2_Tuple_$_Int_i32_$_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_2_Tuple_read_0(_0_3s_0)) in
+(let _0_6s_1 == (f_get(_0_1s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_5s_1, _0_6s_1)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+
+method m_do_transform_impure_CALLER_0_51(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Int_i32(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
+(let _0_4s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_5s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1))))))
+  ensures p_2_Tuple_$_Int_i32_$_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_2_Tuple_read_0(_0_3s_0)) in
+(let _0_6s_1 == (f_do_transform(_0_1s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_5s_1, _0_6s_1)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+
+method m_set_CALLER_0_51(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires p_Int_i32(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_6s_1))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_5s_1, s_Uint_usize_cons(0)))))))
+  ensures p_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_1s_0)) in
+(let _0_7s_1 == (s_Vector_read_0(_0_4s_0)) in
+mir_binop_Eq_usize_usize(_0_6s_1, _0_7s_1))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (f_get(_0_4s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_6s_1, _0_3s_0)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_7s_1 == (s_3_Tuple_cons(_0_1s_0, _0_8s_1, _0_4s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Vector_read_0(s_3_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Eq_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? (let _1_12s_1 == (s_3_Tuple_read_2(_0_7s_1)) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_3_Tuple_read_0(_0_7s_1)) in
+      (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1)))))
+    : s_Bool_cons(true))))))))))))))))
+
+method m_apply_row_by_row_rec_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Vector(_2p)
+  requires p_Uint_usize(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_5s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_6s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_5s_1, _0_6s_1)))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+mir_binop_Ge_usize_usize(_0_3s_0, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Ge_usize_usize(_0_5s_1, s_Uint_usize_cons(1)))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_3s_0 == (p_Uint_usize_snap(_3p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_2s_0)) in
+mir_binop_Lt_usize_usize(_0_3s_0, _0_6s_1))))))
+  ensures p_2_Tuple_$_Vector_$_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Vector_read_0(s_2_Tuple_read_0(_0_4s_0)))) in
+(let _0_8s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_2s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_8s_1))) in
+s_Bool_cons((_0_6s_1) == (_0_7s_1))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_4s_0))) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_8s_1))) in
+s_Bool_cons((_0_6s_1) == (_0_7s_1))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_7s_1 == (s_3_Tuple_cons(_0_8s_1, _0_2s_0, _0_4s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_12s_1 == (s_2_Tuple_read_0(s_3_Tuple_read_2(_0_7s_1))) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_3_Tuple_read_1(_0_7s_1)) in
+      (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1))))))))))))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Vector_snap(_2p))) in
+(let _0_3s_0 == (old(p_Uint_usize_snap(_3p))) in
+(let _0_4s_0 == (p_2_Tuple_$_Vector_$_ClampTransform_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_7s_1 == (s_4_Tuple_cons(_0_8s_1, _0_2s_0, _0_4s_0, _0_1s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_4_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_4_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_12s_1 == (s_2_Tuple_read_0(s_4_Tuple_read_2(_0_7s_1))) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_4_Tuple_read_3(_0_7s_1)) in
+      (let _1_17s_1 == (s_4_Tuple_read_1(_0_7s_1)) in
+      (let _1_16s_1 == (f_get(_1_17s_1, qvar_0_0)) in
+      (let _1_14s_1 == (f_do_transform(_1_15s_1, _1_16s_1)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1))))))))))))))))))))))
+{
+label start
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  var _11p: Ref
+  var _12p: Ref
+  var _13p: Ref
+  var _14p: Ref
+  var _15p: Ref
+  var _16p: Ref
+  var _17p: Ref
+  var _18p: Ref
+  var _19p: Ref
+  var _20p: Ref
+  var _21p: Ref
+  var _22p: Ref
+  var _23p: Ref
+  var _24p: Ref
+  var _25p: Ref
+  var _26p: Ref
+  var _27p: Ref
+  var _28p: Ref
+  var _29p: Ref
+  var _30p: Ref
+  var _31p: Ref
+  goto bb_0
+label bb_0
+  // _8 = _3
+  assign_p_Uint_usize(_8p, p_Uint_usize_snap(_3p))
+  // _7 = Ge(move _8, const 1_usize)
+  var _tmp0: s_Uint_usize
+  _tmp0 := p_Uint_usize_snap(_8p)
+  exhale p_Uint_usize(_8p)
+  assign_p_Bool(_7p, mir_binop_Ge_usize_usize(_tmp0, s_Uint_usize_cons(1)))
+  // switchInt(move _7) -> [0: bb4, otherwise: bb1]
+  var _tmp1: s_Bool
+  _tmp1 := p_Bool_snap(_7p)
+  exhale p_Bool(_7p)
+  if (s_Bool_read_0(_tmp1) == false) { goto bb_4 }
+  else { goto bb_1 }
+label bb_1
+  // _9 = move _1
+  var _tmp2: s_ClampTransform
+  _tmp2 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_9p, _tmp2)
+  // _10 = move _2
+  var _tmp3: s_Vector
+  _tmp3 := p_Vector_snap(_2p)
+  exhale p_Vector(_2p)
+  assign_p_Vector(_10p, _tmp3)
+  // _12 = _3
+  assign_p_Uint_usize(_12p, p_Uint_usize_snap(_3p))
+  // _13 = CheckedSub(_12, const 1_usize)
+  assign_p_2_Tuple_$_Uint_usize_$_Bool(_13p, mir_checkedbinop_Sub_usize_usize(p_Uint_usize_snap(_12p), s_Uint_usize_cons(1)))
+  // assert(!move (_13.1: bool), "attempt to compute `{} - {}`, which would overflow", move _12, const 1_usize) -> [success: bb2, unwind: bb9]
+  unfold p_2_Tuple_$_Uint_usize_$_Bool(_13p)
+  var _tmp4: s_Bool
+  _tmp4 := p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_13p))
+  exhale p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_13p))
+  exhale (s_Bool_read_0(_tmp4)) == (false)
+  if (s_Bool_read_0(_tmp4) == false) { goto bb_2 }
+  else { goto bb_9 }
+label bb_2
+  // _11 = move (_13.0: usize)
+  var _tmp5: s_Uint_usize
+  _tmp5 := p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_13p))
+  exhale p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_13p))
+  assign_p_Uint_usize(_11p, _tmp5)
+  // _6 = apply_row_by_row_rec(move _9, move _10, move _11) -> [return: bb3, unwind: bb9]
+  m_apply_row_by_row_rec_CALLER_0_51(_6p, _9p, _10p, _11p)
+  goto bb_3
+label bb_3
+  // goto -> bb5
+  goto bb_5
+label bb_4
+  // _14 = move _2
+  var _tmp6: s_Vector
+  _tmp6 := p_Vector_snap(_2p)
+  exhale p_Vector(_2p)
+  assign_p_Vector(_14p, _tmp6)
+  // _15 = move _1
+  var _tmp7: s_ClampTransform
+  _tmp7 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_15p, _tmp7)
+  // _6 = (move _14, move _15)
+  var _tmp8: s_Vector
+  _tmp8 := p_Vector_snap(_14p)
+  exhale p_Vector(_14p)
+  var _tmp9: s_ClampTransform
+  _tmp9 := p_ClampTransform_snap(_15p)
+  exhale p_ClampTransform(_15p)
+  assign_p_2_Tuple_$_Vector_$_ClampTransform(_6p, s_2_Tuple_cons(_tmp8, _tmp9))
+  // goto -> bb5
+  goto bb_5
+label bb_5
+  // PlaceMention(_6)
+  // _4 = move (_6.0: Vector)
+  unfold p_2_Tuple_$_Vector_$_ClampTransform(_6p)
+  var _tmp10: s_Vector
+  _tmp10 := p_Vector_snap(p_2_Tuple_$_Vector_$_ClampTransform_field_0(_6p))
+  exhale p_Vector(p_2_Tuple_$_Vector_$_ClampTransform_field_0(_6p))
+  assign_p_Vector(_4p, _tmp10)
+  // _5 = move (_6.1: ClampTransform)
+  var _tmp11: s_ClampTransform
+  _tmp11 := p_ClampTransform_snap(p_2_Tuple_$_Vector_$_ClampTransform_field_1(_6p))
+  exhale p_ClampTransform(p_2_Tuple_$_Vector_$_ClampTransform_field_1(_6p))
+  assign_p_ClampTransform(_5p, _tmp11)
+  // _19 = move _4
+  var _tmp12: s_Vector
+  _tmp12 := p_Vector_snap(_4p)
+  exhale p_Vector(_4p)
+  assign_p_Vector(_19p, _tmp12)
+  // _20 = _3
+  assign_p_Uint_usize(_20p, p_Uint_usize_snap(_3p))
+  // _18 = Vector::impure_get(move _19, move _20) -> [return: bb6, unwind: bb9]
+  m_impure_get_CALLER_0_51(_18p, _19p, _20p)
+  goto bb_6
+label bb_6
+  // PlaceMention(_18)
+  // _16 = (_18.0: i32)
+  unfold p_2_Tuple_$_Int_i32_$_Vector(_18p)
+  assign_p_Int_i32(_16p, p_Int_i32_snap(p_2_Tuple_$_Int_i32_$_Vector_field_0(_18p)))
+  // _17 = move (_18.1: Vector)
+  var _tmp13: s_Vector
+  _tmp13 := p_Vector_snap(p_2_Tuple_$_Int_i32_$_Vector_field_1(_18p))
+  exhale p_Vector(p_2_Tuple_$_Int_i32_$_Vector_field_1(_18p))
+  assign_p_Vector(_17p, _tmp13)
+  // _24 = move _5
+  var _tmp14: s_ClampTransform
+  _tmp14 := p_ClampTransform_snap(_5p)
+  exhale p_ClampTransform(_5p)
+  assign_p_ClampTransform(_24p, _tmp14)
+  // _25 = _16
+  assign_p_Int_i32(_25p, p_Int_i32_snap(_16p))
+  // _23 = ClampTransform::do_transform_impure(move _24, move _25) -> [return: bb7, unwind: bb9]
+  m_do_transform_impure_CALLER_0_51(_23p, _24p, _25p)
+  goto bb_7
+label bb_7
+  // PlaceMention(_23)
+  // _21 = (_23.0: i32)
+  unfold p_2_Tuple_$_Int_i32_$_ClampTransform(_23p)
+  assign_p_Int_i32(_21p, p_Int_i32_snap(p_2_Tuple_$_Int_i32_$_ClampTransform_field_0(_23p)))
+  // _22 = move (_23.1: ClampTransform)
+  var _tmp15: s_ClampTransform
+  _tmp15 := p_ClampTransform_snap(p_2_Tuple_$_Int_i32_$_ClampTransform_field_1(_23p))
+  exhale p_ClampTransform(p_2_Tuple_$_Int_i32_$_ClampTransform_field_1(_23p))
+  assign_p_ClampTransform(_22p, _tmp15)
+  // _27 = move _17
+  var _tmp16: s_Vector
+  _tmp16 := p_Vector_snap(_17p)
+  exhale p_Vector(_17p)
+  assign_p_Vector(_27p, _tmp16)
+  // _28 = _3
+  assign_p_Uint_usize(_28p, p_Uint_usize_snap(_3p))
+  // _29 = _21
+  assign_p_Int_i32(_29p, p_Int_i32_snap(_21p))
+  // _26 = Vector::set(move _27, move _28, move _29) -> [return: bb8, unwind: bb9]
+  m_set_CALLER_0_51(_26p, _27p, _28p, _29p)
+  goto bb_8
+label bb_8
+  // FakeRead(ForLet(None), _26)
+  // _30 = move _26
+  var _tmp17: s_Vector
+  _tmp17 := p_Vector_snap(_26p)
+  exhale p_Vector(_26p)
+  assign_p_Vector(_30p, _tmp17)
+  // _31 = move _22
+  var _tmp18: s_ClampTransform
+  _tmp18 := p_ClampTransform_snap(_22p)
+  exhale p_ClampTransform(_22p)
+  assign_p_ClampTransform(_31p, _tmp18)
+  // _0 = (move _30, move _31)
+  var _tmp19: s_Vector
+  _tmp19 := p_Vector_snap(_30p)
+  exhale p_Vector(_30p)
+  var _tmp20: s_ClampTransform
+  _tmp20 := p_ClampTransform_snap(_31p)
+  exhale p_ClampTransform(_31p)
+  assign_p_2_Tuple_$_Vector_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp19, _tmp20))
+  // return
+  exhale p_Uint_usize(_3p)
+  goto end
+label bb_9
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_apply_id_rec_CALLER_0_62(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+mir_binop_Lt_usize_usize(_0_2s_0, s_Uint_usize_cons(1000)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Eq_usize_usize(_0_4s_1, s_Uint_usize_cons(2000))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_4s_1, s_Uint_usize_cons(1))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_5s_1)))))
+  ensures p_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_1s_0))) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_0_Tuple_cons()) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_0_Tuple_cons()) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
+
+method m_apply_id_rec_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+mir_binop_Lt_usize_usize(_0_2s_0, s_Uint_usize_cons(1000)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Eq_usize_usize(_0_4s_1, s_Uint_usize_cons(2000))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0)))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_4s_1, s_Uint_usize_cons(1))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_5s_1)))))
+  ensures p_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_1s_0))) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_0_Tuple_cons()) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (p_Vector_snap(_0p)) in
+(let _0_5s_1 == (s_0_Tuple_cons()) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  goto bb_0
+label bb_0
+  // _5 = _2
+  assign_p_Uint_usize(_5p, p_Uint_usize_snap(_2p))
+  // _6 = CheckedAdd(_5, const 1_usize)
+  assign_p_2_Tuple_$_Uint_usize_$_Bool(_6p, mir_checkedbinop_Add_usize_usize(p_Uint_usize_snap(_5p), s_Uint_usize_cons(1)))
+  // assert(!move (_6.1: bool), "attempt to compute `{} + {}`, which would overflow", move _5, const 1_usize) -> [success: bb1, unwind: bb7]
+  unfold p_2_Tuple_$_Uint_usize_$_Bool(_6p)
+  var _tmp0: s_Bool
+  _tmp0 := p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_6p))
+  exhale p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_6p))
+  exhale (s_Bool_read_0(_tmp0)) == (false)
+  if (s_Bool_read_0(_tmp0) == false) { goto bb_1 }
+  else { goto bb_7 }
+label bb_1
+  // _4 = move (_6.0: usize)
+  var _tmp1: s_Uint_usize
+  _tmp1 := p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_6p))
+  exhale p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_6p))
+  assign_p_Uint_usize(_4p, _tmp1)
+  // _3 = Lt(move _4, const 10_usize)
+  var _tmp2: s_Uint_usize
+  _tmp2 := p_Uint_usize_snap(_4p)
+  exhale p_Uint_usize(_4p)
+  assign_p_Bool(_3p, mir_binop_Lt_usize_usize(_tmp2, s_Uint_usize_cons(10)))
+  // switchInt(move _3) -> [0: bb5, otherwise: bb2]
+  var _tmp3: s_Bool
+  _tmp3 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read_0(_tmp3) == false) { goto bb_5 }
+  else { goto bb_2 }
+label bb_2
+  // _7 = move _1
+  var _tmp4: s_Vector
+  _tmp4 := p_Vector_snap(_1p)
+  exhale p_Vector(_1p)
+  assign_p_Vector(_7p, _tmp4)
+  // _9 = _2
+  assign_p_Uint_usize(_9p, p_Uint_usize_snap(_2p))
+  // _10 = CheckedAdd(_9, const 1_usize)
+  assign_p_2_Tuple_$_Uint_usize_$_Bool(_10p, mir_checkedbinop_Add_usize_usize(p_Uint_usize_snap(_9p), s_Uint_usize_cons(1)))
+  // assert(!move (_10.1: bool), "attempt to compute `{} + {}`, which would overflow", move _9, const 1_usize) -> [success: bb3, unwind: bb7]
+  unfold p_2_Tuple_$_Uint_usize_$_Bool(_10p)
+  var _tmp5: s_Bool
+  _tmp5 := p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_10p))
+  exhale p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(_10p))
+  exhale (s_Bool_read_0(_tmp5)) == (false)
+  if (s_Bool_read_0(_tmp5) == false) { goto bb_3 }
+  else { goto bb_7 }
+label bb_3
+  // _8 = move (_10.0: usize)
+  var _tmp6: s_Uint_usize
+  _tmp6 := p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_10p))
+  exhale p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(_10p))
+  assign_p_Uint_usize(_8p, _tmp6)
+  // _0 = apply_id_rec(move _7, move _8) -> [return: bb4, unwind: bb7]
+  m_apply_id_rec_CALLER_0_62(_0p, _7p, _8p)
+  goto bb_4
+label bb_4
+  // goto -> bb6
+  goto bb_6
+label bb_5
+  // _0 = move _1
+  var _tmp7: s_Vector
+  _tmp7 := p_Vector_snap(_1p)
+  exhale p_Vector(_1p)
+  assign_p_Vector(_0p, _tmp7)
+  // goto -> bb6
+  goto bb_6
+label bb_6
+  // return
+  exhale p_Uint_usize(_2p)
+  goto end
+label bb_7
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_assert_geq_0_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Int_i32_snap(_1p)) in
+mir_binop_Ge_i32_i32(_0_1s_0, s_Int_i32_cons(0))))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_Int_i32(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_max_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_Int_i32(_0p)
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  goto bb_0
+label bb_0
+  // _4 = _1
+  assign_p_Int_i32(_4p, p_Int_i32_snap(_1p))
+  // _5 = _2
+  assign_p_Int_i32(_5p, p_Int_i32_snap(_2p))
+  // _3 = Gt(move _4, move _5)
+  var _tmp0: s_Int_i32
+  _tmp0 := p_Int_i32_snap(_4p)
+  exhale p_Int_i32(_4p)
+  var _tmp1: s_Int_i32
+  _tmp1 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  assign_p_Bool(_3p, mir_binop_Gt_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _3) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read_0(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _0 = _1
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_1p))
+  // goto -> bb3
+  goto bb_3
+label bb_2
+  // _0 = _2
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_2p))
+  // goto -> bb3
+  goto bb_3
+label bb_3
+  // return
+  exhale p_Int_i32(_1p)
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_min_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_Int_i32(_0p)
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  goto bb_0
+label bb_0
+  // _4 = _1
+  assign_p_Int_i32(_4p, p_Int_i32_snap(_1p))
+  // _5 = _2
+  assign_p_Int_i32(_5p, p_Int_i32_snap(_2p))
+  // _3 = Gt(move _4, move _5)
+  var _tmp0: s_Int_i32
+  _tmp0 := p_Int_i32_snap(_4p)
+  exhale p_Int_i32(_4p)
+  var _tmp1: s_Int_i32
+  _tmp1 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  assign_p_Bool(_3p, mir_binop_Gt_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _3) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read_0(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _0 = _2
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_2p))
+  // goto -> bb3
+  goto bb_3
+label bb_2
+  // _0 = _1
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_1p))
+  // goto -> bb3
+  goto bb_3
+label bb_3
+  // return
+  exhale p_Int_i32(_1p)
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_make_clamp_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bounds(_1p)
+  ensures p_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Bounds_snap(_1p))) in
+(let _0_2s_0 == (p_ClampTransform_snap(_0p)) in
+(let _0_4s_1 == (s_Ref_Not_cons(s_ClampTransform_read_0(_0_2s_0))) in
+(let _0_6s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_6s_1))) in
+s_Bool_cons((_0_4s_1) == (_0_5s_1))))))))
+{
+label start
+  var _2p: Ref
+  goto bb_0
+label bb_0
+  // _2 = move _1
+  var _tmp0: s_Bounds
+  _tmp0 := p_Bounds_snap(_1p)
+  exhale p_Bounds(_1p)
+  assign_p_Bounds(_2p, _tmp0)
+  // _0 = ClampTransform { bounds: move _2 }
+  var _tmp1: s_Bounds
+  _tmp1 := p_Bounds_snap(_2p)
+  exhale p_Bounds(_2p)
+  assign_p_ClampTransform(_0p, s_ClampTransform_cons(_tmp1))
+  // return
+  goto end
+label end
+  // return
+}
+
+method m_do_transform_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Int_i32(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
+(let _0_4s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_5s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1))))))
+  ensures p_Int_i32(_0p)
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  goto bb_0
+label bb_0
+  // _3 = ((_1.0: Bounds).1: i32)
+  unfold p_ClampTransform(_1p)
+  unfold p_Bounds(p_ClampTransform_field_0(_1p))
+  assign_p_Int_i32(_3p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _5 = ((_1.0: Bounds).0: i32)
+  assign_p_Int_i32(_5p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _6 = _2
+  assign_p_Int_i32(_6p, p_Int_i32_snap(_2p))
+  // _4 = min(move _5, move _6) -> [return: bb1, unwind: bb3]
+  var _tmp0: s_Int_i32
+  _tmp0 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  var _tmp1: s_Int_i32
+  _tmp1 := p_Int_i32_snap(_6p)
+  exhale p_Int_i32(_6p)
+  assign_p_Int_i32(_4p, f_min(_tmp0, _tmp1))
+  goto bb_1
+label bb_1
+  // _0 = max(move _3, move _4) -> [return: bb2, unwind: bb3]
+  var _tmp2: s_Int_i32
+  _tmp2 := p_Int_i32_snap(_3p)
+  exhale p_Int_i32(_3p)
+  var _tmp3: s_Int_i32
+  _tmp3 := p_Int_i32_snap(_4p)
+  exhale p_Int_i32(_4p)
+  assign_p_Int_i32(_0p, f_max(_tmp2, _tmp3))
+  goto bb_2
+label bb_2
+  // return
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  exhale p_ClampTransform(_1p)
+  exhale p_Int_i32(_2p)
+  goto end
+label bb_3
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_do_transform_impure_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Int_i32(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_ClampTransform_snap(_1p)) in
+(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
+(let _0_4s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_0_1s_0))) in
+(let _0_5s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_0_1s_0))) in
+mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1))))))
+  ensures p_2_Tuple_$_Int_i32_$_ClampTransform(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_2_Tuple_read_0(_0_3s_0)) in
+(let _0_6s_1 == (f_do_transform(_0_1s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_5s_1, _0_6s_1)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_ClampTransform_snap(_1p))) in
+(let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
+(let _0_3s_0 == (p_2_Tuple_$_Int_i32_$_ClampTransform_snap(_0p)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_2_Tuple_read_1(_0_3s_0))) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  var _11p: Ref
+  var _12p: Ref
+  var _13p: Ref
+  var _14p: Ref
+  goto bb_0
+label bb_0
+  // _4 = _2
+  assign_p_Int_i32(_4p, p_Int_i32_snap(_2p))
+  // _5 = ((_1.0: Bounds).1: i32)
+  unfold p_ClampTransform(_1p)
+  unfold p_Bounds(p_ClampTransform_field_0(_1p))
+  assign_p_Int_i32(_5p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _3 = Lt(move _4, move _5)
+  var _tmp0: s_Int_i32
+  _tmp0 := p_Int_i32_snap(_4p)
+  exhale p_Int_i32(_4p)
+  var _tmp1: s_Int_i32
+  _tmp1 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  assign_p_Bool(_3p, mir_binop_Lt_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _3) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read_0(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _6 = ((_1.0: Bounds).1: i32)
+  assign_p_Int_i32(_6p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _7 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp3: s_ClampTransform
+  _tmp3 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_7p, _tmp3)
+  // _0 = (move _6, move _7)
+  var _tmp4: s_Int_i32
+  _tmp4 := p_Int_i32_snap(_6p)
+  exhale p_Int_i32(_6p)
+  var _tmp5: s_ClampTransform
+  _tmp5 := p_ClampTransform_snap(_7p)
+  exhale p_ClampTransform(_7p)
+  assign_p_2_Tuple_$_Int_i32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp4, _tmp5))
+  // goto -> bb6
+  goto bb_6
+label bb_2
+  // _9 = _2
+  assign_p_Int_i32(_9p, p_Int_i32_snap(_2p))
+  // _10 = ((_1.0: Bounds).0: i32)
+  assign_p_Int_i32(_10p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _8 = Gt(move _9, move _10)
+  var _tmp6: s_Int_i32
+  _tmp6 := p_Int_i32_snap(_9p)
+  exhale p_Int_i32(_9p)
+  var _tmp7: s_Int_i32
+  _tmp7 := p_Int_i32_snap(_10p)
+  exhale p_Int_i32(_10p)
+  assign_p_Bool(_8p, mir_binop_Gt_i32_i32(_tmp6, _tmp7))
+  // switchInt(move _8) -> [0: bb4, otherwise: bb3]
+  var _tmp8: s_Bool
+  _tmp8 := p_Bool_snap(_8p)
+  exhale p_Bool(_8p)
+  if (s_Bool_read_0(_tmp8) == false) { goto bb_4 }
+  else { goto bb_3 }
+label bb_3
+  // _11 = ((_1.0: Bounds).0: i32)
+  assign_p_Int_i32(_11p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _12 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp9: s_ClampTransform
+  _tmp9 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_12p, _tmp9)
+  // _0 = (move _11, move _12)
+  var _tmp10: s_Int_i32
+  _tmp10 := p_Int_i32_snap(_11p)
+  exhale p_Int_i32(_11p)
+  var _tmp11: s_ClampTransform
+  _tmp11 := p_ClampTransform_snap(_12p)
+  exhale p_ClampTransform(_12p)
+  assign_p_2_Tuple_$_Int_i32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp10, _tmp11))
+  // goto -> bb5
+  goto bb_5
+label bb_4
+  // _13 = _2
+  assign_p_Int_i32(_13p, p_Int_i32_snap(_2p))
+  // _14 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp12: s_ClampTransform
+  _tmp12 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_14p, _tmp12)
+  // _0 = (move _13, move _14)
+  var _tmp13: s_Int_i32
+  _tmp13 := p_Int_i32_snap(_13p)
+  exhale p_Int_i32(_13p)
+  var _tmp14: s_ClampTransform
+  _tmp14 := p_ClampTransform_snap(_14p)
+  exhale p_ClampTransform(_14p)
+  assign_p_2_Tuple_$_Int_i32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp13, _tmp14))
+  // goto -> bb5
+  goto bb_5
+label bb_5
+  // goto -> bb6
+  goto bb_6
+label bb_6
+  // return
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_true_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bool(_1p)
+  requires s_Bool_read_0(p_Bool_snap(_1p))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_Bool(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_eq_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Int_i32_snap(_1p)) in
+(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
+mir_binop_Eq_i32_i32(_0_1s_0, _0_2s_0))))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_Int_i32(_1p)
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_assert_eq_snap_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Vector(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Vector_snap(_2p)) in
+(let _0_4s_1 == (s_Ref_Not_cons(_0_1s_0)) in
+(let _0_6s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_5s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_6s_1))) in
+s_Bool_cons((_0_4s_1) == (_0_5s_1))))))))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_Vector(_1p)
+  exhale p_Vector(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_set_CALLER_0_82(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Uint_usize(_2p)
+  requires p_Int_i32(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+mir_binop_Ge_usize_usize(_0_2s_0, s_Uint_usize_cons(0))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Lt_usize_usize(_0_2s_0, _0_6s_1))))))
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Uint_usize_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Ge_usize_usize(_0_5s_1, s_Uint_usize_cons(0)))))))
+  ensures p_Vector(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (s_Vector_read_0(_0_1s_0)) in
+(let _0_7s_1 == (s_Vector_read_0(_0_4s_0)) in
+mir_binop_Eq_usize_usize(_0_6s_1, _0_7s_1))))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (f_get(_0_4s_0, _0_2s_0)) in
+mir_binop_Eq_i32_i32(_0_6s_1, _0_3s_0)))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
+(let _0_2s_0 == (old(p_Uint_usize_snap(_2p))) in
+(let _0_3s_0 == (old(p_Int_i32_snap(_3p))) in
+(let _0_4s_0 == (p_Vector_snap(_0p)) in
+(let _0_6s_1 == (s_0_Tuple_cons()) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_7s_1 == (s_3_Tuple_cons(_0_1s_0, _0_8s_1, _0_4s_0)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_usize_usize(qvar_0_0, s_Uint_usize_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Vector_read_0(s_3_Tuple_read_0(_0_7s_1))) in
+  (let _1_5s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_1(_0_7s_1))) in
+    (let _1_8s_1 == (mir_binop_Eq_usize_usize(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? (let _1_12s_1 == (s_3_Tuple_read_2(_0_7s_1)) in
+      (let _1_11s_1 == (f_get(_1_12s_1, qvar_0_0)) in
+      (let _1_15s_1 == (s_3_Tuple_read_0(_0_7s_1)) in
+      (let _1_14s_1 == (f_get(_1_15s_1, qvar_0_0)) in
+      mir_binop_Eq_i32_i32(_1_11s_1, _1_14s_1)))))
+    : s_Bool_cons(true))))))))))))))))
+
+method m_assert_eq_CALLER_0_82(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Int_i32_snap(_1p)) in
+(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
+mir_binop_Eq_i32_i32(_0_1s_0, _0_2s_0))))
+  ensures p_0_Tuple(_0p)
+
+method m_vector_client_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Vector(_1p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_3s_1 == (s_Vector_read_0(_0_1s_0)) in
+mir_binop_Eq_usize_usize(_0_3s_1, s_Uint_usize_cons(10)))))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  var _2p: Ref
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  goto bb_0
+label bb_0
+  // _3 = move _1
+  var _tmp0: s_Vector
+  _tmp0 := p_Vector_snap(_1p)
+  exhale p_Vector(_1p)
+  assign_p_Vector(_3p, _tmp0)
+  // _2 = Vector::set(move _3, const 5_usize, const 42_i32) -> [return: bb1, unwind: bb4]
+  var _tmp1: Ref
+  assign_p_Uint_usize(_tmp1, s_Uint_usize_cons(5))
+  var _tmp2: Ref
+  assign_p_Int_i32(_tmp2, s_Int_i32_cons(42))
+  m_set_CALLER_0_82(_2p, _3p, _tmp1, _tmp2)
+  goto bb_1
+label bb_1
+  // FakeRead(ForLet(None), _2)
+  // _5 = move _2
+  var _tmp3: s_Vector
+  _tmp3 := p_Vector_snap(_2p)
+  exhale p_Vector(_2p)
+  assign_p_Vector(_5p, _tmp3)
+  // _4 = Vector::get(move _5, const 5_usize) -> [return: bb2, unwind: bb4]
+  var _tmp4: s_Vector
+  _tmp4 := p_Vector_snap(_5p)
+  exhale p_Vector(_5p)
+  assign_p_Int_i32(_4p, f_get(_tmp4, s_Uint_usize_cons(5)))
+  goto bb_2
+label bb_2
+  // FakeRead(ForLet(None), _4)
+  // _7 = _4
+  assign_p_Int_i32(_7p, p_Int_i32_snap(_4p))
+  // _6 = assert_eq(move _7, const 42_i32) -> [return: bb3, unwind: bb4]
+  var _tmp5: Ref
+  assign_p_Int_i32(_tmp5, s_Int_i32_cons(42))
+  m_assert_eq_CALLER_0_82(_6p, _7p, _tmp5)
+  goto bb_3
+label bb_3
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  goto end
+label bb_4
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_between_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_Int_i32(_1p)
+  requires p_Int_i32(_2p)
+  requires p_Int_i32(_3p)
+  ensures p_Bool(_0p)
+{
+label start
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  goto bb_0
+label bb_0
+  // _5 = _1
+  assign_p_Int_i32(_5p, p_Int_i32_snap(_1p))
+  // _6 = _3
+  assign_p_Int_i32(_6p, p_Int_i32_snap(_3p))
+  // _4 = Le(move _5, move _6)
+  var _tmp0: s_Int_i32
+  _tmp0 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  var _tmp1: s_Int_i32
+  _tmp1 := p_Int_i32_snap(_6p)
+  exhale p_Int_i32(_6p)
+  assign_p_Bool(_4p, mir_binop_Le_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _4) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_4p)
+  exhale p_Bool(_4p)
+  if (s_Bool_read_0(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _7 = _1
+  assign_p_Int_i32(_7p, p_Int_i32_snap(_1p))
+  // _8 = _2
+  assign_p_Int_i32(_8p, p_Int_i32_snap(_2p))
+  // _0 = Ge(move _7, move _8)
+  var _tmp3: s_Int_i32
+  _tmp3 := p_Int_i32_snap(_7p)
+  exhale p_Int_i32(_7p)
+  var _tmp4: s_Int_i32
+  _tmp4 := p_Int_i32_snap(_8p)
+  exhale p_Int_i32(_8p)
+  assign_p_Bool(_0p, mir_binop_Ge_i32_i32(_tmp3, _tmp4))
+  // goto -> bb3
+  goto bb_3
+label bb_2
+  // _0 = const false
+  assign_p_Bool(_0p, s_Bool_cons(false))
+  // goto -> bb3
+  goto bb_3
+label bb_3
+  // return
+  exhale p_Int_i32(_1p)
+  exhale p_Int_i32(_2p)
+  exhale p_Int_i32(_3p)
+  goto end
+label end
+  // return
+}
+
+method m_final_assert_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref,
+  _3p: Ref
+)
+  requires p_Vector(_1p)
+  requires p_Int_i32(_2p)
+  requires p_Int_i32(_3p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
+(let _0_2s_0 == (p_Int_i32_snap(_2p)) in
+(let _0_3s_0 == (p_Int_i32_snap(_3p)) in
+(let _0_5s_1 == (s_0_Tuple_cons()) in
+(let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
+(let _0_8s_1 == (s_Ref_Not_cons(_0_3s_0)) in
+(let _0_6s_1 == (s_3_Tuple_cons(_0_1s_0, _0_7s_1, _0_8s_1)) in
+s_Bool_cons(forall qvar_0_0: s_Uint_usize :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Le_usize_usize(s_Uint_usize_cons(0), qvar_0_0)) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Vector_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Lt_usize_usize(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_9s_1 == (s_3_Tuple_read_0(_0_6s_1)) in
+    (let _1_8s_1 == (f_get(_1_9s_1, qvar_0_0)) in
+    (let _1_11s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_12s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_2(_0_6s_1))) in
+    f_between(_1_8s_1, _1_11s_1, _1_12s_1))))))))))))))))))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_Vector(_1p)
+  exhale p_Int_i32(_2p)
+  exhale p_Int_i32(_3p)
+  goto end
+label end
+  // return
+}
+
+method m_main_CALLER_(
+  _0p: Ref
+)
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  goto end
+label end
+  // return
+}
+
+// -----------------------------
+// functions
+// -----------------------------
+function f_get(
+  _1p: s_Vector,
+  _2p: s_Uint_usize
+): s_Int_i32
+  requires s_Bool_read_0(mir_binop_Ge_usize_usize(_2p, s_Uint_usize_cons(0)))
+  requires s_Bool_read_0((let _0_5s_1 == (s_Vector_read_0(_1p)) in
+mir_binop_Lt_usize_usize(_2p, _0_5s_1)))
+  requires s_Bool_read_0((let _0_4s_1 == (s_Vector_read_0(_1p)) in
+mir_binop_Ge_usize_usize(_0_4s_1, s_Uint_usize_cons(0))))
+
+function f_min(
+  _1p: s_Int_i32,
+  _2p: s_Int_i32
+): s_Int_i32
+{
+  (let _0_3s_1 == (mir_binop_Gt_i32_i32(_1p, _2p)) in
+(s_Bool_read_0(_0_3s_1)) == (false)
+? _1p
+: _2p)
+}
+
+function f_max(
+  _1p: s_Int_i32,
+  _2p: s_Int_i32
+): s_Int_i32
+{
+  (let _0_3s_1 == (mir_binop_Gt_i32_i32(_1p, _2p)) in
+(s_Bool_read_0(_0_3s_1)) == (false)
+? _2p
+: _1p)
+}
+
+function f_do_transform(
+  _1p: s_ClampTransform,
+  _2p: s_Int_i32
+): s_Int_i32
+  requires s_Bool_read_0((let _0_4s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_1p))) in
+(let _0_5s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_1p))) in
+mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1))))
+{
+  (let _0_3s_1 == (s_Bounds_read_1(s_ClampTransform_read_0(_1p))) in
+(let _0_5s_1 == (s_Bounds_read_0(s_ClampTransform_read_0(_1p))) in
+(let _0_4s_1 == (f_min(_0_5s_1, _2p)) in
+f_max(_0_3s_1, _0_4s_1))))
+}
+
+function f_between(
+  _1p: s_Int_i32,
+  _2p: s_Int_i32,
+  _3p: s_Int_i32
+): s_Bool
+{
+  (let _0_4s_1 == (mir_binop_Le_i32_i32(_1p, _3p)) in
+(s_Bool_read_0(_0_4s_1)) == (false)
+? s_Bool_cons(false)
+: mir_binop_Ge_i32_i32(_1p, _2p))
+}
+
+// -----------------------------
+// MIR builtins
+// -----------------------------
+function mir_binop_Ge_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_Bool
+{
+  s_Bool_cons((s_Uint_usize_read_0(arg1)) >= (s_Uint_usize_read_0(arg2)))
+}
+
+function mir_binop_Lt_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_Bool
+{
+  s_Bool_cons((s_Uint_usize_read_0(arg1)) < (s_Uint_usize_read_0(arg2)))
+}
+
+function mir_binop_Eq_i32_i32(
+  arg1: s_Int_i32,
+  arg2: s_Int_i32
+): s_Bool
+{
+  s_Bool_cons((s_Int_i32_read_0(arg1)) == (s_Int_i32_read_0(arg2)))
+}
+
+function mir_binop_Eq_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_Bool
+{
+  s_Bool_cons((s_Uint_usize_read_0(arg1)) == (s_Uint_usize_read_0(arg2)))
+}
+
+function mir_binop_Le_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_Bool
+{
+  s_Bool_cons((s_Uint_usize_read_0(arg1)) <= (s_Uint_usize_read_0(arg2)))
+}
+
+function mir_checkedbinop_Sub_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_2_Tuple[s_Uint_usize, s_Bool]
+{
+  (let val == ((s_Uint_usize_read_0(arg1)) - (s_Uint_usize_read_0(arg2))) in
+(let wrapped_val == ((val) % (18446744073709551616)) in
+s_2_Tuple_cons(s_Uint_usize_cons(wrapped_val), s_Bool_cons((wrapped_val) != (val)))))
+}
+
+function mir_binop_Lt_i32_i32(
+  arg1: s_Int_i32,
+  arg2: s_Int_i32
+): s_Bool
+{
+  s_Bool_cons((s_Int_i32_read_0(arg1)) < (s_Int_i32_read_0(arg2)))
+}
+
+function mir_binop_Gt_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_Bool
+{
+  s_Bool_cons((s_Uint_usize_read_0(arg1)) > (s_Uint_usize_read_0(arg2)))
+}
+
+function mir_binop_Gt_i32_i32(
+  arg1: s_Int_i32,
+  arg2: s_Int_i32
+): s_Bool
+{
+  s_Bool_cons((s_Int_i32_read_0(arg1)) > (s_Int_i32_read_0(arg2)))
+}
+
+function mir_binop_BitAnd_bool_bool(
+  arg1: s_Bool,
+  arg2: s_Bool
+): s_Bool
+{
+  s_Bool_cons((s_Bool_read_0(arg1)) && (s_Bool_read_0(arg2)))
+}
+
+function mir_checkedbinop_Add_usize_usize(
+  arg1: s_Uint_usize,
+  arg2: s_Uint_usize
+): s_2_Tuple[s_Uint_usize, s_Bool]
+{
+  (let val == ((s_Uint_usize_read_0(arg1)) + (s_Uint_usize_read_0(arg2))) in
+(let wrapped_val == ((val) % (18446744073709551616)) in
+s_2_Tuple_cons(s_Uint_usize_cons(wrapped_val), s_Bool_cons((wrapped_val) != (val)))))
+}
+
+function mir_binop_Ge_i32_i32(
+  arg1: s_Int_i32,
+  arg2: s_Int_i32
+): s_Bool
+{
+  s_Bool_cons((s_Int_i32_read_0(arg1)) >= (s_Int_i32_read_0(arg2)))
+}
+
+function mir_binop_Le_i32_i32(
+  arg1: s_Int_i32,
+  arg2: s_Int_i32
+): s_Bool
+{
+  s_Bool_cons((s_Int_i32_read_0(arg1)) <= (s_Int_i32_read_0(arg2)))
+}
+
+// -----------------------------
+// generics
+// -----------------------------
+// -----------------------------
+// snapshots
+// -----------------------------
+domain s_2_Tuple[T0, T1] {
+  axiom ax_s_2_Tuple_cons_read_0 {
+    forall f0: T0, f1: T1 :: {s_2_Tuple_cons(f0, f1)} (s_2_Tuple_read_0(s_2_Tuple_cons(f0, f1))) == (f0)
+  }
+  axiom ax_s_2_Tuple_cons_read_1 {
+    forall f0: T0, f1: T1 :: {s_2_Tuple_cons(f0, f1)} (s_2_Tuple_read_1(s_2_Tuple_cons(f0, f1))) == (f1)
+  }
+  axiom ax_s_2_Tuple_cons {
+    forall self: s_2_Tuple[T0, T1] :: {s_2_Tuple_cons(s_2_Tuple_read_0(self), s_2_Tuple_read_1(self))} (s_2_Tuple_cons(s_2_Tuple_read_0(self), s_2_Tuple_read_1(self))) == (self)
+  }
+  axiom ax_s_2_Tuple_write_0_read_0 {
+    forall self: s_2_Tuple[T0, T1], val: T0 :: {s_2_Tuple_read_0(s_2_Tuple_write_0(self, val))} (s_2_Tuple_read_0(s_2_Tuple_write_0(self, val))) == (val)
+  }
+  axiom ax_s_2_Tuple_write_0_read_1 {
+    forall self: s_2_Tuple[T0, T1], val: T0 :: {s_2_Tuple_read_1(s_2_Tuple_write_0(self, val))} (s_2_Tuple_read_1(s_2_Tuple_write_0(self, val))) == (s_2_Tuple_read_1(self))
+  }
+  axiom ax_s_2_Tuple_write_1_read_0 {
+    forall self: s_2_Tuple[T0, T1], val: T1 :: {s_2_Tuple_read_0(s_2_Tuple_write_1(self, val))} (s_2_Tuple_read_0(s_2_Tuple_write_1(self, val))) == (s_2_Tuple_read_0(self))
+  }
+  axiom ax_s_2_Tuple_write_1_read_1 {
+    forall self: s_2_Tuple[T0, T1], val: T1 :: {s_2_Tuple_read_1(s_2_Tuple_write_1(self, val))} (s_2_Tuple_read_1(s_2_Tuple_write_1(self, val))) == (val)
+  }
+  function s_2_Tuple_cons(T0, T1): s_2_Tuple[T0, T1]
+  function s_2_Tuple_read_0(s_2_Tuple[T0, T1]): T0
+  function s_2_Tuple_write_0(s_2_Tuple[T0, T1], T0): s_2_Tuple[T0, T1]
+  function s_2_Tuple_read_1(s_2_Tuple[T0, T1]): T1
+  function s_2_Tuple_write_1(s_2_Tuple[T0, T1], T1): s_2_Tuple[T0, T1]
+}
+
+domain s_Int_i32 {
+  axiom ax_s_Int_i32_cons_read_0 {
+    forall f0: Int :: {s_Int_i32_cons(f0)} (s_Int_i32_read_0(s_Int_i32_cons(f0))) == (f0)
+  }
+  axiom ax_s_Int_i32_cons {
+    forall self: s_Int_i32 :: {s_Int_i32_read_0(self)} (s_Int_i32_cons(s_Int_i32_read_0(self))) == (self)
+  }
+  axiom ax_s_Int_i32_write_0_read_0 {
+    forall self: s_Int_i32, val: Int :: {s_Int_i32_read_0(s_Int_i32_write_0(self, val))} (s_Int_i32_read_0(s_Int_i32_write_0(self, val))) == (val)
+  }
+  axiom s_Int_i32_bounds {
+    forall self: s_Int_i32 :: {s_Int_i32_read_0(self)} ((-(2147483648)) <= (s_Int_i32_read_0(self))) && ((s_Int_i32_read_0(self)) <= (2147483647))
+  }
+  function s_Int_i32_cons(Int): s_Int_i32
+  function s_Int_i32_read_0(s_Int_i32): Int
+  function s_Int_i32_write_0(s_Int_i32, Int): s_Int_i32
+}
+
+domain s_Uint_usize {
+  axiom ax_s_Uint_usize_cons_read_0 {
+    forall f0: Int :: {s_Uint_usize_cons(f0)} (s_Uint_usize_read_0(s_Uint_usize_cons(f0))) == (f0)
+  }
+  axiom ax_s_Uint_usize_cons {
+    forall self: s_Uint_usize :: {s_Uint_usize_read_0(self)} (s_Uint_usize_cons(s_Uint_usize_read_0(self))) == (self)
+  }
+  axiom ax_s_Uint_usize_write_0_read_0 {
+    forall self: s_Uint_usize, val: Int :: {s_Uint_usize_read_0(s_Uint_usize_write_0(self, val))} (s_Uint_usize_read_0(s_Uint_usize_write_0(self, val))) == (val)
+  }
+  axiom s_Uint_usize_bounds {
+    forall self: s_Uint_usize :: {s_Uint_usize_read_0(self)} ((0) <= (s_Uint_usize_read_0(self))) && ((s_Uint_usize_read_0(self)) <= (18446744073709551615))
+  }
+  function s_Uint_usize_cons(Int): s_Uint_usize
+  function s_Uint_usize_read_0(s_Uint_usize): Int
+  function s_Uint_usize_write_0(s_Uint_usize, Int): s_Uint_usize
+}
+
+domain s_Vector {
+  axiom ax_s_Vector_cons_read_0 {
+    forall f0: s_Uint_usize, f1: s_Int_i32 :: {s_Vector_cons(f0, f1)} (s_Vector_read_0(s_Vector_cons(f0, f1))) == (f0)
+  }
+  axiom ax_s_Vector_cons_read_1 {
+    forall f0: s_Uint_usize, f1: s_Int_i32 :: {s_Vector_cons(f0, f1)} (s_Vector_read_1(s_Vector_cons(f0, f1))) == (f1)
+  }
+  axiom ax_s_Vector_cons {
+    forall self: s_Vector :: {s_Vector_cons(s_Vector_read_0(self), s_Vector_read_1(self))} (s_Vector_cons(s_Vector_read_0(self), s_Vector_read_1(self))) == (self)
+  }
+  axiom ax_s_Vector_write_0_read_0 {
+    forall self: s_Vector, val: s_Uint_usize :: {s_Vector_read_0(s_Vector_write_0(self, val))} (s_Vector_read_0(s_Vector_write_0(self, val))) == (val)
+  }
+  axiom ax_s_Vector_write_0_read_1 {
+    forall self: s_Vector, val: s_Uint_usize :: {s_Vector_read_1(s_Vector_write_0(self, val))} (s_Vector_read_1(s_Vector_write_0(self, val))) == (s_Vector_read_1(self))
+  }
+  axiom ax_s_Vector_write_1_read_0 {
+    forall self: s_Vector, val: s_Int_i32 :: {s_Vector_read_0(s_Vector_write_1(self, val))} (s_Vector_read_0(s_Vector_write_1(self, val))) == (s_Vector_read_0(self))
+  }
+  axiom ax_s_Vector_write_1_read_1 {
+    forall self: s_Vector, val: s_Int_i32 :: {s_Vector_read_1(s_Vector_write_1(self, val))} (s_Vector_read_1(s_Vector_write_1(self, val))) == (val)
+  }
+  function s_Vector_cons(s_Uint_usize, s_Int_i32): s_Vector
+  function s_Vector_read_0(s_Vector): s_Uint_usize
+  function s_Vector_write_0(s_Vector, s_Uint_usize): s_Vector
+  function s_Vector_read_1(s_Vector): s_Int_i32
+  function s_Vector_write_1(s_Vector, s_Int_i32): s_Vector
+}
+
+domain s_Never {
+}
+
+domain s_Bool {
+  axiom ax_s_Bool_cons_read_0 {
+    forall f0: Bool :: {s_Bool_cons(f0)} (s_Bool_read_0(s_Bool_cons(f0))) == (f0)
+  }
+  axiom ax_s_Bool_cons {
+    forall self: s_Bool :: {s_Bool_cons(s_Bool_read_0(self))} (s_Bool_cons(s_Bool_read_0(self))) == (self)
+  }
+  axiom ax_s_Bool_write_0_read_0 {
+    forall self: s_Bool, val: Bool :: {s_Bool_read_0(s_Bool_write_0(self, val))} (s_Bool_read_0(s_Bool_write_0(self, val))) == (val)
+  }
+  function s_Bool_cons(Bool): s_Bool
+  function s_Bool_read_0(s_Bool): Bool
+  function s_Bool_write_0(s_Bool, Bool): s_Bool
+}
+
+domain s_Ref_Not[T] {
+  axiom ax_s_Ref_Not_cons_read_0 {
+    forall f0: T :: {s_Ref_Not_cons(f0)} (s_Ref_Not_read_0(s_Ref_Not_cons(f0))) == (f0)
+  }
+  axiom ax_s_Ref_Not_cons {
+    forall self: s_Ref_Not[T] :: {s_Ref_Not_cons(s_Ref_Not_read_0(self))} (s_Ref_Not_cons(s_Ref_Not_read_0(self))) == (self)
+  }
+  axiom ax_s_Ref_Not_write_0_read_0 {
+    forall self: s_Ref_Not[T], val: T :: {s_Ref_Not_read_0(s_Ref_Not_write_0(self, val))} (s_Ref_Not_read_0(s_Ref_Not_write_0(self, val))) == (val)
+  }
+  function s_Ref_Not_cons(T): s_Ref_Not[T]
+  function s_Ref_Not_read_0(s_Ref_Not[T]): T
+  function s_Ref_Not_write_0(s_Ref_Not[T], T): s_Ref_Not[T]
+}
+
+domain s_0_Tuple {
+  function s_0_Tuple_cons(): s_0_Tuple
+}
+
+domain s_3_Tuple[T0, T1, T2] {
+  axiom ax_s_3_Tuple_cons_read_0 {
+    forall f0: T0, f1: T1, f2: T2 :: {s_3_Tuple_cons(f0, f1, f2)} (s_3_Tuple_read_0(s_3_Tuple_cons(f0, f1, f2))) == (f0)
+  }
+  axiom ax_s_3_Tuple_cons_read_1 {
+    forall f0: T0, f1: T1, f2: T2 :: {s_3_Tuple_cons(f0, f1, f2)} (s_3_Tuple_read_1(s_3_Tuple_cons(f0, f1, f2))) == (f1)
+  }
+  axiom ax_s_3_Tuple_cons_read_2 {
+    forall f0: T0, f1: T1, f2: T2 :: {s_3_Tuple_cons(f0, f1, f2)} (s_3_Tuple_read_2(s_3_Tuple_cons(f0, f1, f2))) == (f2)
+  }
+  axiom ax_s_3_Tuple_cons {
+    forall self: s_3_Tuple[T0, T1, T2] :: {s_3_Tuple_cons(s_3_Tuple_read_0(self), s_3_Tuple_read_1(self), s_3_Tuple_read_2(self))} (s_3_Tuple_cons(s_3_Tuple_read_0(self), s_3_Tuple_read_1(self), s_3_Tuple_read_2(self))) == (self)
+  }
+  axiom ax_s_3_Tuple_write_0_read_0 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T0 :: {s_3_Tuple_read_0(s_3_Tuple_write_0(self, val))} (s_3_Tuple_read_0(s_3_Tuple_write_0(self, val))) == (val)
+  }
+  axiom ax_s_3_Tuple_write_0_read_1 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T0 :: {s_3_Tuple_read_1(s_3_Tuple_write_0(self, val))} (s_3_Tuple_read_1(s_3_Tuple_write_0(self, val))) == (s_3_Tuple_read_1(self))
+  }
+  axiom ax_s_3_Tuple_write_0_read_2 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T0 :: {s_3_Tuple_read_2(s_3_Tuple_write_0(self, val))} (s_3_Tuple_read_2(s_3_Tuple_write_0(self, val))) == (s_3_Tuple_read_2(self))
+  }
+  axiom ax_s_3_Tuple_write_1_read_0 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T1 :: {s_3_Tuple_read_0(s_3_Tuple_write_1(self, val))} (s_3_Tuple_read_0(s_3_Tuple_write_1(self, val))) == (s_3_Tuple_read_0(self))
+  }
+  axiom ax_s_3_Tuple_write_1_read_1 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T1 :: {s_3_Tuple_read_1(s_3_Tuple_write_1(self, val))} (s_3_Tuple_read_1(s_3_Tuple_write_1(self, val))) == (val)
+  }
+  axiom ax_s_3_Tuple_write_1_read_2 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T1 :: {s_3_Tuple_read_2(s_3_Tuple_write_1(self, val))} (s_3_Tuple_read_2(s_3_Tuple_write_1(self, val))) == (s_3_Tuple_read_2(self))
+  }
+  axiom ax_s_3_Tuple_write_2_read_0 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T2 :: {s_3_Tuple_read_0(s_3_Tuple_write_2(self, val))} (s_3_Tuple_read_0(s_3_Tuple_write_2(self, val))) == (s_3_Tuple_read_0(self))
+  }
+  axiom ax_s_3_Tuple_write_2_read_1 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T2 :: {s_3_Tuple_read_1(s_3_Tuple_write_2(self, val))} (s_3_Tuple_read_1(s_3_Tuple_write_2(self, val))) == (s_3_Tuple_read_1(self))
+  }
+  axiom ax_s_3_Tuple_write_2_read_2 {
+    forall self: s_3_Tuple[T0, T1, T2], val: T2 :: {s_3_Tuple_read_2(s_3_Tuple_write_2(self, val))} (s_3_Tuple_read_2(s_3_Tuple_write_2(self, val))) == (val)
+  }
+  function s_3_Tuple_cons(T0, T1, T2): s_3_Tuple[T0, T1, T2]
+  function s_3_Tuple_read_0(s_3_Tuple[T0, T1, T2]): T0
+  function s_3_Tuple_write_0(s_3_Tuple[T0, T1, T2], T0): s_3_Tuple[T0, T1, T2]
+  function s_3_Tuple_read_1(s_3_Tuple[T0, T1, T2]): T1
+  function s_3_Tuple_write_1(s_3_Tuple[T0, T1, T2], T1): s_3_Tuple[T0, T1, T2]
+  function s_3_Tuple_read_2(s_3_Tuple[T0, T1, T2]): T2
+  function s_3_Tuple_write_2(s_3_Tuple[T0, T1, T2], T2): s_3_Tuple[T0, T1, T2]
+}
+
+domain s_Bounds {
+  axiom ax_s_Bounds_cons_read_0 {
+    forall f0: s_Int_i32, f1: s_Int_i32 :: {s_Bounds_cons(f0, f1)} (s_Bounds_read_0(s_Bounds_cons(f0, f1))) == (f0)
+  }
+  axiom ax_s_Bounds_cons_read_1 {
+    forall f0: s_Int_i32, f1: s_Int_i32 :: {s_Bounds_cons(f0, f1)} (s_Bounds_read_1(s_Bounds_cons(f0, f1))) == (f1)
+  }
+  axiom ax_s_Bounds_cons {
+    forall self: s_Bounds :: {s_Bounds_cons(s_Bounds_read_0(self), s_Bounds_read_1(self))} (s_Bounds_cons(s_Bounds_read_0(self), s_Bounds_read_1(self))) == (self)
+  }
+  axiom ax_s_Bounds_write_0_read_0 {
+    forall self: s_Bounds, val: s_Int_i32 :: {s_Bounds_read_0(s_Bounds_write_0(self, val))} (s_Bounds_read_0(s_Bounds_write_0(self, val))) == (val)
+  }
+  axiom ax_s_Bounds_write_0_read_1 {
+    forall self: s_Bounds, val: s_Int_i32 :: {s_Bounds_read_1(s_Bounds_write_0(self, val))} (s_Bounds_read_1(s_Bounds_write_0(self, val))) == (s_Bounds_read_1(self))
+  }
+  axiom ax_s_Bounds_write_1_read_0 {
+    forall self: s_Bounds, val: s_Int_i32 :: {s_Bounds_read_0(s_Bounds_write_1(self, val))} (s_Bounds_read_0(s_Bounds_write_1(self, val))) == (s_Bounds_read_0(self))
+  }
+  axiom ax_s_Bounds_write_1_read_1 {
+    forall self: s_Bounds, val: s_Int_i32 :: {s_Bounds_read_1(s_Bounds_write_1(self, val))} (s_Bounds_read_1(s_Bounds_write_1(self, val))) == (val)
+  }
+  function s_Bounds_cons(s_Int_i32, s_Int_i32): s_Bounds
+  function s_Bounds_read_0(s_Bounds): s_Int_i32
+  function s_Bounds_write_0(s_Bounds, s_Int_i32): s_Bounds
+  function s_Bounds_read_1(s_Bounds): s_Int_i32
+  function s_Bounds_write_1(s_Bounds, s_Int_i32): s_Bounds
+}
+
+domain s_ClampTransform {
+  axiom ax_s_ClampTransform_cons_read_0 {
+    forall f0: s_Bounds :: {s_ClampTransform_cons(f0)} (s_ClampTransform_read_0(s_ClampTransform_cons(f0))) == (f0)
+  }
+  axiom ax_s_ClampTransform_cons {
+    forall self: s_ClampTransform :: {s_ClampTransform_cons(s_ClampTransform_read_0(self))} (s_ClampTransform_cons(s_ClampTransform_read_0(self))) == (self)
+  }
+  axiom ax_s_ClampTransform_write_0_read_0 {
+    forall self: s_ClampTransform, val: s_Bounds :: {s_ClampTransform_read_0(s_ClampTransform_write_0(self, val))} (s_ClampTransform_read_0(s_ClampTransform_write_0(self, val))) == (val)
+  }
+  function s_ClampTransform_cons(s_Bounds): s_ClampTransform
+  function s_ClampTransform_read_0(s_ClampTransform): s_Bounds
+  function s_ClampTransform_write_0(s_ClampTransform, s_Bounds): s_ClampTransform
+}
+
+domain s_4_Tuple[T0, T1, T2, T3] {
+  axiom ax_s_4_Tuple_cons_read_0 {
+    forall f0: T0, f1: T1, f2: T2, f3: T3 :: {s_4_Tuple_cons(f0, f1, f2, f3)} (s_4_Tuple_read_0(s_4_Tuple_cons(f0, f1, f2, f3))) == (f0)
+  }
+  axiom ax_s_4_Tuple_cons_read_1 {
+    forall f0: T0, f1: T1, f2: T2, f3: T3 :: {s_4_Tuple_cons(f0, f1, f2, f3)} (s_4_Tuple_read_1(s_4_Tuple_cons(f0, f1, f2, f3))) == (f1)
+  }
+  axiom ax_s_4_Tuple_cons_read_2 {
+    forall f0: T0, f1: T1, f2: T2, f3: T3 :: {s_4_Tuple_cons(f0, f1, f2, f3)} (s_4_Tuple_read_2(s_4_Tuple_cons(f0, f1, f2, f3))) == (f2)
+  }
+  axiom ax_s_4_Tuple_cons_read_3 {
+    forall f0: T0, f1: T1, f2: T2, f3: T3 :: {s_4_Tuple_cons(f0, f1, f2, f3)} (s_4_Tuple_read_3(s_4_Tuple_cons(f0, f1, f2, f3))) == (f3)
+  }
+  axiom ax_s_4_Tuple_cons {
+    forall self: s_4_Tuple[T0, T1, T2, T3] :: {s_4_Tuple_cons(s_4_Tuple_read_0(self), s_4_Tuple_read_1(self), s_4_Tuple_read_2(self), s_4_Tuple_read_3(self))} (s_4_Tuple_cons(s_4_Tuple_read_0(self), s_4_Tuple_read_1(self), s_4_Tuple_read_2(self), s_4_Tuple_read_3(self))) == (self)
+  }
+  axiom ax_s_4_Tuple_write_0_read_0 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T0 :: {s_4_Tuple_read_0(s_4_Tuple_write_0(self, val))} (s_4_Tuple_read_0(s_4_Tuple_write_0(self, val))) == (val)
+  }
+  axiom ax_s_4_Tuple_write_0_read_1 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T0 :: {s_4_Tuple_read_1(s_4_Tuple_write_0(self, val))} (s_4_Tuple_read_1(s_4_Tuple_write_0(self, val))) == (s_4_Tuple_read_1(self))
+  }
+  axiom ax_s_4_Tuple_write_0_read_2 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T0 :: {s_4_Tuple_read_2(s_4_Tuple_write_0(self, val))} (s_4_Tuple_read_2(s_4_Tuple_write_0(self, val))) == (s_4_Tuple_read_2(self))
+  }
+  axiom ax_s_4_Tuple_write_0_read_3 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T0 :: {s_4_Tuple_read_3(s_4_Tuple_write_0(self, val))} (s_4_Tuple_read_3(s_4_Tuple_write_0(self, val))) == (s_4_Tuple_read_3(self))
+  }
+  axiom ax_s_4_Tuple_write_1_read_0 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T1 :: {s_4_Tuple_read_0(s_4_Tuple_write_1(self, val))} (s_4_Tuple_read_0(s_4_Tuple_write_1(self, val))) == (s_4_Tuple_read_0(self))
+  }
+  axiom ax_s_4_Tuple_write_1_read_1 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T1 :: {s_4_Tuple_read_1(s_4_Tuple_write_1(self, val))} (s_4_Tuple_read_1(s_4_Tuple_write_1(self, val))) == (val)
+  }
+  axiom ax_s_4_Tuple_write_1_read_2 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T1 :: {s_4_Tuple_read_2(s_4_Tuple_write_1(self, val))} (s_4_Tuple_read_2(s_4_Tuple_write_1(self, val))) == (s_4_Tuple_read_2(self))
+  }
+  axiom ax_s_4_Tuple_write_1_read_3 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T1 :: {s_4_Tuple_read_3(s_4_Tuple_write_1(self, val))} (s_4_Tuple_read_3(s_4_Tuple_write_1(self, val))) == (s_4_Tuple_read_3(self))
+  }
+  axiom ax_s_4_Tuple_write_2_read_0 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T2 :: {s_4_Tuple_read_0(s_4_Tuple_write_2(self, val))} (s_4_Tuple_read_0(s_4_Tuple_write_2(self, val))) == (s_4_Tuple_read_0(self))
+  }
+  axiom ax_s_4_Tuple_write_2_read_1 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T2 :: {s_4_Tuple_read_1(s_4_Tuple_write_2(self, val))} (s_4_Tuple_read_1(s_4_Tuple_write_2(self, val))) == (s_4_Tuple_read_1(self))
+  }
+  axiom ax_s_4_Tuple_write_2_read_2 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T2 :: {s_4_Tuple_read_2(s_4_Tuple_write_2(self, val))} (s_4_Tuple_read_2(s_4_Tuple_write_2(self, val))) == (val)
+  }
+  axiom ax_s_4_Tuple_write_2_read_3 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T2 :: {s_4_Tuple_read_3(s_4_Tuple_write_2(self, val))} (s_4_Tuple_read_3(s_4_Tuple_write_2(self, val))) == (s_4_Tuple_read_3(self))
+  }
+  axiom ax_s_4_Tuple_write_3_read_0 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T3 :: {s_4_Tuple_read_0(s_4_Tuple_write_3(self, val))} (s_4_Tuple_read_0(s_4_Tuple_write_3(self, val))) == (s_4_Tuple_read_0(self))
+  }
+  axiom ax_s_4_Tuple_write_3_read_1 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T3 :: {s_4_Tuple_read_1(s_4_Tuple_write_3(self, val))} (s_4_Tuple_read_1(s_4_Tuple_write_3(self, val))) == (s_4_Tuple_read_1(self))
+  }
+  axiom ax_s_4_Tuple_write_3_read_2 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T3 :: {s_4_Tuple_read_2(s_4_Tuple_write_3(self, val))} (s_4_Tuple_read_2(s_4_Tuple_write_3(self, val))) == (s_4_Tuple_read_2(self))
+  }
+  axiom ax_s_4_Tuple_write_3_read_3 {
+    forall self: s_4_Tuple[T0, T1, T2, T3], val: T3 :: {s_4_Tuple_read_3(s_4_Tuple_write_3(self, val))} (s_4_Tuple_read_3(s_4_Tuple_write_3(self, val))) == (val)
+  }
+  function s_4_Tuple_cons(T0, T1, T2, T3): s_4_Tuple[T0, T1, T2, T3]
+  function s_4_Tuple_read_0(s_4_Tuple[T0, T1, T2, T3]): T0
+  function s_4_Tuple_write_0(s_4_Tuple[T0, T1, T2, T3], T0): s_4_Tuple[T0, T1, T2, T3]
+  function s_4_Tuple_read_1(s_4_Tuple[T0, T1, T2, T3]): T1
+  function s_4_Tuple_write_1(s_4_Tuple[T0, T1, T2, T3], T1): s_4_Tuple[T0, T1, T2, T3]
+  function s_4_Tuple_read_2(s_4_Tuple[T0, T1, T2, T3]): T2
+  function s_4_Tuple_write_2(s_4_Tuple[T0, T1, T2, T3], T2): s_4_Tuple[T0, T1, T2, T3]
+  function s_4_Tuple_read_3(s_4_Tuple[T0, T1, T2, T3]): T3
+  function s_4_Tuple_write_3(s_4_Tuple[T0, T1, T2, T3], T3): s_4_Tuple[T0, T1, T2, T3]
+}
+
+// -----------------------------
+// types
+// -----------------------------
+field f_Int_i32: s_Int_i32
+function p_Int_i32_unreachable(
+): s_Int_i32
+  requires false
+  ensures false
+
+function p_Int_i32_snap(
+  self: Ref
+): s_Int_i32
+  requires acc(p_Int_i32(self), wildcard)
+{
+  unfolding acc(p_Int_i32(self), wildcard) in (self.f_Int_i32)
+}
+
+predicate p_Int_i32(self: Ref) {
+  acc(self.f_Int_i32)
+}
+
+method assign_p_Int_i32(
+  self: Ref,
+  self_new: s_Int_i32
+)
+  ensures p_Int_i32(self)
+  ensures (p_Int_i32_snap(self)) == (self_new)
+
+field f_Uint_usize: s_Uint_usize
+function p_Uint_usize_unreachable(
+): s_Uint_usize
+  requires false
+  ensures false
+
+function p_Uint_usize_snap(
+  self: Ref
+): s_Uint_usize
+  requires acc(p_Uint_usize(self), wildcard)
+{
+  unfolding acc(p_Uint_usize(self), wildcard) in (self.f_Uint_usize)
+}
+
+predicate p_Uint_usize(self: Ref) {
+  acc(self.f_Uint_usize)
+}
+
+method assign_p_Uint_usize(
+  self: Ref,
+  self_new: s_Uint_usize
+)
+  ensures p_Uint_usize(self)
+  ensures (p_Uint_usize_snap(self)) == (self_new)
+
+function p_Vector_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Vector_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Vector_unreachable(
+): s_Vector
+  requires false
+  ensures false
+
+function p_Vector_snap(
+  self: Ref
+): s_Vector
+  requires acc(p_Vector(self), wildcard)
+{
+  unfolding acc(p_Vector(self), wildcard) in (s_Vector_cons(p_Uint_usize_snap(p_Vector_field_0(self)), p_Int_i32_snap(p_Vector_field_1(self))))
+}
+
+predicate p_Vector(self: Ref) {
+  (p_Uint_usize(p_Vector_field_0(self))) && (p_Int_i32(p_Vector_field_1(self)))
+}
+
+method assign_p_Vector(
+  self: Ref,
+  self_new: s_Vector
+)
+  ensures p_Vector(self)
+  ensures (p_Vector_snap(self)) == (self_new)
+
+function p_2_Tuple_$_Int_i32_$_Vector_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Int_i32_$_Vector_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Int_i32_$_Vector_unreachable(
+): s_2_Tuple[s_Int_i32, s_Vector]
+  requires false
+  ensures false
+
+function p_2_Tuple_$_Int_i32_$_Vector_snap(
+  self: Ref
+): s_2_Tuple[s_Int_i32, s_Vector]
+  requires acc(p_2_Tuple_$_Int_i32_$_Vector(self), wildcard)
+{
+  unfolding acc(p_2_Tuple_$_Int_i32_$_Vector(self), wildcard) in (s_2_Tuple_cons(p_Int_i32_snap(p_2_Tuple_$_Int_i32_$_Vector_field_0(self)), p_Vector_snap(p_2_Tuple_$_Int_i32_$_Vector_field_1(self))))
+}
+
+predicate p_2_Tuple_$_Int_i32_$_Vector(self: Ref) {
+  (p_Int_i32(p_2_Tuple_$_Int_i32_$_Vector_field_0(self))) && (p_Vector(p_2_Tuple_$_Int_i32_$_Vector_field_1(self)))
+}
+
+method assign_p_2_Tuple_$_Int_i32_$_Vector(
+  self: Ref,
+  self_new: s_2_Tuple[s_Int_i32, s_Vector]
+)
+  ensures p_2_Tuple_$_Int_i32_$_Vector(self)
+  ensures (p_2_Tuple_$_Int_i32_$_Vector_snap(self)) == (self_new)
+
+function p_Never_unreachable(
+): s_Never
+  requires false
+  ensures false
+
+function p_Never_snap(
+  self: Ref
+): s_Never
+  requires acc(p_Never(self), wildcard)
+
+predicate p_Never(self: Ref) {
+  false
+}
+
+method assign_p_Never(
+  self: Ref,
+  self_new: s_Never
+)
+  ensures p_Never(self)
+  ensures (p_Never_snap(self)) == (self_new)
+
+field f_Bool: s_Bool
+function p_Bool_unreachable(
+): s_Bool
+  requires false
+  ensures false
+
+function p_Bool_snap(
+  self: Ref
+): s_Bool
+  requires acc(p_Bool(self), wildcard)
+{
+  unfolding acc(p_Bool(self), wildcard) in (self.f_Bool)
+}
+
+predicate p_Bool(self: Ref) {
+  acc(self.f_Bool)
+}
+
+method assign_p_Bool(
+  self: Ref,
+  self_new: s_Bool
+)
+  ensures p_Bool(self)
+  ensures (p_Bool_snap(self)) == (self_new)
+
+function p_0_Tuple_unreachable(
+): s_0_Tuple
+  requires false
+  ensures false
+
+function p_0_Tuple_snap(
+  self: Ref
+): s_0_Tuple
+  requires acc(p_0_Tuple(self), wildcard)
+{
+  unfolding acc(p_0_Tuple(self), wildcard) in (s_0_Tuple_cons())
+}
+
+predicate p_0_Tuple(self: Ref) {
+  true
+}
+
+method assign_p_0_Tuple(
+  self: Ref,
+  self_new: s_0_Tuple
+)
+  ensures p_0_Tuple(self)
+  ensures (p_0_Tuple_snap(self)) == (self_new)
+
+function p_Bounds_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Bounds_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Bounds_unreachable(
+): s_Bounds
+  requires false
+  ensures false
+
+function p_Bounds_snap(
+  self: Ref
+): s_Bounds
+  requires acc(p_Bounds(self), wildcard)
+{
+  unfolding acc(p_Bounds(self), wildcard) in (s_Bounds_cons(p_Int_i32_snap(p_Bounds_field_0(self)), p_Int_i32_snap(p_Bounds_field_1(self))))
+}
+
+predicate p_Bounds(self: Ref) {
+  (p_Int_i32(p_Bounds_field_0(self))) && (p_Int_i32(p_Bounds_field_1(self)))
+}
+
+method assign_p_Bounds(
+  self: Ref,
+  self_new: s_Bounds
+)
+  ensures p_Bounds(self)
+  ensures (p_Bounds_snap(self)) == (self_new)
+
+function p_ClampTransform_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_ClampTransform_unreachable(
+): s_ClampTransform
+  requires false
+  ensures false
+
+function p_ClampTransform_snap(
+  self: Ref
+): s_ClampTransform
+  requires acc(p_ClampTransform(self), wildcard)
+{
+  unfolding acc(p_ClampTransform(self), wildcard) in (s_ClampTransform_cons(p_Bounds_snap(p_ClampTransform_field_0(self))))
+}
+
+predicate p_ClampTransform(self: Ref) {
+  p_Bounds(p_ClampTransform_field_0(self))
+}
+
+method assign_p_ClampTransform(
+  self: Ref,
+  self_new: s_ClampTransform
+)
+  ensures p_ClampTransform(self)
+  ensures (p_ClampTransform_snap(self)) == (self_new)
+
+function p_2_Tuple_$_Vector_$_ClampTransform_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Vector_$_ClampTransform_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Vector_$_ClampTransform_unreachable(
+): s_2_Tuple[s_Vector, s_ClampTransform]
+  requires false
+  ensures false
+
+function p_2_Tuple_$_Vector_$_ClampTransform_snap(
+  self: Ref
+): s_2_Tuple[s_Vector, s_ClampTransform]
+  requires acc(p_2_Tuple_$_Vector_$_ClampTransform(self), wildcard)
+{
+  unfolding acc(p_2_Tuple_$_Vector_$_ClampTransform(self), wildcard) in (s_2_Tuple_cons(p_Vector_snap(p_2_Tuple_$_Vector_$_ClampTransform_field_0(self)), p_ClampTransform_snap(p_2_Tuple_$_Vector_$_ClampTransform_field_1(self))))
+}
+
+predicate p_2_Tuple_$_Vector_$_ClampTransform(self: Ref) {
+  (p_Vector(p_2_Tuple_$_Vector_$_ClampTransform_field_0(self))) && (p_ClampTransform(p_2_Tuple_$_Vector_$_ClampTransform_field_1(self)))
+}
+
+method assign_p_2_Tuple_$_Vector_$_ClampTransform(
+  self: Ref,
+  self_new: s_2_Tuple[s_Vector, s_ClampTransform]
+)
+  ensures p_2_Tuple_$_Vector_$_ClampTransform(self)
+  ensures (p_2_Tuple_$_Vector_$_ClampTransform_snap(self)) == (self_new)
+
+function p_2_Tuple_$_Uint_usize_$_Bool_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Uint_usize_$_Bool_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Uint_usize_$_Bool_unreachable(
+): s_2_Tuple[s_Uint_usize, s_Bool]
+  requires false
+  ensures false
+
+function p_2_Tuple_$_Uint_usize_$_Bool_snap(
+  self: Ref
+): s_2_Tuple[s_Uint_usize, s_Bool]
+  requires acc(p_2_Tuple_$_Uint_usize_$_Bool(self), wildcard)
+{
+  unfolding acc(p_2_Tuple_$_Uint_usize_$_Bool(self), wildcard) in (s_2_Tuple_cons(p_Uint_usize_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_0(self)), p_Bool_snap(p_2_Tuple_$_Uint_usize_$_Bool_field_1(self))))
+}
+
+predicate p_2_Tuple_$_Uint_usize_$_Bool(self: Ref) {
+  (p_Uint_usize(p_2_Tuple_$_Uint_usize_$_Bool_field_0(self))) && (p_Bool(p_2_Tuple_$_Uint_usize_$_Bool_field_1(self)))
+}
+
+method assign_p_2_Tuple_$_Uint_usize_$_Bool(
+  self: Ref,
+  self_new: s_2_Tuple[s_Uint_usize, s_Bool]
+)
+  ensures p_2_Tuple_$_Uint_usize_$_Bool(self)
+  ensures (p_2_Tuple_$_Uint_usize_$_Bool_snap(self)) == (self_new)
+
+function p_2_Tuple_$_Int_i32_$_ClampTransform_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Int_i32_$_ClampTransform_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_Int_i32_$_ClampTransform_unreachable(
+): s_2_Tuple[s_Int_i32, s_ClampTransform]
+  requires false
+  ensures false
+
+function p_2_Tuple_$_Int_i32_$_ClampTransform_snap(
+  self: Ref
+): s_2_Tuple[s_Int_i32, s_ClampTransform]
+  requires acc(p_2_Tuple_$_Int_i32_$_ClampTransform(self), wildcard)
+{
+  unfolding acc(p_2_Tuple_$_Int_i32_$_ClampTransform(self), wildcard) in (s_2_Tuple_cons(p_Int_i32_snap(p_2_Tuple_$_Int_i32_$_ClampTransform_field_0(self)), p_ClampTransform_snap(p_2_Tuple_$_Int_i32_$_ClampTransform_field_1(self))))
+}
+
+predicate p_2_Tuple_$_Int_i32_$_ClampTransform(self: Ref) {
+  (p_Int_i32(p_2_Tuple_$_Int_i32_$_ClampTransform_field_0(self))) && (p_ClampTransform(p_2_Tuple_$_Int_i32_$_ClampTransform_field_1(self)))
+}
+
+method assign_p_2_Tuple_$_Int_i32_$_ClampTransform(
+  self: Ref,
+  self_new: s_2_Tuple[s_Int_i32, s_ClampTransform]
+)
+  ensures p_2_Tuple_$_Int_i32_$_ClampTransform(self)
+  ensures (p_2_Tuple_$_Int_i32_$_ClampTransform_snap(self)) == (self_new)
+
