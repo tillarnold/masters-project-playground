@@ -10,35 +10,22 @@ method m_apply_id_rec_CALLER_0_24(
   requires p_Int_i32(_2p)
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_2s_0) in
-(let _0_3s_1 == (mir_binop_Lt_i32_i32(_0_4s_1, s_Int_i32_cons(1000))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Lt_i32_i32(_0_2s_0, s_Int_i32_cons(1000)))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
 (let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Eq_i32_i32(_0_4s_1, s_Int_i32_cons(2000))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Eq_i32_i32(_0_4s_1, s_Int_i32_cons(2000))))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_2s_0) in
-(let _0_3s_1 == (mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(0))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Ge_i32_i32(_0_2s_0, s_Int_i32_cons(0)))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
 (let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(1))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(1))))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_2s_0) in
 (let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1)) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0)))))))
+mir_binop_Lt_i32_i32(_0_2s_0, _0_5s_1)))))
   ensures p_Vector(_0p)
   ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
@@ -46,97 +33,57 @@ _0_0s_0)))))))
 (let _0_5s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_3s_0))) in
 (let _0_7s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_1s_0))) in
 (let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
-(let _0_4s_1 == (s_Bool_cons((_0_5s_1) == (_0_6s_1))) in
-(let _0_0s_0 == (_0_4s_1) in
-_0_0s_0)))))))))
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
   ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
 (let _0_3s_0 == (p_Vector_snap(_0p)) in
 (let _0_5s_1 == (s_0_Tuple_cons()) in
 (let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
 (let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
-(let _0_4s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_1s_0 == (_0_6s_1) in
-  (let _1_2s_0 == (qvar_0_0) in
-  (let _1_4s_1 == (_1_2s_0) in
-  (let _1_3s_1 == (mir_binop_Ge_i32_i32(_1_4s_1, s_Int_i32_cons(0))) in
-  (let _1_phi_2 == ((s_Bool_read_0(_1_3s_1)) == (false)
-    ? (let _1_0s_0 == (s_Bool_cons(true)) in
-      _1_0s_0)
-    : (let _1_6s_1 == (_1_2s_0) in
-      (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_1_1s_0))) in
-      (let _1_5s_1 == (mir_binop_Gt_i32_i32(_1_6s_1, _1_7s_1)) in
-      (let _1_phi_1 == ((s_Bool_read_0(_1_5s_1)) == (false)
-        ? (let _1_0s_1 == (s_Bool_cons(true)) in
-          _1_0s_1)
-        : (let _1_9s_1 == (_1_2s_0) in
-          (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_1_1s_0))) in
-          (let _1_8s_1 == (mir_binop_Lt_i32_i32(_1_9s_1, _1_10s_1)) in
-          (let _1_phi_0 == ((s_Bool_read_0(_1_8s_1)) == (false)
-            ? (let _1_0s_2 == (s_Bool_cons(true)) in
-              _1_0s_2)
-            : (let _1_13s_1 == (s_3_Tuple_read_2(_1_1s_0)) in
-              (let _1_14s_1 == (_1_2s_0) in
-              (let _1_12s_1 == (f_get(_1_13s_1, _1_14s_1)) in
-              (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
-              (let _1_18s_1 == (s_3_Tuple_read_1(_1_1s_0)) in
-              (let _1_19s_1 == (_1_2s_0) in
-              (let _1_17s_1 == (f_get(_1_18s_1, _1_19s_1)) in
-              (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
-              (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
-              (let _1_0s_3 == (s_Bool_cons((_1_11s_1) == (_1_15s_1))) in
-              _1_0s_3))))))))))) in
-          (let _1_0s_4 == (_1_phi_0) in
-          _1_0s_4)))))) in
-      (let _1_0s_5 == (_1_phi_1) in
-      _1_0s_5)))))) in
-  (let _1_0s_6 == (_1_phi_2) in
-  _1_0s_6))))))))) in
-(let _0_0s_0 == (_0_4s_1) in
-_0_0s_0)))))))))
+s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_i32_i32(qvar_0_0, s_Int_i32_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_i32_i32(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_i32_i32(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
   ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
 (let _0_3s_0 == (p_Vector_snap(_0p)) in
 (let _0_5s_1 == (s_0_Tuple_cons()) in
 (let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
 (let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
-(let _0_4s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_1s_0 == (_0_6s_1) in
-  (let _1_2s_0 == (qvar_0_0) in
-  (let _1_4s_1 == (_1_2s_0) in
-  (let _1_3s_1 == (mir_binop_Ge_i32_i32(_1_4s_1, s_Int_i32_cons(0))) in
-  (let _1_phi_2 == ((s_Bool_read_0(_1_3s_1)) == (false)
-    ? (let _1_0s_0 == (s_Bool_cons(true)) in
-      _1_0s_0)
-    : (let _1_6s_1 == (_1_2s_0) in
-      (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_1_1s_0))) in
-      (let _1_5s_1 == (mir_binop_Le_i32_i32(_1_6s_1, _1_7s_1)) in
-      (let _1_phi_1 == ((s_Bool_read_0(_1_5s_1)) == (false)
-        ? (let _1_0s_1 == (s_Bool_cons(true)) in
-          _1_0s_1)
-        : (let _1_9s_1 == (_1_2s_0) in
-          (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_1_1s_0))) in
-          (let _1_8s_1 == (mir_binop_Lt_i32_i32(_1_9s_1, _1_10s_1)) in
-          (let _1_phi_0 == ((s_Bool_read_0(_1_8s_1)) == (false)
-            ? (let _1_0s_2 == (s_Bool_cons(true)) in
-              _1_0s_2)
-            : (let _1_13s_1 == (s_3_Tuple_read_2(_1_1s_0)) in
-              (let _1_14s_1 == (_1_2s_0) in
-              (let _1_12s_1 == (f_get(_1_13s_1, _1_14s_1)) in
-              (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
-              (let _1_18s_1 == (s_3_Tuple_read_1(_1_1s_0)) in
-              (let _1_19s_1 == (_1_2s_0) in
-              (let _1_17s_1 == (f_get(_1_18s_1, _1_19s_1)) in
-              (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
-              (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
-              (let _1_0s_3 == (s_Bool_cons((_1_11s_1) == (_1_15s_1))) in
-              _1_0s_3))))))))))) in
-          (let _1_0s_4 == (_1_phi_0) in
-          _1_0s_4)))))) in
-      (let _1_0s_5 == (_1_phi_1) in
-      _1_0s_5)))))) in
-  (let _1_0s_6 == (_1_phi_2) in
-  _1_0s_6))))))))) in
-(let _0_0s_0 == (_0_4s_1) in
-_0_0s_0)))))))))
+s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_i32_i32(qvar_0_0, s_Int_i32_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_i32_i32(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_i32_i32(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
 
 method m_apply_id_rec_CALLER_(
   _0p: Ref,
@@ -147,35 +94,22 @@ method m_apply_id_rec_CALLER_(
   requires p_Int_i32(_2p)
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_2s_0) in
-(let _0_3s_1 == (mir_binop_Lt_i32_i32(_0_4s_1, s_Int_i32_cons(1000))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Lt_i32_i32(_0_2s_0, s_Int_i32_cons(1000)))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
 (let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Eq_i32_i32(_0_4s_1, s_Int_i32_cons(2000))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Eq_i32_i32(_0_4s_1, s_Int_i32_cons(2000))))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_2s_0) in
-(let _0_3s_1 == (mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(0))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Ge_i32_i32(_0_2s_0, s_Int_i32_cons(0)))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
 (let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(1))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(1))))))
   requires s_Bool_read_0((let _0_1s_0 == (p_Vector_snap(_1p)) in
 (let _0_2s_0 == (p_Int_i32_snap(_2p)) in
-(let _0_4s_1 == (_0_2s_0) in
 (let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1)) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0)))))))
+mir_binop_Lt_i32_i32(_0_2s_0, _0_5s_1)))))
   ensures p_Vector(_0p)
   ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
@@ -183,97 +117,57 @@ _0_0s_0)))))))
 (let _0_5s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_3s_0))) in
 (let _0_7s_1 == (s_Ref_Not_cons(s_Vector_read_0(_0_1s_0))) in
 (let _0_6s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_0_7s_1))) in
-(let _0_4s_1 == (s_Bool_cons((_0_5s_1) == (_0_6s_1))) in
-(let _0_0s_0 == (_0_4s_1) in
-_0_0s_0)))))))))
+s_Bool_cons((_0_5s_1) == (_0_6s_1)))))))))
   ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
 (let _0_3s_0 == (p_Vector_snap(_0p)) in
 (let _0_5s_1 == (s_0_Tuple_cons()) in
 (let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
 (let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
-(let _0_4s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_1s_0 == (_0_6s_1) in
-  (let _1_2s_0 == (qvar_0_0) in
-  (let _1_4s_1 == (_1_2s_0) in
-  (let _1_3s_1 == (mir_binop_Ge_i32_i32(_1_4s_1, s_Int_i32_cons(0))) in
-  (let _1_phi_2 == ((s_Bool_read_0(_1_3s_1)) == (false)
-    ? (let _1_0s_0 == (s_Bool_cons(true)) in
-      _1_0s_0)
-    : (let _1_6s_1 == (_1_2s_0) in
-      (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_1_1s_0))) in
-      (let _1_5s_1 == (mir_binop_Gt_i32_i32(_1_6s_1, _1_7s_1)) in
-      (let _1_phi_1 == ((s_Bool_read_0(_1_5s_1)) == (false)
-        ? (let _1_0s_1 == (s_Bool_cons(true)) in
-          _1_0s_1)
-        : (let _1_9s_1 == (_1_2s_0) in
-          (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_1_1s_0))) in
-          (let _1_8s_1 == (mir_binop_Lt_i32_i32(_1_9s_1, _1_10s_1)) in
-          (let _1_phi_0 == ((s_Bool_read_0(_1_8s_1)) == (false)
-            ? (let _1_0s_2 == (s_Bool_cons(true)) in
-              _1_0s_2)
-            : (let _1_13s_1 == (s_3_Tuple_read_2(_1_1s_0)) in
-              (let _1_14s_1 == (_1_2s_0) in
-              (let _1_12s_1 == (f_get(_1_13s_1, _1_14s_1)) in
-              (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
-              (let _1_18s_1 == (s_3_Tuple_read_1(_1_1s_0)) in
-              (let _1_19s_1 == (_1_2s_0) in
-              (let _1_17s_1 == (f_get(_1_18s_1, _1_19s_1)) in
-              (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
-              (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
-              (let _1_0s_3 == (s_Bool_cons((_1_11s_1) == (_1_15s_1))) in
-              _1_0s_3))))))))))) in
-          (let _1_0s_4 == (_1_phi_0) in
-          _1_0s_4)))))) in
-      (let _1_0s_5 == (_1_phi_1) in
-      _1_0s_5)))))) in
-  (let _1_0s_6 == (_1_phi_2) in
-  _1_0s_6))))))))) in
-(let _0_0s_0 == (_0_4s_1) in
-_0_0s_0)))))))))
+s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_i32_i32(qvar_0_0, s_Int_i32_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Gt_i32_i32(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_i32_i32(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
   ensures s_Bool_read_0((let _0_1s_0 == (old(p_Vector_snap(_1p))) in
 (let _0_2s_0 == (old(p_Int_i32_snap(_2p))) in
 (let _0_3s_0 == (p_Vector_snap(_0p)) in
 (let _0_5s_1 == (s_0_Tuple_cons()) in
 (let _0_7s_1 == (s_Ref_Not_cons(_0_2s_0)) in
 (let _0_6s_1 == (s_3_Tuple_cons(_0_7s_1, _0_1s_0, _0_3s_0)) in
-(let _0_4s_1 == (s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_1s_0 == (_0_6s_1) in
-  (let _1_2s_0 == (qvar_0_0) in
-  (let _1_4s_1 == (_1_2s_0) in
-  (let _1_3s_1 == (mir_binop_Ge_i32_i32(_1_4s_1, s_Int_i32_cons(0))) in
-  (let _1_phi_2 == ((s_Bool_read_0(_1_3s_1)) == (false)
-    ? (let _1_0s_0 == (s_Bool_cons(true)) in
-      _1_0s_0)
-    : (let _1_6s_1 == (_1_2s_0) in
-      (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_1_1s_0))) in
-      (let _1_5s_1 == (mir_binop_Le_i32_i32(_1_6s_1, _1_7s_1)) in
-      (let _1_phi_1 == ((s_Bool_read_0(_1_5s_1)) == (false)
-        ? (let _1_0s_1 == (s_Bool_cons(true)) in
-          _1_0s_1)
-        : (let _1_9s_1 == (_1_2s_0) in
-          (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_1_1s_0))) in
-          (let _1_8s_1 == (mir_binop_Lt_i32_i32(_1_9s_1, _1_10s_1)) in
-          (let _1_phi_0 == ((s_Bool_read_0(_1_8s_1)) == (false)
-            ? (let _1_0s_2 == (s_Bool_cons(true)) in
-              _1_0s_2)
-            : (let _1_13s_1 == (s_3_Tuple_read_2(_1_1s_0)) in
-              (let _1_14s_1 == (_1_2s_0) in
-              (let _1_12s_1 == (f_get(_1_13s_1, _1_14s_1)) in
-              (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
-              (let _1_18s_1 == (s_3_Tuple_read_1(_1_1s_0)) in
-              (let _1_19s_1 == (_1_2s_0) in
-              (let _1_17s_1 == (f_get(_1_18s_1, _1_19s_1)) in
-              (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
-              (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
-              (let _1_0s_3 == (s_Bool_cons((_1_11s_1) == (_1_15s_1))) in
-              _1_0s_3))))))))))) in
-          (let _1_0s_4 == (_1_phi_0) in
-          _1_0s_4)))))) in
-      (let _1_0s_5 == (_1_phi_1) in
-      _1_0s_5)))))) in
-  (let _1_0s_6 == (_1_phi_2) in
-  _1_0s_6))))))))) in
-(let _0_0s_0 == (_0_4s_1) in
-_0_0s_0)))))))))
+s_Bool_cons(forall qvar_0_0: s_Int_i32 :: s_Bool_read_0((let _1_3s_1 == (mir_binop_Ge_i32_i32(qvar_0_0, s_Int_i32_cons(0))) in
+(s_Bool_read_0(_1_3s_1)) == (false)
+? s_Bool_cons(true)
+: (let _1_7s_1 == (s_Ref_Not_read_0(s_3_Tuple_read_0(_0_6s_1))) in
+  (let _1_5s_1 == (mir_binop_Le_i32_i32(qvar_0_0, _1_7s_1)) in
+  (s_Bool_read_0(_1_5s_1)) == (false)
+  ? s_Bool_cons(true)
+  : (let _1_10s_1 == (s_Vector_read_0(s_3_Tuple_read_1(_0_6s_1))) in
+    (let _1_8s_1 == (mir_binop_Lt_i32_i32(qvar_0_0, _1_10s_1)) in
+    (s_Bool_read_0(_1_8s_1)) == (false)
+    ? s_Bool_cons(true)
+    : (let _1_13s_1 == (s_3_Tuple_read_2(_0_6s_1)) in
+      (let _1_12s_1 == (f_get(_1_13s_1, qvar_0_0)) in
+      (let _1_11s_1 == (s_Ref_Not_cons(_1_12s_1)) in
+      (let _1_18s_1 == (s_3_Tuple_read_1(_0_6s_1)) in
+      (let _1_17s_1 == (f_get(_1_18s_1, qvar_0_0)) in
+      (let _1_16s_1 == (s_Ref_Not_cons(_1_17s_1)) in
+      (let _1_15s_1 == (s_Ref_Not_cons(s_Ref_Not_read_0(_1_16s_1))) in
+      s_Bool_cons((_1_11s_1) == (_1_15s_1)))))))))))))))))))))))
 {
 label start
   var _3p: Ref
@@ -387,25 +281,11 @@ function f_get(
   _1p: s_Vector,
   _2p: s_Int_i32
 ): s_Int_i32
-  requires s_Bool_read_0((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_4s_1 == (_0_2s_0) in
-(let _0_3s_1 == (mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(0))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
-  requires s_Bool_read_0((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_4s_1 == (_0_2s_0) in
-(let _0_5s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Lt_i32_i32(_0_4s_1, _0_5s_1)) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0)))))))
-  requires s_Bool_read_0((let _0_1s_0 == (_1p) in
-(let _0_2s_0 == (_2p) in
-(let _0_4s_1 == (s_Vector_read_0(_0_1s_0)) in
-(let _0_3s_1 == (mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(0))) in
-(let _0_0s_0 == (_0_3s_1) in
-_0_0s_0))))))
+  requires s_Bool_read_0(mir_binop_Ge_i32_i32(_2p, s_Int_i32_cons(0)))
+  requires s_Bool_read_0((let _0_5s_1 == (s_Vector_read_0(_1p)) in
+mir_binop_Lt_i32_i32(_2p, _0_5s_1)))
+  requires s_Bool_read_0((let _0_4s_1 == (s_Vector_read_0(_1p)) in
+mir_binop_Ge_i32_i32(_0_4s_1, s_Int_i32_cons(0))))
 
 // -----------------------------
 // MIR builtins
