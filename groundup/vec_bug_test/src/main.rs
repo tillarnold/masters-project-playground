@@ -21,24 +21,28 @@ impl Vector {
 
 
 
+#[requires(idx < 1000)]
+#[requires(data.len == 2000)]
 #[requires(idx >= 0)]
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.len === data.len)]
-#[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {( result.get(i) === data.get(i))  }))] // should not be needed
-// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {(((i > idx) | (i <= idx)) ==> result.get(i) === data.get(i)) }))]
-// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {let v = data.get(i); let r = result.get(i); ((i > idx || i <= idx) ==> r === v) }))]
-// #[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> {let v = data.get(i); let r = result.get(i); (i > idx ==> r === v) && (i <= idx ==> r === v)  }))]
+#[ensures(forall(|i: i32| (i >= 0 && i < data.len) ==> ( result.get(i) === data.get(i))  ))] 
 #[ensures(forall(|i: i32| (i >= 0 && i > idx && i < data.len)  ==> result.get(i) === data.get(i)))]
-#[ensures(forall(|i: i32| (i >= 0 && i <= idx && i < data.len)  ==> result.get(i) === data.get(i)))]
 fn apply_id_rec(data: Vector, idx: i32) -> Vector {
-    if idx + 1 < data.len {
+    if idx + 1 < 10 {
         apply_id_rec(data, idx + 1)
     } else {
         data
     }
 }
 
-fn main() {
 
-}
+// #[requires(a < 10000)]
+// fn add(a: i32) -> i32 {
+//     a + 1
+// }
+
+
+
+fn main () {}
