@@ -9,9 +9,24 @@ prusti_bins_dir := prusti_target_dir / "debug"
 user_home_dir := `realpath ~`
 rustup_home := absolute_path(env_var_or_default("RUSTUP_HOME", user_home_dir/".rustup"))
 toolchain_home := rustup_home / "toolchains" / config_rust_toolchain
-viper_tools := clean(prusti_bins_dir / "../../viper_tools")
+viper_tools := user_home_dir / "software/VSCodium-linux-x64-1.80.1.23194/data/user-data/User/globalStorage/viper-admin.viper/Stable/ViperTools"
 main_rs := absolute_path("src/main.rs")
 
+
+# The dirs where viper and the sif plugin are on the different machines
+classfile_dir_candidate_1 := user_home_dir / "software/VSCodium-linux-x64-1.80.1.23194/data/user-data/User/globalStorage/viper-admin.viper/Stable/ViperTools/backends"
+classfile_dir_candidate_2 := user_home_dir / ".config/VSCodium/User/globalStorage/viper-admin.viper/Stable/ViperTools/backends/"
+
+viper_backend := "viper.silicon.SiliconRunner"
+#viper_backend := "viper.carbon.Carbon"
+
+classfile_dir := if path_exists(classfile_dir_candidate_1) == "true" {
+        classfile_dir_candidate_1
+    } else if path_exists(classfile_dir_candidate_2) == "true" {
+        classfile_dir_candidate_2
+    } else {
+        error("None of the classfile dirs exists")
+    }
 
 # Env vars
 export RUST_BACKTRACE := "1"
@@ -19,6 +34,8 @@ export PRUSTI_LOG := "debug,mir_state_analysis=warn"
 export RUST_LOG := "debug,mir_state_analysis=warn"
 export PRUSTI_LOG_TRACING := "false"
 export PRUSTI_CHECK_OVERFLOWS := "false"
+export Z3_EXE := viper_tools / "z3/bin/z3"
+export BOOGIE_EXE := viper_tools / "boogie/Binaries/Boogie"
 
 
 _default:
@@ -32,8 +49,15 @@ build-prusti:
 cargo-prusti: (build-prusti)
 	{{prusti_bins_dir}}/cargo-prusti
 
-prusti: (build-prusti)
+prusti: (build_all_prusti)
 	{{prusti_bins_dir}}/prusti-rustc -Z dump-mir=F {{main_rs}}
+	mkdir -p log
+	rm -f log/viper_with_plugin.log
+	just run_viper_with_extension ./local-testing/simple.vpr > log/viper_with_plugin.log
+	@echo --------------
+	tail log/viper_with_plugin.log
+	@echo --------------
+
 
 
 prusti_driver_direct:
@@ -72,6 +96,12 @@ clean_build_prusti:
 
 
 build_all_prusti:
+	mkdir -p local-testing
 	cd {{prusti_dev_dir}}/prusti && cargo build
 	cd {{prusti_dev_dir}}/prusti-contracts-build && cargo build
 	cd {{prusti_dev_dir}}/prusti-launch && cargo build
+
+run_viper_with_extension file:
+    Z3_EXE="{{viper_tools}}/z3/bin/z3" java -Xmx2048m -Xss128m \
+    -cp :"{{classfile_dir}}/silver-sif-extension.jar":"{{classfile_dir}}/viperserver.jar" "{{viper_backend}}" \
+    --plugin viper.silver.sif.SIFPlugin {{file}}
