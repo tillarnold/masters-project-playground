@@ -199,15 +199,15 @@ fn between(val: i32, lower: i32, upper: i32) -> bool {
 #[requires(forall(|i: usize| (0<= i && i< res.len) ==> between(res.get(i), lower, upper)))]
 fn final_assert(res: Vector, lower: i32, upper: i32) {}
 
-// #[requires(data.len >= 10)]
-// #[requires(lower < upper)]
-// pub fn client(data: Vector, lower: i32, upper: i32) {
-//     let t = ClampTransform::make_clamp(Bounds { lower, upper });
-//     let (res, t2) = apply_row_by_row(t, data);
+#[requires(data.len >= 10)]
+#[requires(lower < upper)]
+pub fn client(data: Vector, lower: i32, upper: i32) {
+    let t = ClampTransform::make_clamp(Bounds { lower, upper });
+    let (res, t2) = apply_row_by_row(t, data);
 
-//     final_assert(res, lower, upper);
-//     //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
-// }
+    final_assert(res, lower, upper);
+    //prusti_assert!(forall(|i: i32| (0<= i && i< res.len) ==> res.get(i) <= 200 && res.get(i) >= 100))
+}
 
 
 /// This function shows that the second field in vector is required
