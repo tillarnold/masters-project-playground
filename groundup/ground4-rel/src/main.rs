@@ -57,8 +57,14 @@ fn valid_mapping(m: &Map) -> bool
 
 
 #[pure]
+#[trusted]
+#[ensures(result ==> (
+    m.keys().card() == m.values().card() && m.keys().contains(k) && m.values().contains(v) && m.translate(k) == v && m.translate_invert(v) == k
+
+))]
 fn mapps(m: &Map, k: i32, v: i32) -> bool {
-      m.keys().card() == m.values().card() && m.keys().contains(k) && m.values().contains(v) && m.translate(k) == v && m.translate_invert(v) == k
+    unimplemented!()
+
 }
 
 struct Map {
@@ -112,16 +118,17 @@ impl Map {
 
 }
 
-#[requires(valid_mapping(&m))]
-#[requires(!(m.keys().contains(k)))]
-#[requires(!(m.values().contains(v)))]
-#[ensures(valid_mapping(&result))]
-fn insert_client(m: Map, k: i32, v: i32)  -> Map 
- {
-     let a = m.insert(k,v);
-     assert_true(mapps(&a, k, v));
-     a
-}
+// #[requires(valid_mapping(&m))]
+// #[requires(!(m.keys().contains(k)))]
+// #[requires(!(m.values().contains(v)))]
+// #[ensures(valid_mapping(&result))]
+// #[pure]
+// fn insert_client(m: Map, k: i32, v: i32)  -> Map 
+//  {
+//      let a = m.insert(k,v);
+//      assert_true(mapps(&a, k, v));
+//      a
+// }
 
 pub struct Vector {
     len: usize,
@@ -226,6 +233,12 @@ fn apply_id_rec(data: Vector, idx: usize) -> Vector {
         data
     }
 }
+
+#[ensures(rel0(a) == rel1(a) ==> rel0(result) == rel1(result))]
+fn id_2(a: i32, b: i32) -> i32 {
+    a
+}
+
 
 
 
