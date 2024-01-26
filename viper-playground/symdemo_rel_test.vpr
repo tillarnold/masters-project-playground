@@ -1,0 +1,25 @@
+field vecs: Seq[Int]
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+
+method func(X: Ref)
+    requires(Vec(X))
+    requires(rel(Vec(X),0))
+    requires(rel(Vec(X),1))
+{
+   
+}
+
+
+
+
+method apply_clamp_0_rel_client(A: Ref) 
+    requires(Vec(A))
+      requires(rel(Vec(A),0))
+    requires(rel(Vec(A),1))
+    { 
+        func(A)
+}
