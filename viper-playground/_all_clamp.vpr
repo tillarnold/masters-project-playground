@@ -137,7 +137,7 @@ method insert_client(m: Mapping, k: Int, v: Int)  returns(a: Mapping)
 method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
     requires(Vec(A))
     requires(Vec(B))
-    requires(len(A) == len(B) + 1) // A is longer by one
+    requires(len(A) > len(B)) // A is longer
 
     requires valid_mapping(m)
 
@@ -190,7 +190,30 @@ method apply_clamp_1(A: Ref, B: Ref, m: Mapping)
         i := i + 1;
     }
 
-    set(A, len(B)  , clamp(get(A, len(B)  )))
+    assert (forall q: Int :: valid_index(B, q) ==> get(B, q) == old(clamp(get(B, q))) )
+
+
+   while(i < len(A))
+        // Generic loop invariant things
+        invariant Vec(A)
+        invariant Vec(B)
+        invariant len(A) == old(len(A))
+        invariant len(B) == old(len(B))
+        invariant i >= 0
+        invariant (forall q: Int :: valid_index(B, q) ==> get(B, q) == old(clamp(get(B, q))) )
+
+        // Invariants for clamping
+        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
+        invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
+
+    {
+        set(A, i, clamp(get(A, i)))
+
+        i := i + 1;
+    }
+
+        assert (forall q: Int :: valid_index(B, q) ==> get(B, q) == old(clamp(get(B, q))) )
+
 }
 
 
