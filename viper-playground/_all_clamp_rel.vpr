@@ -307,31 +307,49 @@ method apply_clamp_same(V: Ref, m: Mapping, extra_B_index: Int)
 // I have an isabelle proof that shows that (for multisets) the only way for the symd to be 1 is if A and B differe in size by one.
 // So this covers all possible cases for symd=1 except for A and B being swaped (so the case where B is longer by 1)
 method apply_clamp_1(V: Ref,  m: Mapping)
+    requires((Vec(V)))
+
     requires(rel(Vec(V),0))
     requires(rel(Vec(V),1))
-    requires(rel(len(V),0) == rel(len(B),1) + 1) // A is longer
+    requires(rel(len(V),0) == rel(len(V),1) + 1) // A is longer
+
+
+    requires rel(m,0) == rel(m,1)
+    requires rel(m,0) == rel(m,1)
 
     requires valid_mapping(m)
 
     // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
     // range(m) = domain(m) + {len(B)} \ {extra_element}
     // domain(m) = {0,1,..., len(B) - 1}
-    requires(forall i: Int :: i in keys(m) <==> valid_index(B, i))
-    requires(forall i: Int :: i in values(m) ==> valid_index(A, i))
+    requires(forall i: Int :: i in keys(m) <==> rel(valid_index(V, i),1))
+    requires(forall i: Int :: i in values(m) ==> rel(valid_index(V, i),0))
+    requires(forall i: Int :: i in values(m) ==> (valid_index(V, i)))
 
     // The mapping is valid (dsym is at most 1)
-    requires(forall i: Int :: valid_index(B, i) ==> (get(A,translate(m,i)) == get(B, i))) 
+    requires(forall i: Int :: rel(valid_index(V, i),1) ==> ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1))) 
 
 
-    // Lists same length
-    ensures(Vec(A) && Vec(B) && old(len(B)) == len(B) && old(len(A)) == len(A))
+  // Lists same length
+    ensures Vec(V)
+    ensures(rel(Vec(V),0))
+    ensures(rel(Vec(V),1))
+
+    ensures(old(rel(len(V),1)) == rel(len(V),1) && old(len(rel(V,0))) == len(rel(V,0)))
+    // ensures(rel(len(V),0) == rel(len(V),1))
+    ensures(rel(len(V),0) == len(V))
+    // ensures(rel(len(V),1) == len(V))
+    ensures(len(V) == old(len(V)))
 
     // Clamping was done
-    ensures(forall i: Int :: valid_index(A, i) ==> get(A, i) == old(clamp(get(A, i))))
-    ensures(forall i: Int :: valid_index(B, i) ==> get(B, i) == old(clamp(get(B, i))) )
+    ensures(forall i: Int ::  (valid_index(V, i) ==> (get(V, i) == old(clamp(get(V, i)))) ))
+    ensures(forall i: Int ::  (( rel(valid_index(V, i),0) ==> ( rel(get(V, i),0) == old(  rel(clamp(get(V, i)),0) )) )))
+    ensures(forall i: Int ::  (( rel(valid_index(V, i),1) ==> ( rel(get(V, i),1) == old(  rel(clamp(get(V, i)),1) )) )))
+
+
 
     // the mapping shows that dsym is still at most 1
-    ensures(forall i: Int :: valid_index(B, i) ==> (get(A,translate(m,i)) == get(B, i))) 
+    ensures(forall i: Int :: rel(valid_index(V, i),1) ==> ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1))) 
 
     ensures valid_mapping(m)
 
@@ -339,30 +357,41 @@ method apply_clamp_1(V: Ref,  m: Mapping)
 
     var i: Int := 0;
 
-    while(i < len(B))
-        // Generic loop invariant things
-        invariant Vec(A)
-        invariant Vec(B)
-        invariant len(A) == old(len(A))
-        invariant len(B) == old(len(B))
+    while(i < len(V))
+        invariant Vec(V)
+        // invariant rel(Vec(V),0)
+        // invariant rel(Vec(V),1)
+       
+
+
+        // invariant rel(len(V),0) == old(rel(len((V)),0))
+        // invariant rel(len(V),1) == old(rel(len((V)),1))
+        invariant len(V) == old(len(V))
+        // invariant(rel(len(V),0) == rel(len(V),1) + 1) // A is longer
+
         invariant i >= 0
-        invariant i <= len(B)
+        invariant i <= len(V)
+        // invariant i <= rel(len(V),1) 
+        // invariant i <= rel(len(V),0) 
+
+        // invariant rel(len(V),0) == rel(len(V),1)
+
 
         // Invariants for clamping
-        invariant forall x: Int :: {clamp(old(get(A, x)))} (valid_index(A, x) && x < i) ==> get(A, x) == clamp(old(get(A, x)))
-        invariant forall x: Int :: (valid_index(A, x) && x >= i) ==> get(A, x) == old(get(A, x))
-        invariant forall x: Int :: {clamp(old(get(B, x)))} (valid_index(B, x) && x < i) ==> get(B, x) == clamp(old(get(B, x)))
-        invariant forall x: Int :: (valid_index(B, x) && x >= i) ==> get(B, x) == old(get(B, x))
+        invariant forall x: Int :: (valid_index(V, x) && x < i) ==> get(V, x) == clamp(old(get(V, x)))
+        invariant forall x: Int :: (valid_index(V, x) && x >= i) ==> get(V, x) == old(get(V, x))
+
+        // invariant forall x: Int :: rel((valid_index(V, x) && x < i) ==> get(V, x) == clamp(old(get(V, x))),0)
+        // invariant forall x: Int :: rel((valid_index(V, x) && x >= i) ==> get(V, x) == old(get(V, x)),0)
+
+        // invariant forall x: Int :: rel((valid_index(V, x) && x < i) ==> get(V, x) == clamp(old(get(V, x))),1)
+        // invariant forall x: Int :: rel((valid_index(V, x) && x >= i) ==> get(V, x) == old(get(V, x)),1)
 
     {
-        set(B, i, clamp(get(B, i)))
-
-        set(A, i, clamp(get(A, i)))
-
+        set(V, i, clamp(get(V, i)))
         i := i + 1;
     }
 
-        set(A, i, clamp(get(A, i)))
 
 
 }
