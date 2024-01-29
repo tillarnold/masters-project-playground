@@ -401,7 +401,7 @@ method client_apply_clamp_1(A: Ref)
 
 function valid_mapping_exists(V: Ref) : Bool 
  requires(Vec(V))
- requires(rel(Vec(V),0))
+  requires(rel(Vec(V),0))
  requires(rel(Vec(V),1))
 requires(rel(len(V),0) <= rel(len(V),1))
 
@@ -416,7 +416,7 @@ requires(rel(len(V),0) <= rel(len(V),1))
 
 function find_mapping(V: Ref) : Mapping
   requires(Vec(V))
- requires(rel(Vec(V),0))
+requires(rel(Vec(V),0))
  requires(rel(Vec(V),1))
   requires(rel(len(V),0) <= rel(len(V),1))
   ensures(valid_mapping_exists(V) <==> 
@@ -428,12 +428,13 @@ function find_mapping(V: Ref) : Mapping
   )
 
 
-method apply_clamp_0_rel_no_mapping(V: Ref)
-    requires(Vec(V))
-    requires(rel(Vec(V),0))
-    requires(rel(Vec(V),1))
-    requires(rel(len(V),0) <= rel(len(V),1))
-    requires(   (V))
-{
-    var m : Mapping := find_mapping(V);
-}
+// method apply_clamp_0_rel_no_mapping(V: Ref)
+//  requires(Vec(V))
+//   requires(rel(Vec(V),0))
+//  requires(rel(Vec(V),1))
+// requires(rel(len(V),0) <= rel(len(V),1))
+//     requires(valid_mapping_exists(V))
+
+// {
+//     // var m : Mapping := find_mapping(V);
+// }
