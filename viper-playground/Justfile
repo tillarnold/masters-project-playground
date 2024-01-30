@@ -1,5 +1,5 @@
-#viper_version := "Stable"
-viper_version := "Nightly"
+viper_version := "Stable"
+#viper_version := "Nightly"
 #viper_backend := "viper.silicon.SiliconRunner"
 viper_backend := "viper.carbon.Carbon"
 

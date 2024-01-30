@@ -163,7 +163,12 @@ fn single_client(s: Set) {
 }
 
 fn union_client(s: Set) {
-    let b = s.union(Set::singleton(3));
+    let s2 = Set::singleton(3);
+    let (s2, s2p) = s2.clone_set();
+    assert_true(s2.contains(3));
+
+    let b = s.union(s2p);
+
     assert_true(b.contains(3))
 }
 
