@@ -1,51 +1,6 @@
 extern crate prusti_contracts;
 use prusti_contracts::*;
 
-pub struct Set {
-    contents: u32,
-}
-
-impl Set {
-    #[pure]
-    #[trusted]
-    fn contains(self, el: i32) -> bool {
-        unimplemented!()
-    }
-
-    #[pure]
-    #[trusted]
-    #[ensures(forall(|el: i32| (result.contains(el) <==>  (self.contains(el) | other.contains( el) ) ) ))]
-    fn union(self, other: Set) -> Set {
-        unimplemented!()
-    }
-
-    #[pure]
-    #[trusted]
-    #[ensures(result.0 === self)]
-    #[ensures(result.1 === self)]
-    fn clone_set(self) -> (Self, Self) {
-        unimplemented!()
-    }
-
-    #[pure]
-    #[trusted]
-    // TODO 
-    fn card(self) -> usize {
-        unimplemented!()
-    }
-
-    #[pure]
-    #[trusted]
-    #[ensures(result.contains(el))]
-    #[ensures(result.card() == 1)]
-    #[ensures(forall(|e: i32| (result.contains(e) <==>  e == el ) ))]
-    fn singleton(el: i32) -> Set{
-        unimplemented!()
-    }
-}
-
-
-
 
 
 
@@ -59,7 +14,7 @@ impl Set {
 #[ensures(result ==> (
     {
     let (m1,m2) = m.clone_map();
-    m1.keys().card() == m2.values().card() 
+    m1.key_card() == m2.value_card() 
     }
 ))]
 
@@ -67,7 +22,7 @@ impl Set {
     {
     let (m1,m2) = m.clone_map();
     let (m2,m3) = m2.clone_map();
-    (forall(|v : i32|  (m1.values().contains(v) ==> m2.translate(m3.translate_invert(v)) == v)))
+    (forall(|v : i32|  (m1.has_value(v) ==> m2.translate(m3.translate_invert(v)) == v)))
     }
 ))]
 
@@ -83,11 +38,11 @@ fn valid_mapping_owned(m: Map) -> bool
     {
     let (m1,m2) = m.clone_map();
     
-    m1.keys().card() == m2.values().card() 
+    m1.key_card() == m2.value_card() 
     }
 ))]
-#[ensures(result ==> (m.keys().contains(k)))]
-#[ensures(result ==> (m.values().contains(v)))]
+#[ensures(result ==> (m.has_key(k)))]
+#[ensures(result ==> (m.has_value(v)))]
 #[ensures(result ==> (m.translate(k) == v))]
 #[ensures(result ==> (m.translate_invert(v) == k))]
 fn mapps(m: Map, k: i32, v: i32) -> bool {
@@ -103,39 +58,51 @@ struct Map {
 impl Map {
     #[pure]
     #[trusted]
-    fn keys(self) -> Set {
+    fn has_key(self, key: i32) -> bool {
         unimplemented!()
     }
 
     #[pure]
     #[trusted]
-    fn values(self) -> Set {
+    fn key_card(self) -> i32 {
         unimplemented!()
     }
 
     #[pure]
     #[trusted]
-    fn translate(self, el: i32) -> i32 {
+    fn has_value(self, value: i32) -> bool {
         unimplemented!()
     }
 
     #[pure]
     #[trusted]
-    fn translate_invert(self, el: i32) -> i32 {
+    fn value_card(self) -> i32 {
         unimplemented!()
     }
 
     #[pure]
     #[trusted]
-    #[requires(!(self.keys().contains(k)))]
-    #[requires(!(self.values().contains(v)))]
-    #[requires({let (self1,self2) = self.clone_map(); self1.keys().card() == self2.values().card()})]
-    #[ensures((result.keys() === ((self.keys()).union(Set::singleton(k)))))]
-    #[ensures((result.values() === ((self.values()).union(Set::singleton(v)))))]
+    fn translate(self, key: i32) -> i32 {
+        unimplemented!()
+    }
+
+    #[pure]
+    #[trusted]
+    fn translate_invert(self, value: i32) -> i32 {
+        unimplemented!()
+    }
+
+    #[pure]
+    #[trusted]
+    #[requires(!(self.has_key(k)))]
+    #[requires(!(self.has_value(v)))]
+    #[requires({let (self1,self2) = self.clone_map(); self1.key_card() == self2.value_card()})]
+    #[ensures(forall(|e: i32| result.has_key(e) <==> ((self.has_key(e)) || (e == k))))]
+    #[ensures(forall(|e: i32| result.has_value(e) <==> ((self.has_value(e)) || (e == v))))]
     #[ensures(result.translate(k) == v)]
     #[ensures(result.translate_invert(v) == k)]
-    #[ensures(forall(|kp: i32|  { let (self1,self2) = self.clone_map(); (self1.keys().contains(kp) && kp != k) ==> result.translate(kp) == self2.translate( kp) } ))]
-    #[ensures(forall(|vp: i32| { let (self1,self2) = self.clone_map(); (self1.values().contains(vp) && vp != v) ==> result.translate_invert(vp) == self2.translate_invert(vp) } ))]
+    #[ensures(forall(|kp: i32|  { let (self1,self2) = self.clone_map(); (self1.has_key(kp) && kp != k) ==> result.translate(kp) == self2.translate( kp) } ))]
+    #[ensures(forall(|vp: i32| { let (self1,self2) = self.clone_map(); (self1.has_value(vp) && vp != v) ==> result.translate_invert(vp) == self2.translate_invert(vp) } ))]
     fn insert(self, k: i32, v: i32) -> Map  {
         unimplemented!()
 
@@ -154,25 +121,27 @@ impl Map {
 
 }
 
-fn union_client(s: Set) {
-    let b = s.union(Set::singleton(3));
-    assert_true(b.contains(3))
-}
-
-// #[requires(valid_mapping_owned(m))]
-// #[requires(!(m.keys().contains(k)))]
-// #[requires(!(m.values().contains(v)))]
-// #[ensures(valid_mapping_owned(result))]
-// #[pure]
-// fn insert_client(m: Map, k: i32, v: i32)  -> Map 
-//  {
-//      let a = m.insert(k,v);
-//      let (a,b) = a.clone_map();
-//      assert_true(a.keys().contains(k));
-
-//     //  assert_true(mapps(a, k, v));
-//      b
+// fn union_client(s: Set) {
+//     let b = s.union(Set::singleton(3));
+//     assert_true(b.contains(3))
 // }
+
+#[requires(valid_mapping_owned(m))]
+#[requires(!(m.has_key(k)))]
+#[requires(!(m.has_value(v)))]
+// #[ensures(valid_mapping_owned(result))]
+// #[ensures((result).has_key(k))]
+// #[ensures((result).has_value(v))]
+
+#[pure]
+fn insert_client(m: Map, k: i32, v: i32)  
+ {
+     let a = m.insert(k,v);
+
+
+        assert_true(mapps(a, k, v));
+    //  a
+}
 
 pub struct Vector {
     len: usize,

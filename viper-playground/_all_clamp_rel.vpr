@@ -399,42 +399,73 @@ method client_apply_clamp_1(A: Ref)
 }
 
 
-function valid_mapping_exists(V: Ref) : Bool 
- requires(Vec(V))
-  requires(rel(Vec(V),0))
- requires(rel(Vec(V),1))
-requires(rel(len(V),0) <= rel(len(V),1))
+
+function valid_mapping_exists(A: Ref, B: Ref) : Bool 
+ requires(Vec(A))
+ requires(Vec(B))
+
+requires((len(A)) <= (len(B)))
 
   ensures( result ==> ( exists m: Mapping :: (
         valid_mapping(m) &&
-        (forall i: Int :: i in keys(m) <==> rel((valid_index(V, i)),1) ) &&
-        (forall i: Int :: i in values(m) <==> (rel (valid_index(V, i),0)) ) &&
-        (forall i: Int :: rel(valid_index(V, i),0) ==>  ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1)))
+        (forall i: Int :: i in keys(m) <==> ((valid_index(B, i))) ) &&
+        (forall i: Int :: i in values(m) <==> ( (valid_index(A, i))) ) &&
+        (forall i: Int :: (valid_index(A, i)) ==>  ( (get(A,translate(m,i))) == (get(B, i))))
     ))
   )
 
 
-function find_mapping(V: Ref) : Mapping
-  requires(Vec(V))
-requires(rel(Vec(V),0))
- requires(rel(Vec(V),1))
-  requires(rel(len(V),0) <= rel(len(V),1))
-  ensures(valid_mapping_exists(V) <==> 
+function find_mapping(A: Ref, B: Ref) : Mapping
+  requires(Vec(A))
+  requires(Vec(B))
+
+  requires((len(A)) <= (len(B)))
+  ensures(valid_mapping_exists(A, B) <==> 
   
   (valid_mapping(result) &&
-        (forall i: Int :: i in keys(result) <==> rel(valid_index(V, i),1)) &&
-        (forall i: Int :: i in values(result) <==> rel(valid_index(V, i),0)) &&
-        (forall i: Int :: rel(valid_index(V, i),0) ==>  ( rel(get(V,translate(result,i)),0) == rel(get(V, i),1))))
+        (forall i: Int :: i in keys(result) <==> (valid_index(B, i))) &&
+        (forall i: Int :: i in values(result) <==> (valid_index(A, i))) &&
+        (forall i: Int :: (valid_index(A, i)) ==>  ( (get(A,translate(result,i))) == (get(B, i)))))
   )
 
 
-// method apply_clamp_0_rel_no_mapping(V: Ref)
+// function valid_mapping_exists_ref(V: Ref) : Bool 
 //  requires(Vec(V))
 //   requires(rel(Vec(V),0))
 //  requires(rel(Vec(V),1))
 // requires(rel(len(V),0) <= rel(len(V),1))
-//     requires(valid_mapping_exists(V))
 
-// {
-//     // var m : Mapping := find_mapping(V);
-// }
+//   ensures( result ==> ( exists m: Mapping :: (
+//         valid_mapping(m) &&
+//         (forall i: Int :: i in keys(m) <==> rel((valid_index(V, i)),1) ) &&
+//         (forall i: Int :: i in values(m) <==> (rel (valid_index(V, i),0)) ) &&
+//         (forall i: Int :: rel(valid_index(V, i),0) ==>  ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1)))
+//     ))
+//   )
+
+
+// function find_mapping_rel(V: Ref) : Mapping
+//   requires(Vec(V))
+// requires(rel(Vec(V),0))
+//  requires(rel(Vec(V),1))
+//   requires(rel(len(V),0) <= rel(len(V),1))
+//   ensures(valid_mapping_exists_ref(V) <==> 
+  
+//   (valid_mapping(result) &&
+//         (forall i: Int :: i in keys(result) <==> rel(valid_index(V, i),1)) &&
+//         (forall i: Int :: i in values(result) <==> rel(valid_index(V, i),0)) &&
+//         (forall i: Int :: rel(valid_index(V, i),0) ==>  ( rel(get(V,translate(result,i)),0) == rel(get(V, i),1))))
+//   )
+
+
+method apply_clamp_0_rel_no_mapping(V: Ref)
+  requires(rel(Vec(V),0))
+ requires(rel(Vec(V),1))
+  requires(Vec(rel(V,0)))
+  requires(Vec(rel(V,1)))
+requires(rel(len(V),0) <= rel(len(V),1))
+
+{
+    var a: Int:=  get(rel(V,0),4)
+    //  var m : Mapping := find_mapping( rel((V),0) , rel((V),1));
+}

@@ -15,7 +15,7 @@ impl Set {
     #[pure]
     #[trusted]
     #[ensures(forall(|el: i32| (result.contains(el) <==>  (self.contains(el) | other.contains( el) ) ) ))]
-    #[ensures(forall(|el: i32| ( self.contains(el) ==> result.contains(el) ) ))]
+    #[ensures({ let (result1,result2) = result.clone_set(); forall(|el: i32| ( self.contains(el) ==> result1.contains(el) ),triggers=[( result2.contains(el),)] ) })]
     #[ensures(forall(|el: i32| ( other.contains(el) ==> result.contains(el) ) ))]
     fn union(self, other: Set) -> Set {
         unimplemented!()

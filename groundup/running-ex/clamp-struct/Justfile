@@ -1,5 +1,5 @@
 # Configuration
-config_prusti_repo := "../../../prusti-dev"
+config_prusti_repo := "../../../../prusti-dev"
 config_rust_toolchain := "nightly-2023-07-16-x86_64-unknown-linux-gnu"
 
 # Computed values
@@ -33,8 +33,8 @@ viper_tools := if path_exists(viper_tools_candidate_1) == "true" {
 
 classfile_dir := viper_tools / "backends"
 
-viper_backend := "viper.silicon.SiliconRunner"
-#viper_backend := "viper.carbon.Carbon"
+#viper_backend := "viper.silicon.SiliconRunner"
+viper_backend := "viper.carbon.Carbon"
 
 # Env varss
 export RUST_BACKTRACE := "1"
@@ -61,7 +61,7 @@ prusti: (build_all_prusti)
 	{{prusti_bins_dir}}/prusti-rustc -Z dump-mir=F {{main_rs}}
 	mkdir -p log
 	rm -f log/viper_with_plugin.log
-	just run_viper_with_extension ./local-testing/simple.vpr > log/viper_with_plugin.log
+	just run_viper ./local-testing/simple.vpr > log/viper_with_plugin.log
 	@echo --------------
 	tail log/viper_with_plugin.log
 	@echo --------------
@@ -109,7 +109,7 @@ build_all_prusti:
 	cd {{prusti_dev_dir}}/prusti-contracts-build && cargo build
 	cd {{prusti_dev_dir}}/prusti-launch && cargo build
 
-run_viper_with_extension file:
-    Z3_EXE="{{viper_tools}}/z3/bin/z3" java -Xmx2048m -Xss128m \
-    -cp :"{{classfile_dir}}/silver-sif-extension.jar":"{{classfile_dir}}/viperserver.jar" "{{viper_backend}}" \
-    --plugin viper.silver.sif.SIFPlugin {{file}}
+run_viper file:
+    java -Xmx2048m -Xss128m \
+    -cp :"{{classfile_dir}}/viperserver.jar" "{{viper_backend}}" \
+    {{file}}

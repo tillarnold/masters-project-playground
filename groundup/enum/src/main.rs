@@ -139,6 +139,23 @@ fn f3() {
         IntOption::Some(v) => assert(v == 3),
     }
 }
+#[pure]
+fn f4(x: bool, y: bool) -> IntOption{
+    if x ==  y {
+        IntOption::None 
+    }
+    else if x {
+        IntOption::Some(20)
+    }
+    else {
+        IntOption::Some(9)
+    }
+}
+
+#[requires(f4(true, true) === IntOption::None  )]
+fn f4_user() {
+
+}
 
 fn main() {
     let x = Person {
