@@ -174,7 +174,7 @@ impl Vector {
     #[requires(self.len >= 0)]
     #[ensures(self.len == result.len)]
     #[ensures(result.get(idx) == value)]
-    #[ensures(forall(|i : usize| (i >= 0  && i < self.len && !(i == idx)) ==> result.get(i) == self.get(i)))]
+    #[ensures(forall(|i : usize| (i >= 0  && i < self.len && i != idx) ==> result.get(i) == self.get(i)))]
     fn set(self, idx: usize, value: i32) -> Self {
         unimplemented!()
     }

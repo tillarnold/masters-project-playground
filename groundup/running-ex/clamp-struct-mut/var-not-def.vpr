@@ -1,0 +1,13 @@
+
+
+method m_set_CALLER_0_90()
+  ensures forall qvar_0_0: Int :: (let XXX == (true) in F(qvar_0_0, XXX))
+
+
+
+
+function F(
+  arg1: Int,
+  arg2: Bool
+): Bool
+
