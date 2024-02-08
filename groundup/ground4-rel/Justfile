@@ -61,7 +61,7 @@ prusti: (build_all_prusti)
 	{{prusti_bins_dir}}/prusti-rustc -Z dump-mir=F {{main_rs}}
 	mkdir -p log
 	rm -f log/viper_with_plugin.log
-	just run_viper_with_extension ./local-testing/simple.vpr > log/viper_with_plugin.log
+	just run_viper_without_extension ./local-testing/simple.vpr > log/viper_with_plugin.log
 	@echo --------------
 	tail log/viper_with_plugin.log
 	@echo --------------
@@ -110,6 +110,11 @@ build_all_prusti:
 	cd {{prusti_dev_dir}}/prusti-launch && cargo build
 
 run_viper_with_extension file:
-    Z3_EXE="{{viper_tools}}/z3/bin/z3" java -Xmx2048m -Xss128m \
+    java -Xmx2048m -Xss128m \
     -cp :"{{classfile_dir}}/silver-sif-extension.jar":"{{classfile_dir}}/viperserver.jar" "{{viper_backend}}" \
     --plugin viper.silver.sif.SIFPlugin {{file}}
+
+run_viper_without_extension file:
+    java -Xmx2048m -Xss128m \
+    -cp :"{{classfile_dir}}/viperserver.jar" "{{viper_backend}}" \
+     {{file}}
