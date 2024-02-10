@@ -1,0 +1,469 @@
+// -----------------------------
+// methods
+// -----------------------------
+method m_clamp_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_i32(_1p)
+  requires p_Bounds(_2p)
+//   requires s_Bool_read_0((let _0_1s_0 == (p_i32_snap(_1p)) in
+// (let _0_2s_0 == (p_Bounds_snap(_2p)) in
+// (let _0_4s_1 == (s_Bounds_field_min(_0_2s_0)) in
+// (let _0_5s_1 == (s_Bounds_field_max(_0_2s_0)) in
+// mir_binop_Le_i32_i32(_0_4s_1, _0_5s_1))))))
+  ensures p_i32(_0p)
+//   ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(_1p))) in
+// (let _0_2s_0 == (old(p_Bounds_snap(_2p))) in
+// (let _0_3s_0 == (p_i32_snap(_0p)) in
+// (let _0_6s_1 == (s_Bounds_field_max(_0_2s_0)) in
+// mir_binop_Le_i32_i32(_0_3s_0, _0_6s_1))))))
+//   ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(_1p))) in
+// (let _0_2s_0 == (old(p_Bounds_snap(_2p))) in
+// (let _0_3s_0 == (p_i32_snap(_0p)) in
+// (let _0_6s_1 == (s_Bounds_field_min(_0_2s_0)) in
+// mir_binop_Ge_i32_i32(_0_3s_0, _0_6s_1))))))
+//   ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(_1p))) in
+// (let _0_2s_0 == (old(p_Bounds_snap(_2p))) in
+// (let _0_3s_0 == (p_i32_snap(_0p)) in
+// (let _0_7s_1 == (s_Bounds_field_max(_0_2s_0)) in
+// (let _0_5s_1 == (mir_binop_Le_i32_i32(_0_1s_0, _0_7s_1)) in
+// !(s_Bool_read_0(_0_5s_1))
+// ? s_Bool_cons(true)
+// : (let _0_10s_1 == (s_Bounds_field_min(_0_2s_0)) in
+//   (let _0_8s_1 == (mir_binop_Ge_i32_i32(_0_1s_0, _0_10s_1)) in
+//   !(s_Bool_read_0(_0_8s_1))
+//   ? s_Bool_cons(true)
+//   : mir_binop_Eq_i32_i32(_0_3s_0, _0_1s_0)))))))))
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  goto bb_0
+label bb_0
+  // _4 = _1
+  assign_p_i32(_4p, p_i32_snap(_1p))
+  // _5 = (_2.0: i32)
+  unfold p_Bounds(_2p)
+  assign_p_i32(_5p, p_i32_snap(p_Bounds_field_min(_2p)))
+  // _3 = Lt(move _4, move _5)
+  var _tmp0: s_i32
+  _tmp0 := p_i32_snap(_4p)
+  exhale p_i32(_4p)
+  var _tmp1: s_i32
+  _tmp1 := p_i32_snap(_5p)
+  exhale p_i32(_5p)
+  assign_p_Bool(_3p, mir_binop_Lt_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _3) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read_0(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _0 = (_2.0: i32)
+  assign_p_i32(_0p, p_i32_snap(p_Bounds_field_min(_2p)))
+  // goto -> bb6
+  goto bb_6
+label bb_2
+  // _7 = _1
+  assign_p_i32(_7p, p_i32_snap(_1p))
+  // _8 = (_2.1: i32)
+  assign_p_i32(_8p, p_i32_snap(p_Bounds_field_1(_2p)))
+  // _6 = Gt(move _7, move _8)
+  var _tmp3: s_i32
+  _tmp3 := p_i32_snap(_7p)
+  exhale p_i32(_7p)
+  var _tmp4: s_i32
+  _tmp4 := p_i32_snap(_8p)
+  exhale p_i32(_8p)
+  assign_p_Bool(_6p, mir_binop_Gt_i32_i32(_tmp3, _tmp4))
+  // switchInt(move _6) -> [0: bb4, otherwise: bb3]
+  var _tmp5: s_Bool
+  _tmp5 := p_Bool_snap(_6p)
+  exhale p_Bool(_6p)
+  if (s_Bool_read_0(_tmp5) == false) { goto bb_4 }
+  else { goto bb_3 }
+label bb_3
+  // _0 = (_2.1: i32)
+  assign_p_i32(_0p, p_i32_snap(p_Bounds_field_1(_2p)))
+  // goto -> bb5
+  goto bb_5
+label bb_4
+  // _0 = _1
+  assign_p_i32(_0p, p_i32_snap(_1p))
+  // goto -> bb5
+  goto bb_5
+label bb_5
+  // goto -> bb6
+  goto bb_6
+label bb_6
+  // return
+  exhale p_i32(_1p)
+  fold p_Bounds(_2p)
+  exhale p_Bounds(_2p)
+  goto end
+label end
+  // return
+}
+
+
+method m_clamp_user_CALLER_impure(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_i32(_1p)
+  ensures p_i32(_0p)
+{
+label start
+  var _2p: Ref
+  var _3p: Ref
+  assign_p_i32(_2p, p_i32_snap(_1p))
+  assign_p_Bounds(_3p, s_Bounds_cons(s_i32_cons(10), s_i32_cons(20)))
+  m_clamp_CALLER_(_0p, _2p, _3p)
+  exhale p_i32(_1p)
+}
+
+
+method m_clamp_user_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_i32(_1p)
+  requires s_Bool_read_0((let _0_1s_0 == (p_i32_snap(_1p)) in
+(let _0_5s_1 == (s_Bounds_cons(s_i32_cons(10), s_i32_cons(20))) in
+(let _0_3s_1 == (f_clamp(_0_1s_0, _0_5s_1)) in
+mir_binop_Eq_i32_i32(_0_3s_1, s_i32_cons(20))))))
+  ensures p_i32(_0p)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(_1p))) in
+(let _0_2s_0 == (p_i32_snap(_0p)) in
+mir_binop_Eq_i32_i32(_0_2s_0, s_i32_cons(20)))))
+{
+label start
+  var _2p: Ref
+  var _3p: Ref
+  goto bb_0
+label bb_0
+  // _2 = _1
+  assign_p_i32(_2p, p_i32_snap(_1p))
+  // _3 = Bounds { min: const 10_i32, max: const 20_i32 }
+  assign_p_Bounds(_3p, s_Bounds_cons(s_i32_cons(10), s_i32_cons(20)))
+  // _0 = clamp(move _2, move _3) -> [return: bb1, unwind: bb2]
+  var _tmp0: s_i32
+  _tmp0 := p_i32_snap(_2p)
+  exhale p_i32(_2p)
+  var _tmp1: s_Bounds
+  _tmp1 := p_Bounds_snap(_3p)
+  exhale p_Bounds(_3p)
+  assign_p_i32(_0p, f_clamp(_tmp0, _tmp1))
+  goto bb_1
+label bb_1
+  // return
+  exhale p_i32(_1p)
+  goto end
+label bb_2
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_foo_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_Bounds(_1p)
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_Bounds(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_main_CALLER_(
+  _0p: Ref
+)
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  goto end
+label end
+  // return
+}
+
+// -----------------------------
+// functions
+// -----------------------------
+function f_clamp(
+  _1p: s_i32,
+  _2p: s_Bounds
+): s_i32
+  requires s_Bool_read_0((let _0_4s_1 == (s_Bounds_field_min(_2p)) in
+(let _0_5s_1 == (s_Bounds_field_max(_2p)) in
+mir_binop_Le_i32_i32(_0_4s_1, _0_5s_1))))
+  ensures s_Bool_read_0((let _0_6s_1 == (s_Bounds_field_max(_2p)) in
+mir_binop_Le_i32_i32(result, _0_6s_1)))
+  ensures s_Bool_read_0((let _0_6s_1 == (s_Bounds_field_min(_2p)) in
+mir_binop_Ge_i32_i32(result, _0_6s_1)))
+  ensures s_Bool_read_0((let _0_7s_1 == (s_Bounds_field_max(_2p)) in
+(let _0_5s_1 == (mir_binop_Le_i32_i32(_1p, _0_7s_1)) in
+!(s_Bool_read_0(_0_5s_1))
+? s_Bool_cons(true)
+: (let _0_10s_1 == (s_Bounds_field_min(_2p)) in
+  (let _0_8s_1 == (mir_binop_Ge_i32_i32(_1p, _0_10s_1)) in
+  !(s_Bool_read_0(_0_8s_1))
+  ? s_Bool_cons(true)
+  : mir_binop_Eq_i32_i32(result, _1p))))))
+{
+  (let _0_5s_1 == (s_Bounds_field_min(_2p)) in
+(let _0_3s_1 == (mir_binop_Lt_i32_i32(_1p, _0_5s_1)) in
+!(s_Bool_read_0(_0_3s_1))
+? (let _0_8s_1 == (s_Bounds_field_max(_2p)) in
+  (let _0_6s_1 == (mir_binop_Gt_i32_i32(_1p, _0_8s_1)) in
+  !(s_Bool_read_0(_0_6s_1))
+  ? _1p
+  : s_Bounds_field_max(_2p)))
+: s_Bounds_field_min(_2p)))
+}
+
+// -----------------------------
+// MIR builtins
+// -----------------------------
+function mir_binop_Lt_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read_0(arg1)) < (s_i32_read_0(arg2)))
+}
+
+function mir_binop_Gt_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read_0(arg1)) > (s_i32_read_0(arg2)))
+}
+
+function mir_binop_Le_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read_0(arg1)) <= (s_i32_read_0(arg2)))
+}
+
+function mir_binop_Ge_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read_0(arg1)) >= (s_i32_read_0(arg2)))
+}
+
+function mir_binop_Eq_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read_0(arg1)) == (s_i32_read_0(arg2)))
+}
+
+// -----------------------------
+// generics
+// -----------------------------
+// -----------------------------
+// snapshots
+// -----------------------------
+domain s_i32 {
+  axiom ax_s_i32_cons_read_0 {
+    forall f0: Int :: {s_i32_cons(f0)} (s_i32_read_0(s_i32_cons(f0))) == (f0)
+  }
+  axiom ax_s_i32_cons {
+    forall self: s_i32 :: {s_i32_read_0(self)} (s_i32_cons(s_i32_read_0(self))) == (self)
+  }
+  axiom ax_s_i32_write_0_read_0 {
+    forall self: s_i32, val: Int :: {s_i32_read_0(s_i32_write_0(self, val))} (s_i32_read_0(s_i32_write_0(self, val))) == (val)
+  }
+  axiom s_i32_bounds {
+    forall self: s_i32 :: {s_i32_read_0(self)} ((-(2147483648)) <= (s_i32_read_0(self))) && ((s_i32_read_0(self)) <= (2147483647))
+  }
+  function s_i32_cons(Int): s_i32
+  function s_i32_read_0(s_i32): Int
+  function s_i32_write_0(s_i32, Int): s_i32
+}
+
+domain s_Bounds {
+  axiom ax_s_Bounds_cons_read_0 {
+    forall f0: s_i32, f1: s_i32 :: {s_Bounds_cons(f0, f1)} (s_Bounds_field_min(s_Bounds_cons(f0, f1))) == (f0)
+  }
+  axiom ax_s_Bounds_cons_read_1 {
+    forall f0: s_i32, f1: s_i32 :: {s_Bounds_cons(f0, f1)} (s_Bounds_field_max(s_Bounds_cons(f0, f1))) == (f1)
+  }
+  axiom ax_s_Bounds_cons {
+    forall self: s_Bounds :: {s_Bounds_cons(s_Bounds_field_min(self), s_Bounds_field_max(self))} (s_Bounds_cons(s_Bounds_field_min(self), s_Bounds_field_max(self))) == (self)
+  }
+  axiom ax_s_Bounds_write_0_read_0 {
+    forall self: s_Bounds, val: s_i32 :: {s_Bounds_field_min(s_Bounds_write_0(self, val))} (s_Bounds_field_min(s_Bounds_write_0(self, val))) == (val)
+  }
+  axiom ax_s_Bounds_write_0_read_1 {
+    forall self: s_Bounds, val: s_i32 :: {s_Bounds_field_max(s_Bounds_write_0(self, val))} (s_Bounds_field_max(s_Bounds_write_0(self, val))) == (s_Bounds_field_max(self))
+  }
+  axiom ax_s_Bounds_write_1_read_0 {
+    forall self: s_Bounds, val: s_i32 :: {s_Bounds_field_min(s_Bounds_write_1(self, val))} (s_Bounds_field_min(s_Bounds_write_1(self, val))) == (s_Bounds_field_min(self))
+  }
+  axiom ax_s_Bounds_write_1_read_1 {
+    forall self: s_Bounds, val: s_i32 :: {s_Bounds_field_max(s_Bounds_write_1(self, val))} (s_Bounds_field_max(s_Bounds_write_1(self, val))) == (val)
+  }
+  function s_Bounds_cons(s_i32, s_i32): s_Bounds
+  function s_Bounds_field_min(s_Bounds): s_i32
+  function s_Bounds_write_0(s_Bounds, s_i32): s_Bounds
+  function s_Bounds_field_max(s_Bounds): s_i32
+  function s_Bounds_write_1(s_Bounds, s_i32): s_Bounds
+}
+
+domain s_Bool {
+  axiom ax_s_Bool_cons_read_0 {
+    forall f0: Bool :: {s_Bool_cons(f0)} (s_Bool_read_0(s_Bool_cons(f0))) == (f0)
+  }
+  axiom ax_s_Bool_cons {
+    forall self: s_Bool :: {s_Bool_cons(s_Bool_read_0(self))} (s_Bool_cons(s_Bool_read_0(self))) == (self)
+  }
+  axiom ax_s_Bool_write_0_read_0 {
+    forall self: s_Bool, val: Bool :: {s_Bool_read_0(s_Bool_write_0(self, val))} (s_Bool_read_0(s_Bool_write_0(self, val))) == (val)
+  }
+  function s_Bool_cons(Bool): s_Bool
+  function s_Bool_read_0(s_Bool): Bool
+  function s_Bool_write_0(s_Bool, Bool): s_Bool
+}
+
+domain s_0_Tuple {
+  function s_0_Tuple_cons(): s_0_Tuple
+}
+
+// -----------------------------
+// types
+// -----------------------------
+field f_i32: s_i32
+function p_i32_unreachable(
+): s_i32
+  requires false
+  ensures false
+
+function p_i32_snap(
+  self: Ref
+): s_i32
+  requires acc(p_i32(self), wildcard)
+{
+  unfolding acc(p_i32(self), wildcard) in (self.f_i32)
+}
+
+predicate p_i32(self: Ref) {
+  acc(self.f_i32)
+}
+
+method assign_p_i32(
+  self: Ref,
+  self_new: s_i32
+)
+  ensures p_i32(self)
+  ensures (p_i32_snap(self)) == (self_new)
+
+function p_Bounds_field_min(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Bounds_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Bounds_unreachable(
+): s_Bounds
+  requires false
+  ensures false
+
+function p_Bounds_snap(
+  self: Ref
+): s_Bounds
+  requires acc(p_Bounds(self), wildcard)
+{
+  unfolding acc(p_Bounds(self), wildcard) in (s_Bounds_cons(p_i32_snap(p_Bounds_field_min(self)), p_i32_snap(p_Bounds_field_1(self))))
+}
+
+predicate p_Bounds(self: Ref) {
+  (p_i32(p_Bounds_field_min(self))) && (p_i32(p_Bounds_field_1(self)))
+}
+
+method assign_p_Bounds(
+  self: Ref,
+  self_new: s_Bounds
+)
+  ensures p_Bounds(self)
+  ensures (p_Bounds_snap(self)) == (self_new)
+
+field f_Bool: s_Bool
+function p_Bool_unreachable(
+): s_Bool
+  requires false
+  ensures false
+
+function p_Bool_snap(
+  self: Ref
+): s_Bool
+  requires acc(p_Bool(self), wildcard)
+{
+  unfolding acc(p_Bool(self), wildcard) in (self.f_Bool)
+}
+
+predicate p_Bool(self: Ref) {
+  acc(self.f_Bool)
+}
+
+method assign_p_Bool(
+  self: Ref,
+  self_new: s_Bool
+)
+  ensures p_Bool(self)
+  ensures (p_Bool_snap(self)) == (self_new)
+
+function p_0_Tuple_unreachable(
+): s_0_Tuple
+  requires false
+  ensures false
+
+function p_0_Tuple_snap(
+  self: Ref
+): s_0_Tuple
+  requires acc(p_0_Tuple(self), wildcard)
+{
+  unfolding acc(p_0_Tuple(self), wildcard) in (s_0_Tuple_cons())
+}
+
+predicate p_0_Tuple(self: Ref) {
+  true
+}
+
+method assign_p_0_Tuple(
+  self: Ref,
+  self_new: s_0_Tuple
+)
+  ensures p_0_Tuple(self)
+  ensures (p_0_Tuple_snap(self)) == (self_new)
+
