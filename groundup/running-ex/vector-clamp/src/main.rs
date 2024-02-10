@@ -41,8 +41,7 @@ struct Bounds {
 
 
 #[requires(bounds.min <= bounds.max)]
-#[ensures(result.0.len === vec.len)]
-#[ensures(result.1 === bounds)]
+#[ensures(result.0.len === vec.len && result.1 === bounds)]
 #[ensures(forall(|ip: usize| (ip < vec.len) ==> result.0.get(ip) == bounds.clamp(vec.get(ip))))]
 fn clamp_vector(bounds: Bounds, vec: Vector) -> (Vector, Bounds) {
     if vec.len == 0 {
@@ -54,12 +53,10 @@ fn clamp_vector(bounds: Bounds, vec: Vector) -> (Vector, Bounds) {
 }
 
 #[requires(bounds.min <= bounds.max)]
-#[requires(vec.len >= 1)]
 #[requires(idx < vec.len)]
-#[ensures(result.0.len === vec.len)]
-#[ensures(result.1 === bounds)]
-#[ensures(forall(|i: usize| ((i > idx) && (i < vec.len)) ==> result.0.get(i) == vec.get(i)))]
-#[ensures(forall(|i: usize| ((i <= idx) && (i < vec.len)) ==> result.0.get(i) == bounds.clamp(vec.get(i))))]
+#[ensures(result.0.len === vec.len && result.1 === bounds)]
+#[ensures(forall(|i: usize| (i > idx  && i < vec.len) ==> result.0.get(i) == vec.get(i)))]
+#[ensures(forall(|i: usize| (i <= idx && i < vec.len) ==> result.0.get(i) == bounds.clamp(vec.get(i))))]
 fn clamp_vector_rec(
     bounds: Bounds,
     vec: Vector,
@@ -71,10 +68,9 @@ fn clamp_vector_rec(
         (vec, bounds)
     };
 
-    let (cur, vec) = modified.impure_get(idx);
-    let (new, bounds) = bounds.impure_clamp(cur);
-    let modified = vec.set(idx, new);
-    (modified, bounds)
+    let (current_value, vec) = modified.impure_get(idx);
+    let (new_value, bounds) = bounds.impure_clamp(current_value);
+    (vec.set(idx, new_value), bounds)
 }
 
 impl Bounds {
@@ -105,48 +101,14 @@ impl Bounds {
     }
 }
 
-#[requires(i >= 0)]
-fn assert_geq_0(i: i32) {}
-
-#[requires(b)]
-fn assert_true(b: bool) {}
-
-#[requires(a == b)]
-fn assert_eq(a: i32, b: i32) {}
-
-#[requires(a === b)]
-fn assert_eq_snap(a: Vector, b: Vector) {}
-
-#[requires(vec.len == 10)]
-fn vector_client(vec: Vector) {
-    let vec = vec.set(5, 42);
-    let res = vec.get(5);
-    assert_eq(res, 42);
-}
-
-#[pure]
-fn between(val: i32, min: i32, max: i32) -> bool {
-    val <= max && val >= min
-}
-
-#[requires(forall(|i: usize| i< res.len ==> {let value = res.get(i); min <= value && value <= max }))]
-fn final_assert(res: Vector, min: i32, max: i32) {}
-
 #[requires(min <= max)]
-pub fn client(data: Vector, min: i32, max: i32) {
-    let t = Bounds { min, max };
-    let (res, t2) = clamp_vector(t, data);
+#[ensures(forall(|i: usize| i < result.len ==> {let value = result.get(i); min <= value && value <= max }))]
+pub fn client(vec: Vector, min: i32, max: i32) -> Vector {
+    let bounds = Bounds { min, max };
+    let (resulting_vec, _) = clamp_vector(bounds, vec);
 
-    final_assert(res, min, max);
+    resulting_vec
 }
 
-/// This function shows that the second field in vector is required
-/// if that field is removed this verifies implying that all vectors of the same length are the same
-#[requires(data1.len == data2.len)]
-#[requires(data1 !== data2)]
-#[cfg(f)]
-pub fn client2(data1: Vector, data2: Vector) {
-    assert_true(false);
-}
 
 fn main() {}
