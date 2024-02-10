@@ -1,0 +1,269 @@
+// -----------------------------
+// methods
+// -----------------------------
+method m_clamp_CALLER_(
+  return_value: Ref,
+  value: Ref,
+  min: Ref,
+  max: Ref
+)
+  requires p_i32(value)
+  requires p_i32(min)
+  requires p_i32(max)
+  requires s_i32_read(p_i32_snap(min)) <= s_i32_read(p_i32_snap(max))
+  ensures p_i32(return_value)
+  ensures s_i32_read(p_i32_snap(return_value)) <= s_i32_read(old(p_i32_snap(max)))
+{
+label start
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  assign_p_i32(_5p, p_i32_snap(value))
+  assign_p_i32(_6p, p_i32_snap(min))
+  var _tmp0: s_i32 := p_i32_snap(_5p)
+  exhale p_i32(_5p)
+  var _tmp1: s_i32 := p_i32_snap(_6p)
+  exhale p_i32(_6p)
+  assign_p_Bool(_4p, s_Bool_cons((s_i32_read(_tmp0)) < (s_i32_read(_tmp1))))
+  var _tmp2: s_Bool := p_Bool_snap(_4p)
+  exhale p_Bool(_4p)
+  if (s_Bool_read(_tmp2) == false) { goto bb_2 }
+  assign_p_i32(return_value, p_i32_snap(min))
+  goto end
+label bb_2
+  assign_p_i32(_8p, p_i32_snap(value))
+  assign_p_i32(_9p, p_i32_snap(max))
+  var _tmp3: s_i32 := p_i32_snap(_8p)
+  exhale p_i32(_8p)
+  var _tmp4: s_i32 := p_i32_snap(_9p)
+  exhale p_i32(_9p)
+  assign_p_Bool(_7p,  s_Bool_cons((s_i32_read(_tmp3)) > (s_i32_read(_tmp4))))
+  var _tmp5: s_Bool := p_Bool_snap(_7p)
+  exhale p_Bool(_7p)
+  if (s_Bool_read(_tmp5) == false) { goto bb_4 }
+  assign_p_i32(return_value, p_i32_snap(max))
+  goto end
+label bb_4
+  assign_p_i32(return_value, p_i32_snap(value))
+label end
+  exhale p_i32(value)
+  exhale p_i32(min)
+  exhale p_i32(max)
+}
+
+method m_clamp_user_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_i32(_1p)
+  requires s_Bool_read((let _0_1s_0 == (p_i32_snap(_1p)) in
+(let _0_3s_1 == (f_clamp(_0_1s_0, s_i32_cons(10), s_i32_cons(20))) in
+mir_binop_Eq_i32_i32(_0_3s_1, s_i32_cons(20)))))
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  exhale p_i32(_1p)
+  goto end
+label end
+  // return
+}
+
+method m_main_CALLER_(
+  _0p: Ref
+)
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  goto end
+label end
+  // return
+}
+
+// -----------------------------
+// functions
+// -----------------------------
+function f_clamp(
+  _1p: s_i32,
+  _2p: s_i32,
+  _3p: s_i32
+): s_i32
+  requires s_Bool_read(mir_binop_Le_i32_i32(_2p, _3p))
+  ensures s_Bool_read(mir_binop_Le_i32_i32(result, _3p))
+{
+  (let _0_4s_1 == (mir_binop_Lt_i32_i32(_1p, _2p)) in
+!(s_Bool_read(_0_4s_1))
+? (let _0_7s_1 == (mir_binop_Gt_i32_i32(_1p, _3p)) in
+  !(s_Bool_read(_0_7s_1))
+  ? _1p
+  : _3p)
+: _2p)
+}
+
+// -----------------------------
+// MIR builtins
+// -----------------------------
+function mir_binop_Lt_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) < (s_i32_read(arg2)))
+}
+
+function mir_binop_Gt_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) > (s_i32_read(arg2)))
+}
+
+function mir_binop_Le_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) <= (s_i32_read(arg2)))
+}
+
+function mir_binop_Eq_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) == (s_i32_read(arg2)))
+}
+
+// -----------------------------
+// generics
+// -----------------------------
+// -----------------------------
+// snapshots
+// -----------------------------
+domain s_i32 {
+  axiom ax_s_i32_cons_read_0 {
+    forall f0: Int :: {s_i32_cons(f0)} (s_i32_read(s_i32_cons(f0))) == (f0)
+  }
+  axiom ax_s_i32_cons {
+    forall self: s_i32 :: {s_i32_read(self)} (s_i32_cons(s_i32_read(self))) == (self)
+  }
+  axiom ax_s_i32_write_0_read_0 {
+    forall self: s_i32, val: Int :: {s_i32_read(s_i32_write_0(self, val))} (s_i32_read(s_i32_write_0(self, val))) == (val)
+  }
+  axiom s_i32_bounds {
+    forall self: s_i32 :: {s_i32_read(self)} ((-(2147483648)) <= (s_i32_read(self))) && ((s_i32_read(self)) <= (2147483647))
+  }
+  function s_i32_cons(Int): s_i32
+  function s_i32_read(s_i32): Int
+  function s_i32_write_0(s_i32, Int): s_i32
+}
+
+domain s_Bool {
+  axiom ax_s_Bool_cons_read_0 {
+    forall f0: Bool :: {s_Bool_cons(f0)} (s_Bool_read(s_Bool_cons(f0))) == (f0)
+  }
+  axiom ax_s_Bool_cons {
+    forall self: s_Bool :: {s_Bool_cons(s_Bool_read(self))} (s_Bool_cons(s_Bool_read(self))) == (self)
+  }
+  axiom ax_s_Bool_write_0_read_0 {
+    forall self: s_Bool, val: Bool :: {s_Bool_read(s_Bool_write_0(self, val))} (s_Bool_read(s_Bool_write_0(self, val))) == (val)
+  }
+  function s_Bool_cons(Bool): s_Bool
+  function s_Bool_read(s_Bool): Bool
+  function s_Bool_write_0(s_Bool, Bool): s_Bool
+}
+
+domain s_0_Tuple {
+  function s_0_Tuple_cons(): s_0_Tuple
+}
+
+// -----------------------------
+// types
+// -----------------------------
+field f_Int_i32: s_i32
+function p_i32_unreachable(
+): s_i32
+  requires false
+  ensures false
+
+function p_i32_snap(
+  self: Ref
+): s_i32
+  requires acc(p_i32(self), wildcard)
+{
+  unfolding acc(p_i32(self), wildcard) in (self.f_Int_i32)
+}
+
+predicate p_i32(self: Ref) {
+  acc(self.f_Int_i32)
+}
+
+method assign_p_i32(
+  self: Ref,
+  self_new: s_i32
+)
+  ensures p_i32(self)
+  ensures (p_i32_snap(self)) == (self_new)
+
+field f_Bool: s_Bool
+function p_Bool_unreachable(
+): s_Bool
+  requires false
+  ensures false
+
+function p_Bool_snap(
+  self: Ref
+): s_Bool
+  requires acc(p_Bool(self), wildcard)
+{
+  unfolding acc(p_Bool(self), wildcard) in (self.f_Bool)
+}
+
+predicate p_Bool(self: Ref) {
+  acc(self.f_Bool)
+}
+
+method assign_p_Bool(
+  self: Ref,
+  self_new: s_Bool
+)
+  ensures p_Bool(self)
+  ensures (p_Bool_snap(self)) == (self_new)
+
+function p_0_Tuple_unreachable(
+): s_0_Tuple
+  requires false
+  ensures false
+
+function p_0_Tuple_snap(
+  self: Ref
+): s_0_Tuple
+  requires acc(p_0_Tuple(self), wildcard)
+{
+  unfolding acc(p_0_Tuple(self), wildcard) in (s_0_Tuple_cons())
+}
+
+predicate p_0_Tuple(self: Ref) {
+  true
+}
+
+method assign_p_0_Tuple(
+  self: Ref,
+  self_new: s_0_Tuple
+)
+  ensures p_0_Tuple(self)
+  ensures (p_0_Tuple_snap(self)) == (self_new)
+
