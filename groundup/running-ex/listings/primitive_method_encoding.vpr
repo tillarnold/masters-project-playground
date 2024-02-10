@@ -1,7 +1,7 @@
 // -----------------------------
 // methods
 // -----------------------------
-method m_clamp_CALLER_(return_value: Ref, value: Ref, min: Ref, max: Ref)
+method m_clamp(return_value: Ref, value: Ref, min: Ref, max: Ref)
   requires p_i32(value) requires p_i32(min) requires p_i32(max)
   requires s_i32_read(p_i32_snap(min)) <= s_i32_read(p_i32_snap(max))
   ensures p_i32(return_value)

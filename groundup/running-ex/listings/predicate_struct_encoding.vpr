@@ -1,11 +1,7 @@
 // -----------------------------
 // methods
 // -----------------------------
-method m_clamp(
-  return_value: Ref,
-  value: Ref,
-  bounds: Ref
-)
+method m_clamp( return_value: Ref, value: Ref, bounds: Ref )
   requires p_i32(value)
   requires p_Bounds(bounds)
   requires s_Bool_read_0((let _0_1s_0 == (p_i32_snap(value)) in
@@ -68,12 +64,8 @@ label end
 }
 
 
-method m_client_impure(
-  _0p: Ref,
-  _1p: Ref
-)
-  requires p_i32(_1p)
-  ensures p_i32(_0p)
+method m_client_impure(_0p: Ref, _1p: Ref )
+  requires p_i32(_1p) ensures p_i32(_0p)
 {
   var _2p: Ref; var _3p: Ref
   assign_p_i32(_2p, p_i32_snap(_1p))
@@ -83,19 +75,8 @@ method m_client_impure(
 }
 
 
-method m_client_pure(
-  _0p: Ref,
-  _1p: Ref
-)
-  requires p_i32(_1p)
-  requires s_Bool_read_0((let _0_1s_0 == (p_i32_snap(_1p)) in
-(let _0_5s_1 == (s_Bounds_cons(s_i32_cons(10), s_i32_cons(20))) in
-(let _0_3s_1 == (f_clamp(_0_1s_0, _0_5s_1)) in
-mir_binop_Eq_i32_i32(_0_3s_1, s_i32_cons(20))))))
-  ensures p_i32(_0p)
-  ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(_1p))) in
-(let _0_2s_0 == (p_i32_snap(_0p)) in
-mir_binop_Eq_i32_i32(_0_2s_0, s_i32_cons(20)))))
+method m_client_pure( _0p: Ref, _1p: Ref)
+  requires p_i32(_1p) ensures p_i32(_0p)
 {
   var _2p: Ref; var _3p: Ref
   assign_p_i32(_2p, p_i32_snap(_1p))
@@ -286,37 +267,25 @@ method assign_p_i32(
   ensures p_i32(self)
   ensures (p_i32_snap(self)) == (self_new)
 
-function p_Bounds_field_min(
-  self: Ref
-): Ref
+function p_Bounds_field_min(self: Ref): Ref
   ensures ((self) == (null)) == ((result) == (null))
-function p_Bounds_field_max(
-  self: Ref
-): Ref
-  ensures ((self) == (null)) == ((result) == (null))
-function p_Bounds_unreachable(
-): s_Bounds
-  requires false
-  ensures false
 
-function p_Bounds_snap(
-  self: Ref
-): s_Bounds
-  requires acc(p_Bounds(self), wildcard)
-{
-  unfolding acc(p_Bounds(self), wildcard) in (s_Bounds_cons(p_i32_snap(p_Bounds_field_min(self)), p_i32_snap(p_Bounds_field_max(self))))
-}
+function p_Bounds_field_max(self: Ref): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+
+function p_Bounds_unreachable(): s_Bounds
+  requires false ensures false
+
+function p_Bounds_snap(self: Ref): s_Bounds
+  requires acc(p_Bounds(self))
+{ unfolding acc(p_Bounds(self)) in (s_Bounds_cons(p_i32_snap(p_Bounds_field_min(self)), p_i32_snap(p_Bounds_field_max(self)))) }
 
 predicate p_Bounds(self: Ref) {
   (p_i32(p_Bounds_field_min(self))) && (p_i32(p_Bounds_field_max(self)))
 }
 
-method assign_p_Bounds(
-  self: Ref,
-  self_new: s_Bounds
-)
-  ensures p_Bounds(self)
-  ensures (p_Bounds_snap(self)) == (self_new)
+method assign_p_Bounds(self: Ref, self_new: s_Bounds)
+  ensures p_Bounds(self) ensures (p_Bounds_snap(self)) == (self_new)
 
 field f_Bool: s_Bool
 function p_Bool_unreachable(
