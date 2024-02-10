@@ -7,7 +7,6 @@ method m_clamp_CALLER_(return_value: Ref, value: Ref, min: Ref, max: Ref)
   ensures p_i32(return_value)
   ensures s_i32_read(p_i32_snap(return_value)) <= s_i32_read(old(p_i32_snap(max)))
 {
-label start
   var _4p: Ref; var _5p: Ref; var _6p: Ref
   var _7p: Ref; var _8p: Ref; var _9p: Ref
   assign_p_i32(_5p, p_i32_snap(value))
