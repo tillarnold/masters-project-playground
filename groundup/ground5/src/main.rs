@@ -44,41 +44,57 @@ struct ClampTransform {
 }
 
 #[requires(transform.bounds.min <= transform.bounds.max)]
-#[ensures(result.0.len === data.len)]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==> result.0.unwrap_vec().len === data.len)]
 #[ensures(result.1 === transform)]
-#[ensures(forall(|ip: usize| (ip < data.len) ==> result.0.get(ip) == transform.do_transform(data.get(ip)).unwrap()))]
-fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (Vector, ClampTransform) {
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|ip: usize| (ip < data.len) ==> result.0.unwrap_vec().get(ip) == transform.do_transform(data.get(ip)).unwrap()))]
+fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, ClampTransform) {
     if data.len <= 0 {
-        return (data, transform);
+        return (FallibleVec::Ok(data), transform);
     }
 
     let l = data.len;
     apply_row_by_row_rec(transform, data, l - 1)
+
 }
 
 #[requires(transform.bounds.min <= transform.bounds.max)]
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
-#[ensures(result.0.len === data.len)]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  result.0.unwrap_vec().len === data.len)]
 #[ensures(result.1 === transform)]
-#[ensures(forall(|i: usize| ((i > idx) && (i < data.len)) ==> result.0.get(i) == data.get(i)))]
-#[ensures(forall(|i: usize| ((i <= idx) && (i < data.len)) ==> result.0.get(i) == transform.do_transform(data.get(i)).unwrap()))]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|i: usize| ((i > idx) && (i < data.len)) ==> result.0.unwrap_vec().get(i) == data.get(i)))]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|i: usize| ((i <= idx) && (i < data.len)) ==> result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i)).unwrap()))]
 fn apply_row_by_row_rec(
     transform: ClampTransform,
     data: Vector, 
     idx: usize,
-) -> (Vector, ClampTransform) {
+) -> (FallibleVec, ClampTransform) {
     let (modified, transform) = if idx >= 1 {
-        apply_row_by_row_rec(transform, data, idx - 1)
+        let (data, trans) = apply_row_by_row_rec(transform, data, idx - 1);
+        let data = match data {
+            FallibleVec::Ok(vec) => vec,
+            FallibleVec::Err => return (FallibleVec::Err, trans),
+        };
+
+        (data, trans)
     } else {
         (data, transform)
     };
 
+
     let (cur, data) = modified.impure_get(idx);
     let (new, transform) = transform.do_transform_impure(cur);
+    let new = new.unwrap();
     let modified = data.set(idx, new);
-    (modified, transform)
+    (FallibleVec::Ok(modified), transform)
 }
+
+
+enum FallibleVec {
+    Ok(Vector),
+    Err
+}
+
 
 
 
@@ -91,9 +107,17 @@ enum FallibleI32 {
 #[trusted]
 #[pure]
 #[requires(false)]
-fn assert_false() -> i32{
+fn unreachable_i32() -> i32{
     unreachable!()
 } 
+
+
+#[trusted]
+#[pure]
+#[requires(false)]
+fn unreachable_vec() -> Vector{
+    unreachable!()
+}
 
 impl FallibleI32 {
     #[pure]
@@ -101,7 +125,18 @@ impl FallibleI32 {
     fn unwrap(self) -> i32 {
         match self{
             FallibleI32::Ok(val) => val,
-            FallibleI32::Err => assert_false()
+            FallibleI32::Err => unreachable_i32()
+        }
+    }
+}
+
+impl FallibleVec {
+    #[pure]
+    #[requires(matches!(self, FallibleVec::Ok(_)))]
+    fn unwrap_vec(self) -> Vector {
+        match self{
+            FallibleVec::Ok(val) => val,
+            FallibleVec::Err => unreachable_vec()
         }
     }
 }
@@ -127,16 +162,19 @@ impl ClampTransform {
         }
     }
 
-    #[requires(self.bounds.min <= self.bounds.max)]
-    #[ensures(result.0 == self.do_transform(data).unwrap())]
+    #[ensures(result.0 === self.do_transform(data))]
     #[ensures(result.1 === self)]
-    fn do_transform_impure(self, data: i32) -> (i32, Self) {
-        if data < self.bounds.min {
-            (self.bounds.min, self)
+    fn do_transform_impure(self, data: i32) -> (FallibleI32, Self) {
+
+        if self.bounds.min > self.bounds.max {
+            (FallibleI32::Err, self)
+        }
+        else if data < self.bounds.min {
+            (FallibleI32::Ok(self.bounds.min), self)
         } else if data > self.bounds.max {
-            (self.bounds.max, self)
+            (FallibleI32::Ok(self.bounds.max), self)
         } else {
-            (data, self)
+            (FallibleI32::Ok(data), self)
         }
     }
 }
@@ -167,8 +205,13 @@ fn final_assert(res: Vector, min: i32, max: i32) {}
 pub fn client(data: Vector, min: i32, max: i32) {
     let t = ClampTransform::make_clamp(Bounds { min, max });
     let (res, t2) = apply_row_by_row(t, data);
+    match res {
+        FallibleVec::Ok(vec) => {
+            final_assert(vec, min, max);
 
-    final_assert(res, min, max);
+        }
+        _ => {}
+    }
 }
 
 
