@@ -60,6 +60,11 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, Cl
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  result.0.unwrap_vec().len === data.len)]
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|i: usize| ((i > idx) && (i < data.len)) ==> result.0.unwrap_vec().get(i) == data.get(i)))]
 #[ensures((matches!(result.0, FallibleVec::Ok(_))) ==>  (forall(|i: usize| ((i <= idx) && (i < data.len)) ==>  result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i)))))]
+#[ensures( (rel0(&data) === rel1(&data) && rel0(idx) == rel1(idx) && rel0(&transform) === rel1(&transform) ) ==> match (rel0(&result.0), rel1(&result.0)) {
+    (FallibleVec::Err,FallibleVec::Err) => true,
+    (FallibleVec::Ok(_),FallibleVec::Ok(_)) => true,
+    _ => false,
+})]
 fn apply_row_by_row_rec(
     transform: ClampTransform,
     data: Vector,
