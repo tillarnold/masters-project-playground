@@ -43,7 +43,7 @@ struct ClampTransform {
     bounds: Bounds,
 }
 
-// #[ensures( transform.bounds.min <= transform.bounds.max ==>  matches!(result.0, FallibleVec::Ok(_)) )]
+#[ensures( transform.bounds.min <= transform.bounds.max ==>  matches!(result.0, FallibleVec::Ok(_)) )]
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==> result.0.unwrap_vec().len === data.len)]
 #[ensures(result.1 === transform)]
 #[ensures((matches!(result.0, FallibleVec::Ok(_))   && transform.bounds.min <= transform.bounds.max) ==>  forall(|ip: usize| (ip < data.len) ==> result.0.unwrap_vec().get(ip) == transform.do_transform(data.get(ip))))]
@@ -60,10 +60,10 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, Cl
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.1 === transform)]
-#[ensures( transform.bounds.min <= transform.bounds.max ==>  matches!(result.0, FallibleVec::Ok(_)) )]
+#[ensures( transform.bounds.min <= transform.bounds.max <==>  matches!(result.0, FallibleVec::Ok(_)) )]
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  result.0.unwrap_vec().len === data.len)]
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|i: usize| ((i > idx) && (i < data.len)) ==> result.0.unwrap_vec().get(i) == data.get(i)))]
-#[ensures((matches!(result.0, FallibleVec::Ok(_)) && transform.bounds.min <= transform.bounds.max) ==>  (forall(|i: usize| ((i <= idx) && (i < data.len)) ==>  result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i)))))]
+#[ensures((matches!(result.0, FallibleVec::Ok(_))) ==>  (forall(|i: usize| ((i <= idx) && (i < data.len)) ==>  result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i)))))]
 fn apply_row_by_row_rec(
     transform: ClampTransform,
     data: Vector, 
@@ -164,7 +164,7 @@ impl ClampTransform {
         }
     }
 
-    #[ensures(self.bounds.min <= self.bounds.max ==> matches!(result.0, FallibleI32::Ok(_)))]
+    #[ensures(self.bounds.min <= self.bounds.max <==> matches!(result.0, FallibleI32::Ok(_)))]
     #[ensures(self.bounds.min <= self.bounds.max ==> result.0.unwrap() === self.do_transform(data))]
     #[ensures(result.1 === self)]
     fn do_transform_impure(self, data: i32) -> (FallibleI32, Self) {
