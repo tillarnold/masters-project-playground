@@ -154,6 +154,11 @@ impl ClampTransform {
     #[ensures(self.bounds.min <= self.bounds.max <==> matches!(result.0, FallibleI32::Ok(_)))]
     #[ensures(self.bounds.min <= self.bounds.max ==> result.0.unwrap() === self.do_transform(data))]
     #[ensures(result.1 === self)]
+    #[ensures( rel0(&self.bounds) === rel1(&self.bounds) ==> match (rel0(&result.0), rel1(&result.0)) {
+        (FallibleI32::Err,FallibleI32::Err) => true,
+        (FallibleI32::Ok(_),FallibleI32::Ok(_)) => true,
+        _ => false,
+    })]
     fn do_transform_impure(self, data: i32) -> (FallibleI32, Self) {
         if self.bounds.min > self.bounds.max {
             (FallibleI32::Err, self)
@@ -189,7 +194,7 @@ fn vector_client(vec: Vector) {
 #[requires(forall(|i: usize| i< res.len ==> {let value = res.get(i); min <= value && value <= max }))]
 fn final_assert(res: Vector, min: i32, max: i32) {}
 
-#[requires(min <= max)]
+// #[requires(min <= max)]
 pub fn client(data: Vector, min: i32, max: i32) {
     let t = ClampTransform::make_clamp(Bounds { min, max });
     let (res, t2) = apply_row_by_row(t, data);
