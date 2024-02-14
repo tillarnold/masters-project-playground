@@ -1,4 +1,4 @@
-use std::{fmt::Debug, marker::PhantomData, rc::Rc};
+use std::{fmt::Debug, rc::Rc};
 
 pub type Fallible<T> = Result<T, ()>;
 
@@ -20,22 +20,25 @@ impl Clone for Function {
 }
 
 impl Function {
-    pub fn new_fallible(function: impl Fn(&Vec<i32>) -> Fallible<Vec<i32>> + 'static) -> Self {
+    fn new_fallible(function: impl Fn(&Vec<i32>) -> Fallible<Vec<i32>> + 'static) -> Self {
         Self {
             function: Rc::new(function),
         }
     }
 
-    pub fn eval(&self, arg: &Vec<i32>) -> Fallible<Vec<i32>> {
+    fn eval(&self, arg: &Vec<i32>) -> Fallible<Vec<i32>> {
         (self.function)(arg)
     }
 }
 
-pub struct StabilityMap(pub Rc<dyn Fn(u32) -> Fallible<u32>>);
+struct StabilityMap(Rc<dyn Fn(u32) -> u32>);
 
-impl Clone for StabilityMap {
-    fn clone(&self) -> Self {
-        StabilityMap(self.0.clone())
+impl StabilityMap {
+    pub fn new_from_constant(c: u32) -> Self {
+        StabilityMap(Rc::new(move |d_in: u32| (d_in.clone() * (c))))
+    }
+    pub fn eval(&self, input_distance: u32) -> u32 {
+        (self.0)(input_distance)
     }
 }
 
@@ -52,77 +55,24 @@ fn clamp(value: i32, min: i32, max: i32) -> Fallible<i32> {
     })
 }
 
-impl StabilityMap {
-    pub fn new_from_constant(c: u32) -> Self {
-        StabilityMap(Rc::new(move |d_in: u32| Ok(d_in.clone() * (c))))
-    }
-    pub fn eval(&self, input_distance: u32) -> Fallible<u32> {
-        (self.0)(input_distance)
-    }
-}
-
-pub trait Metric: Default + Clone + PartialEq + Debug {
-    type Distance;
-}
-
-#[derive(Clone)]
 pub struct Transformation {
-    pub input_domain: VectorDomain<AtomDomain>,
-    pub output_domain: VectorDomain<AtomDomain>,
-    pub function: Function,
-    pub stability_map: StabilityMap,
+    pub input_domain: VectorDomain,
+    pub output_domain: VectorDomain,
+    function: Function,
+    stability_map: StabilityMap,
 }
 
 impl Transformation {
-    pub fn new(
-        input_domain: VectorDomain<AtomDomain>,
-        output_domain: VectorDomain<AtomDomain>,
-        function: Function,
-
-        stability_map: StabilityMap,
-    ) -> Fallible<Self> {
-        Ok(Self {
-            input_domain,
-            output_domain,
-            function,
-            stability_map,
-        })
-    }
-
-    pub fn invoke(
-        &self,
-        arg: &<VectorDomain<AtomDomain> as Domain>::Carrier,
-    ) -> Fallible<<VectorDomain<AtomDomain> as Domain>::Carrier> {
+    pub fn invoke(&self, arg: &Vec<i32>) -> Fallible<Vec<i32>> {
         self.function.eval(arg)
     }
 
-    pub fn map(&self, d_in: u32) -> Fallible<u32> {
+    pub fn map(&self, d_in: u32) -> u32 {
         self.stability_map.eval(d_in)
     }
 }
 
-pub trait Domain: Clone + PartialEq + Debug {
-    type Carrier;
-    fn member(&self, val: &Self::Carrier) -> bool;
-}
 
-pub trait DatasetDomain: Domain {
-    type ElementDomain: Domain;
-}
-
-impl<D: Domain> DatasetDomain for VectorDomain<D> {
-    type ElementDomain = D;
-}
-
-fn translate<DIA: Domain, DOA: Domain>(
-    s: &VectorDomain<DIA>,
-    output_row_domain: <VectorDomain<DOA> as DatasetDomain>::ElementDomain,
-) -> VectorDomain<DOA> {
-    VectorDomain {
-        element_domain: output_row_domain,
-        size: s.size,
-    }
-}
 
 fn apply_rows(
     value: &Vec<i32>,
@@ -131,180 +81,88 @@ fn apply_rows(
     value.iter().map(row_function).collect()
 }
 
-pub trait MetricSpace {
-    fn check(&self) -> bool;
-    fn assert_compatible(&self) -> Fallible<()> {
-        if !self.check() {
-            fallible!(FailedFunction)
-        } else {
-            Ok(())
-        }
-    }
-}
-
 #[derive(Clone, PartialEq, Debug)]
 pub struct Bounds {
-    lower: i32,
-    upper: i32,
+    min: i32,
+    max: i32,
 }
 
 impl Bounds {
     pub fn member(&self, val: i32) -> bool {
-        self.lower <= val && val <= self.upper
+        self.min <= val && val <= self.max
     }
 }
 
-#[derive(PartialEq)]
-pub struct Null<T> {
-    pub _marker: PhantomData<T>,
+
+pub trait Domain: Clone + PartialEq + Debug {
+    type Carrier;
+    fn member(&self, val: &Self::Carrier) -> bool;
 }
-impl<T> Clone for Null<T> {
-    fn clone(&self) -> Self {
-        Self {
-            _marker: self._marker.clone(),
-        }
-    }
-}
+
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct AtomDomain {
     pub bounds: Option<Bounds>,
-    nullable: bool,
-}
-
-impl Default for AtomDomain {
-    fn default() -> Self {
-        AtomDomain {
-            bounds: None,
-            nullable: false,
-        }
-    }
 }
 
 impl Domain for AtomDomain {
     type Carrier = i32;
-    fn member(&self, val: &Self::Carrier) -> bool {
+    fn member(&self, val: &i32) -> bool {
         self.bounds.clone().map(|b| b.member(*val)).unwrap_or(false)
     }
 }
 
-impl AtomDomain {
-    pub fn new(bounds: Option<Bounds>, nullable: Option<Null<f64>>) -> Self {
-        AtomDomain {
-            bounds,
-            nullable: nullable.is_some(),
-        }
-    }
-    pub fn nullable(&self) -> bool {
-        self.nullable
-    }
-    pub fn assert_non_null(&self) -> Fallible<()> {
-        if self.nullable() {
-            return fallible!(FailedFunction);
-        }
-        Ok(())
-    }
-    pub fn bounds(&self) -> Option<&Bounds> {
-        self.bounds.as_ref()
-    }
-}
-
 #[derive(Clone, PartialEq, Debug)]
-pub struct VectorDomain<D: Domain> {
-    pub element_domain: D,
-    pub size: Option<usize>,
+pub struct VectorDomain {
+    pub element_domain: AtomDomain,
 }
 
-impl<D: Domain> VectorDomain<D> {
-    pub fn new(element_domain: D) -> Self {
-        VectorDomain {
-            element_domain,
-            size: None,
-        }
-    }
-    pub fn with_size(mut self, size: usize) -> Self {
-        self.size = Some(size);
-        self
-    }
-    pub fn without_size(mut self) -> Self {
-        self.size = None;
-        self
-    }
-}
 
-impl<D: Domain> Domain for VectorDomain<D> {
-    type Carrier = Vec<D::Carrier>;
-    fn member(&self, val: &Self::Carrier) -> bool {
+impl Domain for VectorDomain {
+    type Carrier = Vec<i32>;
+    fn member(&self, val: &Vec<i32>) -> bool {
         for e in val {
             if !self.element_domain.member(e) {
                 return false;
             }
         }
-        if let Some(size) = self.size {
-            if size != val.len() {
-                return false;
-            }
-        }
-        true
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct SymmetricDistance;
-
-impl Default for SymmetricDistance {
-    fn default() -> Self {
-        SymmetricDistance
-    }
-}
-
-impl PartialEq for SymmetricDistance {
-    fn eq(&self, _other: &Self) -> bool {
+       
         true
     }
 }
 
 pub fn make_row_by_row_fallible(
-    input_domain: VectorDomain<AtomDomain>,
+    input_domain: VectorDomain,
     output_row_domain: AtomDomain,
     row_function: impl 'static + Fn(&i32) -> Fallible<i32>,
-) -> Fallible<Transformation> {
-    let output_domain = translate(&input_domain, output_row_domain);
-    Transformation::new(
+) -> Transformation {
+    let output_domain = VectorDomain {
+        element_domain: output_row_domain,
+    };
+    Transformation {
         input_domain,
         output_domain,
-        Function::new_fallible(move |arg: &Vec<i32>| apply_rows(arg, &row_function)),
-        StabilityMap::new_from_constant(1),
-    )
+        function: Function::new_fallible(move |arg: &Vec<i32>| apply_rows(arg, &row_function)),
+        stability_map: StabilityMap::new_from_constant(1),
+    }
 }
 
-pub fn make_clamp(
-    input_domain: VectorDomain<AtomDomain>,
-    bounds: Bounds,
-) -> Fallible<Transformation> {
-    input_domain.element_domain.assert_non_null()?;
-
+pub fn make_clamp(input_domain: VectorDomain, bounds: Bounds) -> Transformation {
     let mut output_row_domain = input_domain.element_domain.clone();
     output_row_domain.bounds = Some(bounds.clone());
 
     make_row_by_row_fallible(input_domain, output_row_domain, move |arg: &i32| {
-        clamp(arg.clone(), bounds.lower.clone(), bounds.upper.clone())
+        clamp(arg.clone(), bounds.min.clone(), bounds.max.clone())
     })
 }
 
 fn example_client() -> Fallible<()> {
-    let id = VectorDomain::new(AtomDomain::default());
-    let clamp = make_clamp(
-        id,
-        Bounds {
-            lower: 10,
-            upper: 20,
-        },
-    )?;
+    let input_domain = VectorDomain{ element_domain : AtomDomain { bounds: None }};
+    let clamp_transform = make_clamp(input_domain, Bounds { min: 10, max: 20 });
 
-    println!("privacy spend {:?}", clamp.map(1));
+    println!("privacy spend {:?}", clamp_transform.map(1));
 
-    let res = clamp.invoke(&vec![1, 2, 3, 15, 100])?;
+    let res = clamp_transform.invoke(&vec![1, 2, 3, 15, 100])?;
 
     println!("{:?}", res);
 
