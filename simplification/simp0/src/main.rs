@@ -10,32 +10,7 @@ impl Clone for Function {
     }
 }
 
-impl Function {
-    fn new_fallible(function: impl Fn(&Vec<i32>) -> Fallible<Vec<i32>> + 'static) -> Self {
-        Self(Rc::new(function))
-    }
-}
-
 struct StabilityMap(Rc<dyn Fn(u32) -> u32>);
-
-impl StabilityMap {
-    fn new_from_constant(c: u32) -> Self {
-        StabilityMap(Rc::new(move |d_in: u32| (d_in.clone() * (c))))
-    }
-}
-
-fn clamp(value: i32, min: i32, max: i32) -> Fallible<i32> {
-    if min > max {
-        return Err(());
-    }
-    Ok(if value < min {
-        min
-    } else if value > max {
-        max
-    } else {
-        value
-    })
-}
 
 struct Transformation {
     input_domain: VectorDomain,
@@ -94,6 +69,18 @@ impl VectorDomain {
     }
 }
 
+fn clamp(value: i32, bounds: &Bounds) -> Fallible<i32> {
+    if bounds.min > bounds.max {
+        Err(())
+    } else if value < bounds.min {
+        Ok(bounds.min)
+    } else if value > bounds.max {
+        Ok(bounds.max)
+    } else {
+        Ok(value)
+    }
+}
+
 fn make_row_by_row_fallible(
     input_domain: VectorDomain,
     output_row_domain: AtomDomain,
@@ -105,10 +92,10 @@ fn make_row_by_row_fallible(
     Transformation {
         input_domain,
         output_domain,
-        function: Function::new_fallible(move |arg: &Vec<i32>| {
+        function: Function(Rc::new(move |arg: &Vec<i32>| {
             arg.iter().map(&row_function).collect()
-        }),
-        stability_map: StabilityMap::new_from_constant(1),
+        })),
+        stability_map: StabilityMap(Rc::new(move |d_in: u32| d_in * 1)),
     }
 }
 
@@ -118,7 +105,7 @@ fn make_clamp(input_domain: VectorDomain, bounds: Bounds) -> Transformation {
     };
 
     make_row_by_row_fallible(input_domain, output_row_domain, move |arg: &i32| {
-        clamp(arg.clone(), bounds.min.clone(), bounds.max.clone())
+        clamp(arg.clone(), &bounds)
     })
 }
 
