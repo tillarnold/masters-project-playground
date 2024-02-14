@@ -44,6 +44,11 @@ struct ClampTransform {
 #[ensures(matches!(result.0, FallibleVec::Ok(_))  ==> result.0.unwrap_vec().len === data.len)]
 #[ensures(result.1 === transform)]
 #[ensures((matches!(result.0, FallibleVec::Ok(_)) ) ==>  forall(|ip: usize| (ip < data.len) ==> result.0.unwrap_vec().get(ip) == transform.do_transform(data.get(ip))))]
+#[ensures( ( rel0(&transform) === rel1(&transform) ) ==> match (rel0(&result.0), rel1(&result.0)) {
+    (FallibleVec::Err,FallibleVec::Err) => true,
+    (FallibleVec::Ok(_),FallibleVec::Ok(_)) => true,
+    _ => false,
+})]
 fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, ClampTransform) {
     if data.len <= 0 {
         return (FallibleVec::Ok(data), transform);
