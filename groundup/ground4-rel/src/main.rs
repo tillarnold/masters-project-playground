@@ -262,9 +262,9 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (Vector, ClampTr
 #[ensures(forall(|i: usize| ((i <= idx) && (i < data.len)) ==> result.0.get(i) == transform.do_transform(data.get(i))))]
 fn apply_row_by_row_rec(
     transform: ClampTransform,
-    data: Vector, /*<i32>*/
+    data: Vector, 
     idx: usize,
-) -> (Vector /*<i32>*/, ClampTransform) {
+) -> (Vector, ClampTransform) {
     let (modified, transform) = if idx >= 1 {
         apply_row_by_row_rec(transform, data, idx - 1)
     } else {
