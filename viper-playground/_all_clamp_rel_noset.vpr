@@ -1,0 +1,471 @@
+// Tests for the rel keyword
+method rel_test(a: Int, b: Int) returns (ret: Int)
+ensures((rel( a,0) == rel(a,1)) ==> (rel(ret,0) == rel(ret,1)))
+
+{
+    ret := 12 + a; 
+
+}
+
+method rel_test2(a: Int, b: Int) returns (ret: Int)
+    requires((rel( a,0) == rel(a,1)))
+    ensures((rel(ret,0) == rel(ret,1)))
+
+{
+    ret := 12 + a;
+}
+
+
+method rel_test2_clinet() {
+    var x : Int := rel_test2(10,20);
+    var y : Int := rel_test2(50,20);
+}
+
+
+// Modeling a Vec from a sequence
+field vecs: Seq[Int]
+
+predicate Vec(v: Ref) {
+    acc(v.vecs)
+}
+
+function get(v: Ref, idx: Int): Int 
+    requires(Vec(v))
+    requires(len(v) > idx)    
+    requires(idx >= 0)
+    {
+        (unfolding Vec(v) in v.vecs[idx])
+    }
+
+
+function len(v: Ref): Int
+    requires(Vec(v))
+    ensures(result >= 0) 
+    {
+        (unfolding Vec(v) in |v.vecs| )
+    }
+
+method set(v: Ref, idx: Int, val: Int)
+    requires(Vec(v))
+    requires(len(v) > idx)
+    requires(idx >= 0)    
+    ensures(Vec(v))
+    ensures(len(v) == old(len(v)))
+    ensures(len(v) > idx)
+    ensures(get(v, idx) == val)
+    ensures((forall i: Int :: ((i >= 0 && i< len(v) && i != idx) ==> (get(v, i) == old(get(v, i))))))
+    {
+        unfold Vec(v)
+        var old_seq : Seq[Int] := v.vecs;
+        var new_seq : Seq[Int] := old_seq[ idx := val]
+        v.vecs := new_seq;
+        fold Vec(v)
+        assert len(v) > idx
+    }
+
+
+
+function valid_index(v: Ref, idx: Int): Bool
+    requires(Vec(v))
+{
+    0 <= idx && idx < len(v) 
+}
+
+
+
+// Underspecified function that could do anything but it is pure
+function clamp(v: Int): Int
+
+
+
+
+
+// Modelign the mapping
+domain Mapping {
+    function has_key(self: Mapping, key: Int) : Bool
+    function has_value(self: Mapping, value: Int): Bool
+}
+
+
+function empty_mapping() : Mapping 
+    ensures (forall key : Int :: (!has_key(result,key)))
+    ensures (forall value : Int :: (!has_value(result,value)))
+
+function valid_mapping(m: Mapping) : Bool
+{
+    |keys(m)| == |values(m)| && forall v : Int :: (v in values(m) ==> translate(m,translate_invert(m, v)) == v)
+}
+
+function insert(m: Mapping, k: Int, v: Int) : Mapping 
+    requires !(k in keys(m))
+    requires !(v in values(m))
+    requires |keys(m)| == |values(m)|
+    ensures (keys(result) == ((keys(m)) union (Set(k))))
+    ensures (values(result) == ((values(m)) union (Set(v))))
+    ensures translate(result, k) == v
+    ensures translate_invert(result, v) == k
+    ensures forall kp: Int :: (kp in keys(m) && kp != k) ==> translate(result, kp) == translate(m, kp)
+    ensures translate_invert(result, v) == k
+    ensures forall vp: Int :: (vp in values(m) && vp != v) ==> translate_invert(result, vp) == translate_invert(m, vp)
+
+
+function mapps(m: Mapping, k: Int, v: Int): Bool {
+      |keys(m)| == |values(m)| && k in keys(m) && v in values(m) && translate(m, k) == v && translate_invert(m, v) == k
+}
+
+
+
+function translate(m: Mapping, key: Int) : Int 
+    requires |keys(m)| == |values(m)|
+    requires(key in keys(m))
+    ensures(result in values(m))
+
+
+function translate_invert(m: Mapping, value: Int) : Int
+    requires |keys(m)| == |values(m)|
+    requires(value in values(m))
+    ensures(result in keys(m))
+
+// testing the insert method
+method insert_client(m: Mapping, k: Int, v: Int)  returns(a: Mapping)
+    requires valid_mapping(m)
+     requires !(k in keys(m))
+    requires !(v in values(m))
+    ensures valid_mapping(a)
+
+ {
+     a  := insert(m,k,v);
+     assert mapps(a, k, v)
+}
+
+
+
+
+// if sdif is 0
+method apply_clamp_0_rel(X: Ref, m: Mapping)
+    requires(Vec(X))
+    requires(rel(Vec(X),0))
+    requires(rel(Vec(X),1))
+
+    requires(rel(len(X),0) == rel(len(X),1))
+    requires keys(m) == values(m)
+
+    requires valid_mapping(m)
+
+
+    requires rel(m,0) == rel(m,1)
+
+    requires rel(keys(m),0) == rel(values(m),0)
+    requires(forall i: Int :: i in rel(keys(m),0) <==> rel(valid_index(X, i),0))
+    requires(forall i: Int :: i in rel(keys(m),1) <==> rel(valid_index(X, i),1))
+    requires(forall i: Int :: rel((i in keys(m) <==> valid_index(X, i)),0))
+    requires(forall i: Int :: rel(i in keys(m) <==> valid_index(X, i),1))
+
+    requires rel(keys(m),1) == rel(values(m),1)
+    requires(forall i: Int :: i in rel(keys(m),1) <==> rel(valid_index(X, i),1))
+
+
+    //mapping holds ==> sdif is 0
+    requires(forall i: Int :: rel(valid_index(X, i),0) ==> ( ( rel(get(X,translate(m,i)),0) == rel(get(rel(X,1), i),1)))) 
+
+
+     // Lists same length
+    ensures Vec(X)
+    ensures(rel(Vec(X),0))
+    ensures(rel(Vec(X),1))
+
+    ensures(old(rel(len(X),1)) == rel(len(X),1) && old(len(rel(X,0))) == len(rel(X,0)))
+    ensures(rel(len(X),0) == rel(len(X),1))
+    ensures(rel(len(X),0) == len(X))
+    ensures(rel(len(X),1) == len(X))
+    ensures(len(X) == old(len(X)))
+
+    // Clamping was done
+    ensures(forall i: Int ::  (valid_index(X, i) ==> (get(X, i) == old(clamp(get(X, i)))) ))
+    ensures(forall i: Int ::  (( rel(valid_index(X, i),0) ==> ( rel(get(X, i),0) == old(  rel(clamp(get(X, i)),0) )) )))
+    ensures(forall i: Int ::  (( rel(valid_index(X, i),1) ==> ( rel(get(X, i),1) == old(  rel(clamp(get(X, i)),1) )) )))
+
+
+    // mapping still holds
+    ensures(forall i: Int :: rel(valid_index(X, i),0) ==> ( ( rel(get(X,translate(m,i)),0) == rel(get(rel(X,1), i),1))))
+    ensures valid_mapping(m)
+    ensures rel(valid_mapping(m),0)
+    ensures rel(valid_mapping(m),1)
+
+{
+        apply_clamp_same(X , m, -1)
+
+}
+
+
+
+
+// Requires that A and B have same length and that exactly one element in A is not in B and exactly one in B is not in A
+// the mapping mapps all the matching elemens and also matches the two non matching ones.
+// 
+// 
+method apply_clamp_same(V: Ref, m: Mapping, extra_B_index: Int)
+    requires(Vec(V))
+    requires(rel(Vec(V),0))
+    requires(rel(Vec(V),1))
+
+    requires(rel(len(V),0) == rel(len(V),1))
+
+    requires valid_mapping(m)
+
+
+    requires rel(m,0) == rel(m,1)
+    requires rel(m,0) == rel(m,1)
+    requires rel(extra_B_index,0) == rel(extra_B_index,1)
+
+    requires (|keys(m)| == |values(m)|)
+    requires keys(m) == values(m)
+
+    // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
+    // range(m) = domain(m) + {len(B)} \ {extra_element}
+    // domain(m) = {0,1,..., len(B) - 1}
+    requires(forall i: Int :: i in keys(m) <==> rel(valid_index(V, i),1))
+    requires(forall i: Int :: i in values(m) <==> rel(valid_index(V, i),1))
+
+
+    // The mapping is valid (dsym is at most 2)
+    requires(forall i: Int :: rel(valid_index(V, i),0) ==> ( ( rel(get(V,translate(m,i)),0) == rel(get(rel(V,1), i),1))) || i == extra_B_index )
+
+   // Lists same length
+    ensures Vec(V)
+    ensures(rel(Vec(V),0))
+    ensures(rel(Vec(V),1))
+
+    ensures(old(rel(len(V),1)) == rel(len(V),1) && old(len(rel(V,0))) == len(rel(V,0)))
+    ensures(rel(len(V),0) == rel(len(V),1))
+    ensures(rel(len(V),0) == len(V))
+    ensures(rel(len(V),1) == len(V))
+    ensures(len(V) == old(len(V)))
+
+    // Clamping was done
+    ensures(forall i: Int ::  (valid_index(V, i) ==> (get(V, i) == old(clamp(get(V, i)))) ))
+    ensures(forall i: Int ::  (( rel(valid_index(V, i),0) ==> ( rel(get(V, i),0) == old(  rel(clamp(get(V, i)),0) )) )))
+    ensures(forall i: Int ::  (( rel(valid_index(V, i),1) ==> ( rel(get(V, i),1) == old(  rel(clamp(get(V, i)),1) )) )))
+
+
+    // mapping still holds
+    ensures(forall i: Int :: rel(valid_index(V, i),0) ==> ( ( rel(get(V,translate(m,i)),0) == rel(get(rel(V,1), i),1))) || i == extra_B_index )
+    ensures valid_mapping(m)
+    ensures rel(valid_mapping(m),0)
+    ensures rel(valid_mapping(m),1)
+{
+
+    var i: Int := 0;
+
+     while(i < len(V))
+        // Generic loop invariant things
+        invariant Vec(V)
+        invariant len(V) == old(len(V))
+        invariant i >= 0
+
+
+        // Invariants for clamping
+        invariant forall x: Int :: (valid_index(V, x) && x < i) ==> get(V, x) == clamp(old(get(V, x)))
+        invariant forall x: Int :: (valid_index(V, x) && x >= i) ==> get(V, x) == old(get(V, x))
+
+    {
+ 
+        set(V, i, clamp(get(V, i)))
+
+
+     
+        i := i + 1;
+
+    }
+
+}
+
+
+// Apply clamp to two vecs.
+// requrires that A is longer by one single element ant that all oher elements of A are in B
+// Thus the symd between A and B is 1
+//
+// I have an isabelle proof that shows that (for multisets) the only way for the symd to be 1 is if A and B differe in size by one.
+// So this covers all possible cases for symd=1 except for A and B being swaped (so the case where B is longer by 1)
+method apply_clamp_1(V: Ref,  m: Mapping)
+    requires((Vec(V)))
+
+    requires(rel(Vec(V),0))
+    requires(rel(Vec(V),1))
+    requires(rel(len(V),0) > rel(len(V),1) ) // A is longer
+
+
+    requires rel(m,0) == rel(m,1)
+    requires rel(m,0) == rel(m,1)
+
+    requires valid_mapping(m)
+
+    // range(m) = {0,1,..., len(B) -1, len(B) == len(A) - 1} \ {extra_element}
+    // range(m) = domain(m) + {len(B)} \ {extra_element}
+    // domain(m) = {0,1,..., len(B) - 1}
+    requires(forall i: Int :: i in keys(m) <==> rel(valid_index(V, i),1))
+    requires(forall i: Int :: i in values(m) ==> rel(valid_index(V, i),0))
+
+    // The mapping is valid (dsym is at most 1)
+    requires(forall i: Int :: rel(valid_index(V, i),1) ==> ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1))) 
+
+
+  // Lists same length
+    ensures Vec(V)
+    ensures(rel(Vec(V),0))
+    ensures(rel(Vec(V),1))
+    ensures(old(rel(len(V),1)) == rel(len(V),1) && old(len(rel(V,0))) == len(rel(V,0)))
+    ensures(rel(len(V),0) == len(V))
+    ensures(len(V) == old(len(V)))
+
+    // Clamping was done
+    ensures(forall i: Int ::  (valid_index(V, i) ==> (get(V, i) == old(clamp(get(V, i)))) ))
+    ensures(forall i: Int ::  (( rel(valid_index(V, i),0) ==> ( rel(get(V, i),0) == old(  rel(clamp(get(V, i)),0) )) )))
+    ensures(forall i: Int ::  (( rel(valid_index(V, i),1) ==> ( rel(get(V, i),1) == old(  rel(clamp(get(V, i)),1) )) )))
+
+
+
+    // the mapping shows that dsym is still at most 1
+    ensures(forall i: Int :: rel(valid_index(V, i),1) ==> ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1))) 
+
+    ensures valid_mapping(m)
+
+{
+
+    var i: Int := 0;
+
+    while(i < len(V))
+        invariant Vec(V)
+        invariant len(V) == old(len(V))
+        invariant i >= 0
+        invariant i <= len(V)
+
+
+        invariant forall x: Int :: (valid_index(V, x) && x < i) ==> get(V, x) == clamp(old(get(V, x)))
+        invariant forall x: Int :: (valid_index(V, x) && x >= i) ==> get(V, x) == old(get(V, x))
+    {
+        set(V, i, clamp(get(V, i)))
+        i := i + 1;
+    }
+
+
+}
+
+
+method apply_clamp_0_rel_client(A: Ref) 
+    requires(Vec(A))
+    requires(rel(Vec(A),0))
+    requires(rel(Vec(A),1))
+    requires(len(A) == 4)
+    {
+        set(A, 0, 200)
+        set(A, 1, 100)
+        set(A, 2, 400)
+        set(A, 3, 300)
+
+        var m : Mapping := empty_mapping();
+        m := insert(m, 0, 1);
+        m := insert(m, 1, 0);
+        m := insert(m, 2, 2);
+        m := insert(m, 3, 3);
+        assume(forall i: Int :: rel(valid_index(A, i),0) ==> ( ( rel(get(A,translate(m,i)),0) == rel(get(rel(A,1), i),1)))) 
+
+
+        apply_clamp_0_rel(A,  m)
+
+
+}
+
+method client_apply_clamp_1(A: Ref)
+ requires(Vec(A))
+    requires(rel(Vec(A),0))
+    requires(rel(Vec(A),1))
+    requires(len(A) == 4)
+{
+    set(A, 0, 200)
+    set(A, 1, 100)
+    set(A, 2, 400)
+    set(A, 3, 300)
+
+           var m : Mapping := empty_mapping();
+        m := insert(m, 0, 1);
+        m := insert(m, 1, 0);
+        m := insert(m, 2, 2);
+        m := insert(m, 3, 3);
+        assert valid_mapping(m)
+        assume(forall i: Int :: rel(valid_index(A, i),0) ==> ( ( rel(get(A,translate(m,i)),0) == rel(get(A, i),1)))) 
+
+        apply_clamp_1(A,  m)
+}
+
+
+
+function valid_mapping_exists(A: Ref, B: Ref) : Bool 
+ requires(Vec(A))
+ requires(Vec(B))
+
+requires((len(A)) <= (len(B)))
+
+  ensures( result ==> ( exists m: Mapping :: (
+        valid_mapping(m) &&
+        (forall i: Int :: i in keys(m) <==> ((valid_index(B, i))) ) &&
+        (forall i: Int :: i in values(m) <==> ( (valid_index(A, i))) ) &&
+        (forall i: Int :: (valid_index(A, i)) ==>  ( (get(A,translate(m,i))) == (get(B, i))))
+    ))
+  )
+
+
+function find_mapping(A: Ref, B: Ref) : Mapping
+  requires(Vec(A))
+  requires(Vec(B))
+
+  requires((len(A)) <= (len(B)))
+  ensures(valid_mapping_exists(A, B) <==> 
+  
+  (valid_mapping(result) &&
+        (forall i: Int :: i in keys(result) <==> (valid_index(B, i))) &&
+        (forall i: Int :: i in values(result) <==> (valid_index(A, i))) &&
+        (forall i: Int :: (valid_index(A, i)) ==>  ( (get(A,translate(result,i))) == (get(B, i)))))
+  )
+
+
+// function valid_mapping_exists_ref(V: Ref) : Bool 
+//  requires(Vec(V))
+//   requires(rel(Vec(V),0))
+//  requires(rel(Vec(V),1))
+// requires(rel(len(V),0) <= rel(len(V),1))
+
+//   ensures( result ==> ( exists m: Mapping :: (
+//         valid_mapping(m) &&
+//         (forall i: Int :: i in keys(m) <==> rel((valid_index(V, i)),1) ) &&
+//         (forall i: Int :: i in values(m) <==> (rel (valid_index(V, i),0)) ) &&
+//         (forall i: Int :: rel(valid_index(V, i),0) ==>  ( rel(get(V,translate(m,i)),0) == rel(get(V, i),1)))
+//     ))
+//   )
+
+
+// function find_mapping_rel(V: Ref) : Mapping
+//   requires(Vec(V))
+// requires(rel(Vec(V),0))
+//  requires(rel(Vec(V),1))
+//   requires(rel(len(V),0) <= rel(len(V),1))
+//   ensures(valid_mapping_exists_ref(V) <==> 
+  
+//   (valid_mapping(result) &&
+//         (forall i: Int :: i in keys(result) <==> rel(valid_index(V, i),1)) &&
+//         (forall i: Int :: i in values(result) <==> rel(valid_index(V, i),0)) &&
+//         (forall i: Int :: rel(valid_index(V, i),0) ==>  ( rel(get(V,translate(result,i)),0) == rel(get(V, i),1))))
+//   )
+
+
+// method apply_clamp_0_rel_no_mapping(V: Ref)
+//   requires(rel(Vec(V),0))
+//  requires(rel(Vec(V),1))
+//   requires(Vec(rel(V,0)))
+//   requires(Vec(rel(V,1)))
+// requires(rel(len(V),0) <= rel(len(V),1))
+
+// {
+//     var a: Int:=  get(rel(V,0),4)
+//     //  var m : Mapping := find_mapping( rel((V),0) , rel((V),1));
+// }

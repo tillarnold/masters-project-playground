@@ -65,30 +65,26 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, Cl
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  result.0.unwrap_vec().len === data.len)]
 #[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|i: usize| ((i > idx) && (i < data.len)) ==> result.0.unwrap_vec().get(i) == data.get(i)))]
 #[ensures((matches!(result.0, FallibleVec::Ok(_))) ==>  (forall(|i: usize| ((i <= idx) && (i < data.len)) ==>  result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i)))))]
-#[ensures( ( rel0(idx) == rel1(idx) && rel0(&transform) === rel1(&transform) ) ==> match (rel0(&result.0), rel1(&result.0)) {
+#[ensures((rel0(idx) == rel1(idx) && rel0(&transform) === rel1(&transform) ) ==> match (rel0(&result.0), rel1(&result.0)) {
     (FallibleVec::Err,FallibleVec::Err) => true,
     (FallibleVec::Ok(_),FallibleVec::Ok(_)) => true,
     _ => false,
 })]
 fn apply_row_by_row_rec(
-    transform: ClampTransform,
-    data: Vector,
+    mut transform: ClampTransform,
+    mut data: Vector,
     idx: usize,
 ) -> (FallibleVec, ClampTransform) {
-    let (data, transform) = if idx >= 1 {
-        let (data, transform) = apply_row_by_row_rec(transform, data, idx - 1);
-        let data = match data {
-            FallibleVec::Ok(vec) => vec,
-            FallibleVec::Err => return (FallibleVec::Err, transform),
+    if idx >= 1 {
+        (data, transform) = match apply_row_by_row_rec(transform, data, idx - 1) {
+            (FallibleVec::Ok(vec), transform) => (vec, transform),
+            (FallibleVec::Err, transform) => return (FallibleVec::Err, transform),
         };
-
-        (data, transform)
-    } else {
-        (data, transform)
-    };
+    }
 
     let (cur, data) = data.impure_get(idx);
     let (clamped, transform) = transform.do_transform_impure(cur);
+
     if let FallibleI32::Ok(clamped) = clamped {
         let data = data.set(idx, clamped);
         return (FallibleVec::Ok(data), transform);
