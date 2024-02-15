@@ -40,11 +40,11 @@ struct Bounds {
 struct ClampTransform {
     bounds: Bounds,
 }
-#[ensures((transform.bounds.min <= transform.bounds.max || data.len == 0) <==>  ( matches!(result.0, FallibleVec::Ok(_))   ))]
+#[ensures((transform.bounds.min <= transform.bounds.max || data.len == 0) <==> (matches!(result.0, FallibleVec::Ok(_))   ))]
 #[ensures(matches!(result.0, FallibleVec::Ok(_))  ==> result.0.unwrap_vec().len === data.len)]
 #[ensures(result.1 === transform)]
 #[ensures((matches!(result.0, FallibleVec::Ok(_)) ) ==>  forall(|ip: usize| (ip < data.len) ==> result.0.unwrap_vec().get(ip) == transform.do_transform(data.get(ip))))]
-#[ensures( ( rel0(&transform) === rel1(&transform) ) ==> match (rel0(&result.0), rel1(&result.0)) {
+#[ensures( ( rel0(&transform) === rel1(&transform) && rel0(&data.len) === rel1(&data.len) ) ==> match (rel0(&result.0), rel1(&result.0)) {
     (FallibleVec::Err,FallibleVec::Err) => true,
     (FallibleVec::Ok(_),FallibleVec::Ok(_)) => true,
     _ => false,
@@ -75,7 +75,7 @@ fn apply_row_by_row_rec(
     data: Vector,
     idx: usize,
 ) -> (FallibleVec, ClampTransform) {
-    let (modified, transform) = if idx >= 1 {
+    let (data, transform) = if idx >= 1 {
         let (data, transform) = apply_row_by_row_rec(transform, data, idx - 1);
         let data = match data {
             FallibleVec::Ok(vec) => vec,
@@ -87,11 +87,11 @@ fn apply_row_by_row_rec(
         (data, transform)
     };
 
-    let (cur, data) = modified.impure_get(idx);
-    let (new, transform) = transform.do_transform_impure(cur);
-    if let FallibleI32::Ok(val) = new {
-        let modified = data.set(idx, val);
-        return (FallibleVec::Ok(modified), transform);
+    let (cur, data) = data.impure_get(idx);
+    let (clamped, transform) = transform.do_transform_impure(cur);
+    if let FallibleI32::Ok(clamped) = clamped {
+        let data = data.set(idx, clamped);
+        return (FallibleVec::Ok(data), transform);
     }
 
     (FallibleVec::Err, transform)
@@ -124,7 +124,7 @@ fn unreachable_vec() -> Vector {
 impl FallibleI32 {
     #[pure]
     #[requires(matches!(self, FallibleI32::Ok(_)))]
-    fn unwrap(self) -> i32 {
+    fn unwrap_i32(self) -> i32 {
         match self {
             FallibleI32::Ok(val) => val,
             FallibleI32::Err => unreachable_i32(),
@@ -162,7 +162,7 @@ impl ClampTransform {
     }
 
     #[ensures(self.bounds.min <= self.bounds.max <==> matches!(result.0, FallibleI32::Ok(_)))]
-    #[ensures(self.bounds.min <= self.bounds.max ==> result.0.unwrap() === self.do_transform(data))]
+    #[ensures(self.bounds.min <= self.bounds.max ==> result.0.unwrap_i32() === self.do_transform(data))]
     #[ensures(result.1 === self)]
     #[ensures( rel0(&self.bounds) === rel1(&self.bounds) ==> match (rel0(&result.0), rel1(&result.0)) {
         (FallibleI32::Err,FallibleI32::Err) => true,
