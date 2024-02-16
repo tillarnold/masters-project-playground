@@ -40,20 +40,22 @@ struct Bounds {
 struct ClampTransform {
     bounds: Bounds,
 }
-#[ensures((transform.bounds.min <= transform.bounds.max || data.len == 0) <==> (matches!(result.0, FallibleVec::Ok(_))   ))]
-#[ensures(matches!(result.0, FallibleVec::Ok(_))  ==> result.0.unwrap_vec().len === data.len)]
 #[ensures(result.1 === transform)]
-#[ensures((matches!(result.0, FallibleVec::Ok(_)) ) ==>  forall(|ip: usize| (ip < data.len) ==> result.0.unwrap_vec().get(ip) == transform.do_transform(data.get(ip))))]
-#[ensures( ( rel0(&transform) === rel1(&transform) && rel0(&data.len) === rel1(&data.len) ) ==> match (rel0(&result.0), rel1(&result.0)) {
+#[ensures((transform.bounds.min <= transform.bounds.max || data.len == 0) <==>
+    matches!(result.0, FallibleVec::Ok(_)))]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>
+    result.0.unwrap_vec().len === data.len)]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>
+    forall(|ip: usize|(ip < data.len) ==>
+    result.0.unwrap_vec().get(ip) == transform.do_transform(data.get(ip))))]
+#[ensures((rel0(&transform) === rel1(&transform) && rel0(&data.len) === rel1(&data.len)) ==> match (rel0(&result.0), rel1(&result.0)) {
     (FallibleVec::Err,FallibleVec::Err) => true,
     (FallibleVec::Ok(_),FallibleVec::Ok(_)) => true,
     _ => false,
 })]
-fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, ClampTransform) {
-    if data.len <= 0 {
-        return (FallibleVec::Ok(data), transform);
-    }
-
+fn apply_row_by_row(transform: ClampTransform, data: Vector)
+    -> (FallibleVec, ClampTransform) {
+    if data.len <= 0 { return (FallibleVec::Ok(data), transform); }
     let l = data.len;
     apply_row_by_row_rec(transform, data, l - 1)
 }
@@ -61,10 +63,11 @@ fn apply_row_by_row(transform: ClampTransform, data: Vector) -> (FallibleVec, Cl
 #[requires(data.len >= 1)]
 #[requires(idx < data.len)]
 #[ensures(result.1 === transform)]
-#[ensures( transform.bounds.min <= transform.bounds.max <==>  matches!(result.0, FallibleVec::Ok(_)) )]
-#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  result.0.unwrap_vec().len === data.len)]
-#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==>  forall(|i: usize| ((i > idx) && (i < data.len)) ==> result.0.unwrap_vec().get(i) == data.get(i)))]
-#[ensures((matches!(result.0, FallibleVec::Ok(_))) ==>  (forall(|i: usize| ((i <= idx) && (i < data.len)) ==>  result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i)))))]
+#[ensures(transform.bounds.min <= transform.bounds.max <==>
+    matches!(result.0, FallibleVec::Ok(_)))]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==> result.0.unwrap_vec().len === data.len)]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==> forall(|i: usize| (i > idx && i < data.len)  ==> result.0.unwrap_vec().get(i) == data.get(i)))]
+#[ensures(matches!(result.0, FallibleVec::Ok(_)) ==> forall(|i: usize| (i <= idx && i < data.len) ==>  result.0.unwrap_vec().get(i) == transform.do_transform(data.get(i))))]
 #[ensures((rel0(idx) == rel1(idx) && rel0(&transform) === rel1(&transform) ) ==> match (rel0(&result.0), rel1(&result.0)) {
     (FallibleVec::Err,FallibleVec::Err) => true,
     (FallibleVec::Ok(_),FallibleVec::Ok(_)) => true,
