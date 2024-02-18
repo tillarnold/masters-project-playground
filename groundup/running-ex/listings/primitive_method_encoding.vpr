@@ -1,7 +1,7 @@
 // -----------------------------
 // methods
 // -----------------------------
-method m_clamp(return_value: Ref, value: Ref, min: Ref, max: Ref)
+method m_clamp_orig(return_value: Ref, value: Ref, min: Ref, max: Ref)
   requires p_i32(value) requires p_i32(min) requires p_i32(max)
   requires s_i32_read(p_i32_snap(min)) <= s_i32_read(p_i32_snap(max))
   ensures p_i32(return_value)
@@ -32,6 +32,34 @@ label bb_4
   assign_p_i32(return_value, p_i32_snap(value))
 label end
   exhale p_i32(value); exhale p_i32(min); exhale p_i32(max)
+}
+
+
+method m_clamp(return_value: Ref, value: Ref, min: Ref, max: Ref)
+  requires p_i32(value) requires p_i32(min) requires p_i32(max)
+  requires s_i32_read(p_i32_snap(min)) <= s_i32_read(p_i32_snap(max))
+  ensures p_i32(return_value)
+  ensures s_i32_read(p_i32_snap(return_value)) <= s_i32_read(old(p_i32_snap(max)))
+{
+  var _4p: Ref; var _5p: Ref; var _6p: Ref
+  var _7p: Ref; var _8p: Ref; var _9p: Ref
+  assign_p_i32(_5p, p_i32_snap(value))
+  assign_p_i32(_6p, p_i32_snap(min))
+
+  assign_p_Bool(_4p, s_Bool_cons(s_i32_read(p_i32_snap(_5p)) < s_i32_read(p_i32_snap(_6p))))
+  if (s_Bool_read(p_Bool_snap(_4p)) == false) { goto bb_1 }
+  assign_p_i32(return_value, p_i32_snap(min))
+  goto end
+label bb_1
+  assign_p_i32(_8p, p_i32_snap(value))
+  assign_p_i32(_9p, p_i32_snap(max))
+  assign_p_Bool(_7p,  s_Bool_cons(s_i32_read( p_i32_snap(_8p)) > s_i32_read(p_i32_snap(_9p))))
+  if (s_Bool_read(p_Bool_snap(_7p)) == false) { goto bb_2 }
+  assign_p_i32(return_value, p_i32_snap(max))
+  goto end
+label bb_2
+  assign_p_i32(return_value, p_i32_snap(value))
+label end
 }
 
 method m_clamp_user_CALLER_(

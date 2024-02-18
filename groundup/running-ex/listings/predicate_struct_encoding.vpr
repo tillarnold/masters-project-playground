@@ -1,7 +1,7 @@
 // -----------------------------
 // methods
 // -----------------------------
-method m_clamp( return_value: Ref, value: Ref, bounds: Ref )
+method m_clamp_orig( return_value: Ref, value: Ref, bounds: Ref )
   requires p_i32(value)
   requires p_Bounds(bounds)
   requires s_Bool_read_0((let _0_1s_0 == (p_i32_snap(value)) in
@@ -62,6 +62,65 @@ label end
   fold p_Bounds(bounds)
   exhale p_Bounds(bounds)
 }
+
+
+// -----------------------------
+// methods
+// -----------------------------
+method m_clamp( return_value: Ref, value: Ref, bounds: Ref )
+  requires p_i32(value)
+  requires p_Bounds(bounds)
+  requires s_Bool_read_0((let _0_1s_0 == (p_i32_snap(value)) in
+(let _0_2s_0 == (p_Bounds_snap(bounds)) in
+(let _0_4s_1 == (s_Bounds_field_min(_0_2s_0)) in
+(let _0_5s_1 == (s_Bounds_field_max(_0_2s_0)) in
+mir_binop_Le_i32_i32(_0_4s_1, _0_5s_1))))))
+  ensures p_i32(return_value)
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(value))) in
+(let _0_2s_0 == (old(p_Bounds_snap(bounds))) in
+(let _0_3s_0 == (p_i32_snap(return_value)) in
+(let _0_6s_1 == (s_Bounds_field_max(_0_2s_0)) in
+mir_binop_Le_i32_i32(_0_3s_0, _0_6s_1))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(value))) in
+(let _0_2s_0 == (old(p_Bounds_snap(bounds))) in
+(let _0_3s_0 == (p_i32_snap(return_value)) in
+(let _0_6s_1 == (s_Bounds_field_min(_0_2s_0)) in
+mir_binop_Ge_i32_i32(_0_3s_0, _0_6s_1))))))
+  ensures s_Bool_read_0((let _0_1s_0 == (old(p_i32_snap(value))) in
+(let _0_2s_0 == (old(p_Bounds_snap(bounds))) in
+(let _0_3s_0 == (p_i32_snap(return_value)) in
+(let _0_7s_1 == (s_Bounds_field_max(_0_2s_0)) in
+(let _0_5s_1 == (mir_binop_Le_i32_i32(_0_1s_0, _0_7s_1)) in
+!(s_Bool_read_0(_0_5s_1))
+? s_Bool_cons(true)
+: (let _0_10s_1 == (s_Bounds_field_min(_0_2s_0)) in
+  (let _0_8s_1 == (mir_binop_Ge_i32_i32(_0_1s_0, _0_10s_1)) in
+  !(s_Bool_read_0(_0_8s_1))
+  ? s_Bool_cons(true)
+  : mir_binop_Eq_i32_i32(_0_3s_0, _0_1s_0)))))))))
+{
+  var _3p: Ref; var _4p: Ref; var _5p: Ref
+  var _6p: Ref; var _7p: Ref; var _8p: Ref
+  assign_p_i32(_4p, p_i32_snap(value))
+  unfold p_Bounds(bounds)
+  assign_p_i32(_5p, p_i32_snap(p_Bounds_field_min(bounds)))
+  assign_p_Bool(_3p, s_Bool_cons((s_i32_read_0( p_i32_snap(_4p))) < (s_i32_read_0(p_i32_snap(_5p)))))
+  if (s_Bool_read_0(p_Bool_snap(_3p)) == false) { goto bb_1 }
+  assign_p_i32(return_value, p_i32_snap(p_Bounds_field_min(bounds)))
+  goto end
+label bb_1
+  assign_p_i32(_7p, p_i32_snap(value))
+  assign_p_i32(_8p, p_i32_snap(p_Bounds_field_max(bounds)))
+  assign_p_Bool(_6p, s_Bool_cons((s_i32_read_0(p_i32_snap(_7p))) > (s_i32_read_0( p_i32_snap(_8p)))))
+  if (s_Bool_read_0( p_Bool_snap(_6p)) == false) { goto bb_2 }
+  assign_p_i32(return_value, p_i32_snap(p_Bounds_field_max(bounds)))
+  goto end
+label bb_2
+  assign_p_i32(return_value, p_i32_snap(value))
+label end
+  fold p_Bounds(bounds)
+}
+
 
 
 method m_client_impure(_0p: Ref, _1p: Ref )
