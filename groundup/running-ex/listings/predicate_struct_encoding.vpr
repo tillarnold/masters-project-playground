@@ -118,7 +118,6 @@ label bb_1
 label bb_2
   assign_p_i32(return_value, p_i32_snap(value))
 label end
-  fold p_Bounds(bounds)
 }
 
 

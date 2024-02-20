@@ -34,23 +34,20 @@
 predicate Vec(v: Ref) 
 
 function valid_index(v: Ref, idx: Int): Bool
-    requires Vec(v)
-{ 0 <= idx < len(v)  }
+  requires Vec(v) { 0 <= idx < len(v)  }
 
 
 function get(v: Ref, idx: Int): Int 
-    requires Vec(v) && valid_index(v, idx)
+  requires Vec(v) && valid_index(v, idx)
 
 
-function len(v: Ref): Int
-    requires Vec(v)
+function len(v: Ref): Int requires Vec(v)
 
 method set(v: Ref, idx: Int, val: Int)
     requires Vec(v) && valid_index(v, idx)
     ensures Vec(v) && len(v) == old(len(v))
     ensures get(v, idx) == val
     ensures forall i: Int :: (i >= 0 && i< len(v) && i != idx) ==> get(v, i) == old(get(v, i))
-
 
 
 
@@ -83,8 +80,7 @@ function is_bijection(m: Mapping) : Bool {
 function clamp(v: Int): Int
 
 
-
-method clamp_norel(V: Ref)
+method clamp_vector(V: Ref)
     requires Vec(V)
     ensures Vec(V) && len(V) == old(len(V))
     ensures forall i: Int :: valid_index(V, i) ==> get(V, i) == old(clamp(get(V, i)))
@@ -160,9 +156,9 @@ method clamp_same_len(V: Ref, m: Mapping, extra_B_index: Int)
 // This includes all cases of symdist = 1 since symdist = 1 can only occur if the difference between the lenght of the two vecs is exactly 1
 // (aside from swapping rel0 and rel 1)
 // I have an isabelle proof that shows that (for multisets) the only way for the symd to be 1 is if A and B differe in size by one.
-method apply_clamp_1(V: Ref, m: Mapping)
+method apply_clamp_longer(V: Ref, m: Mapping)
     requires Vec(V)
-    requires rel(len(V),0) > rel(len(V),1) // rel0 is longer
+    requires rel(len(V),0) >= rel(len(V),1) // rel0 is longer
     requires rel(m,0) == rel(m,1)
 
 
@@ -242,7 +238,7 @@ method clamp_0_client(A: Ref)
         clamp_0(A,  m)
 }
 
-method client_apply_clamp_1(A: Ref)
+method client_apply_clamp_longer(A: Ref)
  requires Vec(A) && len(A) == 4
 {
     set(A, 0, 200)
@@ -258,7 +254,7 @@ method client_apply_clamp_1(A: Ref)
     assert is_bijection(m)
     assume forall i: Int :: rel(valid_index(A, i),0) ==> ( ( rel(get(A,translate(m,i)),0) == rel(get(A, i),1)))
 
-    apply_clamp_1(A,  m)
+    apply_clamp_longer(A,  m)
 }
 
 

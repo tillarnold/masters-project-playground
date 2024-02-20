@@ -1,7 +1,7 @@
 // -----------------------------
 // methods
 // -----------------------------
-method m_clamp(
+method m_clamp_orig(
   return_value: Ref,
   value: Ref,
   bounds: Ref
@@ -67,6 +67,60 @@ label end
   exhale p_i32(value)
   fold p_Bounds(bounds)
   exhale p_Bounds(bounds)
+}
+
+
+// -----------------------------
+// methods
+// -----------------------------
+method m_clamp(
+  return_value: Ref,
+  value: Ref,
+  bounds: Ref
+)
+  requires p_i32(value)
+  requires p_Bounds(bounds)
+  ensures p_Result(return_value)
+  ensures s_Bool_read(
+      s_isize_read(s_Result_discr(p_Result_snap(return_value))) == 1
+    ? s_Bool_cons(true)
+    : s_isize_read(s_Result_discr(p_Result_snap(return_value))) == 0
+    ? s_Bool_cons(s_i32_read(s_Result_Ok_read_0(p_Result_snap(return_value))) <= s_i32_read(s_Bounds_field_max(old(p_Bounds_snap(bounds)))))
+    : p_Bool_unreachable()
+  )
+    
+ensures p_Result_snap(return_value) == old(f_clamp(p_i32_snap(value), p_Bounds_snap(bounds)))
+{
+  var _3p: Ref var _4p: Ref var _5p: Ref
+  var _6p: Ref var _7p: Ref var _8p: Ref
+  var _9p: Ref var _10p: Ref var _11p: Ref
+  var _12p: Ref var _13p: Ref var _14p: Ref
+  unfold p_Bounds(bounds)
+  
+  assign_p_Bool(_3p,s_Bool_cons(s_i32_read(p_i32_snap(p_Bounds_field_min(bounds))) > s_i32_read(p_i32_snap(p_Bounds_field_max(bounds)))))
+  if (s_Bool_read(p_Bool_snap(_3p)) == false) { goto bb_1 }
+  assign_p_Result(return_value, s_Result_Err_cons())
+  goto end
+  
+label bb_1
+  assign_p_Bool(_6p, s_Bool_cons(s_i32_read(p_i32_snap(value)) < s_i32_read(p_i32_snap(p_Bounds_field_min(bounds)))))
+  if (s_Bool_read(p_Bool_snap(_6p)) == false) { goto bb_2 }
+  assign_p_i32(_9p, p_i32_snap(p_Bounds_field_min(bounds)))
+  assign_p_Result(return_value, s_Result_Ok_cons(p_i32_snap(_9p)))
+  goto end
+
+label bb_2
+  assign_p_Bool(_10p, s_Bool_cons(s_i32_read(p_i32_snap(value)) > s_i32_read(p_i32_snap(p_Bounds_field_max(bounds)))))
+  if (s_Bool_read(p_Bool_snap(_10p)) == false) { goto bb_3 }
+  assign_p_i32(_13p, p_i32_snap(p_Bounds_field_max(bounds)))
+  assign_p_Result(return_value, s_Result_Ok_cons(p_i32_snap(_13p)))
+  goto end
+  
+label bb_3
+  assign_p_i32(_14p, p_i32_snap(value))
+  assign_p_Result(return_value, s_Result_Ok_cons(p_i32_snap(_14p)))
+label end
+  fold p_Bounds(bounds)
 }
 
 method m_clamp_user_CALLER_(

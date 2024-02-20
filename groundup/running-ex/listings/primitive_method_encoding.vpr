@@ -43,13 +43,14 @@ method m_clamp(return_value: Ref, value: Ref, min: Ref, max: Ref)
 {
   var _4p: Ref; var _5p: Ref; var _6p: Ref
   var _7p: Ref; var _8p: Ref; var _9p: Ref
+  
   assign_p_i32(_5p, p_i32_snap(value))
   assign_p_i32(_6p, p_i32_snap(min))
-
   assign_p_Bool(_4p, s_Bool_cons(s_i32_read(p_i32_snap(_5p)) < s_i32_read(p_i32_snap(_6p))))
   if (s_Bool_read(p_Bool_snap(_4p)) == false) { goto bb_1 }
   assign_p_i32(return_value, p_i32_snap(min))
   goto end
+
 label bb_1
   assign_p_i32(_8p, p_i32_snap(value))
   assign_p_i32(_9p, p_i32_snap(max))
@@ -57,8 +58,10 @@ label bb_1
   if (s_Bool_read(p_Bool_snap(_7p)) == false) { goto bb_2 }
   assign_p_i32(return_value, p_i32_snap(max))
   goto end
+
 label bb_2
   assign_p_i32(return_value, p_i32_snap(value))
+
 label end
 }
 
