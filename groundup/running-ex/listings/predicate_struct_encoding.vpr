@@ -339,7 +339,7 @@ function p_Bounds_snap(self: Ref): s_Bounds
 { unfolding acc(p_Bounds(self)) in (s_Bounds_cons(p_i32_snap(p_Bounds_field_min(self)), p_i32_snap(p_Bounds_field_max(self)))) }
 
 predicate p_Bounds(self: Ref) {
-  (p_i32(p_Bounds_field_min(self))) && (p_i32(p_Bounds_field_max(self)))
+  p_i32(p_Bounds_field_min(self)) && p_i32(p_Bounds_field_max(self))
 }
 
 method assign_p_Bounds(self: Ref, self_new: s_Bounds)

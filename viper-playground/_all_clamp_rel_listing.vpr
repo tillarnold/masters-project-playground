@@ -105,7 +105,7 @@ method clamp_0(V: Ref, m: Mapping)
     requires is_bijection(m)
     requires forall i: Int :: i in keys(m) <==> valid_index(V, i)
     //Symetric distance is 0
-    requires forall i: Int :: rel(valid_index(V, i),0) ==> rel(get(V,translate(m,i)),0) == rel(get(rel(V,1), i),1)
+    requires forall i: Int :: rel(valid_index(V, i),0) ==> rel(get(V,translate(m,i)),0) == rel(get(V, i),1)
 
 
      // Clamping was done
@@ -114,7 +114,7 @@ method clamp_0(V: Ref, m: Mapping)
    
     // mapping still holds
     ensures is_bijection(m)
-    ensures forall i: Int :: rel(valid_index(V, i),0) ==> rel(get(V,translate(m,i)),0) == rel(get(rel(V,1), i),1)
+    ensures forall i: Int :: rel(valid_index(V, i),0) ==> rel(get(V,translate(m,i)),0) == rel(get(V, i),1)
 {
     clamp_same_len(V , m, -1)
 }
@@ -137,7 +137,7 @@ method clamp_same_len(V: Ref, m: Mapping, extra_B_index: Int)
     requires forall i: Int :: i in keys(m) <==> valid_index(V, i)
     requires forall i: Int :: i in values(m) <==> valid_index(V, i)
     // The mapping is valid (dsym is at most 2)
-    requires forall i: Int :: rel(valid_index(V, i),0) ==> (rel(get(V,translate(m,i)),0) == rel(get(rel(V,1), i),1)) || i == extra_B_index 
+    requires forall i: Int :: rel(valid_index(V, i),0) ==> (rel(get(V,translate(m,i)),0) == rel(get(V, i),1)) || i == extra_B_index 
 
     // Clamping was done
     ensures Vec(V) && len(V) == old(len(V))
@@ -145,7 +145,7 @@ method clamp_same_len(V: Ref, m: Mapping, extra_B_index: Int)
 
     // Mapping still holds
     ensures is_bijection(m)
-    ensures forall i: Int :: rel(valid_index(V, i),0) ==> (rel(get(V,translate(m,i)),0) == rel(get(rel(V,1), i),1)) || i == extra_B_index 
+    ensures forall i: Int :: rel(valid_index(V, i),0) ==> (rel(get(V,translate(m,i)),0) == rel(get(V, i),1)) || i == extra_B_index 
 {
   clamp_body()
 }

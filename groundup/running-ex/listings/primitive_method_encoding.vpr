@@ -212,8 +212,7 @@ function p_i32_unreachable(
 
 function p_i32_snap(
   self: Ref
-): s_i32
-  requires acc(p_i32(self), wildcard)
+): s_i32 requires acc(p_i32(self), wildcard)
 {
   unfolding acc(p_i32(self), wildcard) in (self.f_Int_i32)
 }
@@ -226,8 +225,7 @@ method assign_p_i32(
   self: Ref,
   self_new: s_i32
 )
-  ensures p_i32(self)
-  ensures (p_i32_snap(self)) == (self_new)
+  ensures p_i32(self) && p_i32_snap(self) == self_new
 
 field f_Bool: s_Bool
 function p_Bool_unreachable(

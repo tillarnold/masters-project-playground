@@ -452,20 +452,21 @@ method assign_p_i32(
 
 // START RESULT
 
+function p_Result_unreachable(): s_Result
+  requires false ensures false
+
 field p_Result_discr: s_isize
 
 function p_Result_Ok_field_0(self: Ref): Ref
-  ensures ((self) == (null)) == ((result) == (null))
+  ensures (self == null) == (result == null)
 
-function p_Result_unreachable(): s_Result
-  requires false ensures false
 
 function p_Result_snap(self: Ref): s_Result
   requires acc(p_Result(self))
 {
-  unfolding acc(p_Result(self)) in ((s_isize_read(self.p_Result_discr)) == (0)
-? unfolding acc(p_Result_Ok(self)) in (s_Result_Ok_cons(p_i32_snap(p_Result_Ok_field_0(self))))
-: unfolding acc(p_Result_Err(self)) in (s_Result_Err_cons()))
+  unfolding acc(p_Result(self)) in s_isize_read(self.p_Result_discr) == 0
+? unfolding acc(p_Result_Ok(self)) in s_Result_Ok_cons(p_i32_snap(p_Result_Ok_field_0(self)))
+: unfolding acc(p_Result_Err(self)) in s_Result_Err_cons()
 }
 
 predicate p_Result_Ok(self: Ref) {p_i32(p_Result_Ok_field_0(self))}
@@ -476,17 +477,15 @@ predicate p_Result(self: Ref) {
   (acc(self.p_Result_discr) && 0 <= s_isize_read(self.p_Result_discr) && s_isize_read(self.p_Result_discr) <= 1) 
   && 
   (
-    s_isize_read(self.p_Result_discr) == 1
-    ? p_Result_Err(self)
-    : s_isize_read(self.p_Result_discr) == 0
-    ? p_Result_Ok(self)
+    s_isize_read(self.p_Result_discr) == 1 ? p_Result_Err(self)
+    : s_isize_read(self.p_Result_discr) == 0 ? p_Result_Ok(self)
     : false
   )
 }
 
 method assign_p_Result(self: Ref, self_new: s_Result)
   ensures p_Result(self)
-  ensures (p_Result_snap(self)) == (self_new)
+  ensures p_Result_snap(self) == self_new
 
 
 // END RESULT
