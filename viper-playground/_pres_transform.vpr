@@ -1,0 +1,844 @@
+// -----------------------------
+// methods
+// -----------------------------
+method m_unwrap_i32_CALLER_(
+  _0p: Ref,
+  _1p: Ref
+)
+  requires p_FallibleI32(_1p)
+  requires (s_Int_isize_read_0(s_FallibleI32_discr(p_FallibleI32_snap(_1p)))) == (0)
+  ensures p_Int_i32(_0p)
+{
+label start
+  var _2p: Ref
+  var _3p: Ref
+  goto bb_0
+label bb_0
+  // FakeRead(ForMatchedPlace(None), _1)
+  // _2 = discriminant(_1)
+  assign_p_Int_isize(_2p, unfolding acc(p_FallibleI32(_1p), wildcard) in (_1p.p_FallibleI32_discr))
+  // switchInt(move _2) -> [0: bb1, 1: bb2, otherwise: bb3]
+  var _tmp0: s_Int_isize
+  _tmp0 := p_Int_isize_snap(_2p)
+  exhale p_Int_isize(_2p)
+  if (s_Int_isize_read_0(_tmp0) == 0) { goto bb_1 }
+  elseif (s_Int_isize_read_0(_tmp0) == 1) { goto bb_2 }
+  else { goto bb_3 }
+label bb_1
+  // falseEdge -> [real: bb4, imaginary: bb2]
+  goto bb_4
+label bb_2
+  // _0 = unreachable_i32() -> [return: bb5, unwind: bb6]
+  assign_p_Int_i32(_0p, f_unreachable_i32())
+  goto bb_5
+label bb_3
+  // unreachable
+  exhale false
+  assume false
+label bb_4
+  // _3 = ((_1 as Ok).0: i32)
+  unfold p_FallibleI32(_1p)
+  unfold p_FallibleI32_Ok(_1p)
+  assign_p_Int_i32(_3p, p_Int_i32_snap(p_FallibleI32_Ok_field_0(_1p)))
+  // _0 = _3
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_3p))
+  // goto -> bb5
+  fold p_FallibleI32_Ok(_1p)
+  fold p_FallibleI32(_1p)
+  goto bb_5
+label bb_5
+  // return
+  exhale p_FallibleI32(_1p)
+  goto end
+label bb_6
+  // resume
+  assert false // terminator resume
+label end
+  // return
+}
+
+method m_clamp_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Int_i32(_2p)
+  requires s_Bool_read(mir_binop_Le_i32_i32(s_Bounds_field_min(s_ClampTransform_field_bounds(p_ClampTransform_snap(_1p))), s_Bounds_field_max(s_ClampTransform_field_bounds(p_ClampTransform_snap(_1p)))))
+  ensures p_Int_i32(_0p)
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  goto bb_0
+label bb_0
+  // _4 = _2
+  assign_p_Int_i32(_4p, p_Int_i32_snap(_2p))
+  // _5 = ((_1.0: Bounds).0: i32)
+  unfold p_ClampTransform(_1p)
+  unfold p_Bounds(p_ClampTransform_field_0(_1p))
+  assign_p_Int_i32(_5p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _3 = Lt(move _4, move _5)
+  var _tmp0: s_i32
+  _tmp0 := p_Int_i32_snap(_4p)
+  exhale p_Int_i32(_4p)
+  var _tmp1: s_i32
+  _tmp1 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  assign_p_Bool(_3p, mir_binop_Lt_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _3) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _0 = ((_1.0: Bounds).0: i32)
+  assign_p_Int_i32(_0p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // goto -> bb6
+  goto bb_6
+label bb_2
+  // _7 = _2
+  assign_p_Int_i32(_7p, p_Int_i32_snap(_2p))
+  // _8 = ((_1.0: Bounds).1: i32)
+  assign_p_Int_i32(_8p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _6 = Gt(move _7, move _8)
+  var _tmp3: s_i32
+  _tmp3 := p_Int_i32_snap(_7p)
+  exhale p_Int_i32(_7p)
+  var _tmp4: s_i32
+  _tmp4 := p_Int_i32_snap(_8p)
+  exhale p_Int_i32(_8p)
+  assign_p_Bool(_6p, mir_binop_Gt_i32_i32(_tmp3, _tmp4))
+  // switchInt(move _6) -> [0: bb4, otherwise: bb3]
+  var _tmp5: s_Bool
+  _tmp5 := p_Bool_snap(_6p)
+  exhale p_Bool(_6p)
+  if (s_Bool_read(_tmp5) == false) { goto bb_4 }
+  else { goto bb_3 }
+label bb_3
+  // _0 = ((_1.0: Bounds).1: i32)
+  assign_p_Int_i32(_0p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // goto -> bb5
+  goto bb_5
+label bb_4
+  // _0 = _2
+  assign_p_Int_i32(_0p, p_Int_i32_snap(_2p))
+  // goto -> bb5
+  goto bb_5
+label bb_5
+  // goto -> bb6
+  goto bb_6
+label bb_6
+  // return
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  exhale p_ClampTransform(_1p)
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_clamp_impure_CALLER_(
+  _0p: Ref,
+  _1p: Ref,
+  _2p: Ref
+)
+  requires p_ClampTransform(_1p)
+  requires p_Int_i32(_2p)
+  ensures p_2_Tuple_$_FallibleI32_$_ClampTransform(_0p)
+  ensures s_Bool_read(mir_binop_Eq_bool_bool(mir_binop_Le_i32_i32(s_Bounds_field_min(s_ClampTransform_field_bounds(old(p_ClampTransform_snap(_1p)))), s_Bounds_field_max(s_ClampTransform_field_bounds(old(p_ClampTransform_snap(_1p))))), s_Bool_cons((s_Int_isize_read_0(s_FallibleI32_discr(s_2_Tuple_read_0(p_2_Tuple_$_FallibleI32_$_ClampTransform_snap(_0p))))) == (0))))
+  ensures s_Bool_read(s_2_Tuple_read_0(!(s_Bool_read(mir_binop_Le_i32_i32(s_Bounds_field_min(s_ClampTransform_field_bounds(old(p_ClampTransform_snap(_1p)))), s_Bounds_field_max(s_ClampTransform_field_bounds(old(p_ClampTransform_snap(_1p)))))))
+? s_2_Tuple_cons(s_Bool_cons(true), s_Bool_cons(true))
+: s_2_Tuple_cons(s_Bool_cons((s_Ref_Not_cons(f_unwrap_i32(s_2_Tuple_read_0(p_2_Tuple_$_FallibleI32_$_ClampTransform_snap(_0p))))) == (s_Ref_Not_cons(f_clamp(old(p_ClampTransform_snap(_1p)), old(p_Int_i32_snap(_2p)))))), s_Bool_cons((s_Ref_Not_cons(f_unwrap_i32(s_2_Tuple_read_0(p_2_Tuple_$_FallibleI32_$_ClampTransform_snap(_0p))))) == (s_Ref_Not_cons(f_clamp(old(p_ClampTransform_snap(_1p)), old(p_Int_i32_snap(_2p)))))))))
+  ensures (s_Ref_Not_cons(s_2_Tuple_read_1(p_2_Tuple_$_FallibleI32_$_ClampTransform_snap(_0p)))) == (s_Ref_Not_cons(old(p_ClampTransform_snap(_1p))))
+{
+label start
+  var _3p: Ref
+  var _4p: Ref
+  var _5p: Ref
+  var _6p: Ref
+  var _7p: Ref
+  var _8p: Ref
+  var _9p: Ref
+  var _10p: Ref
+  var _11p: Ref
+  var _12p: Ref
+  var _13p: Ref
+  var _14p: Ref
+  var _15p: Ref
+  var _16p: Ref
+  var _17p: Ref
+  var _18p: Ref
+  var _19p: Ref
+  var _20p: Ref
+  var _21p: Ref
+  var _22p: Ref
+  goto bb_0
+label bb_0
+  // _4 = ((_1.0: Bounds).0: i32)
+  unfold p_ClampTransform(_1p)
+  unfold p_Bounds(p_ClampTransform_field_0(_1p))
+  assign_p_Int_i32(_4p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _5 = ((_1.0: Bounds).1: i32)
+  assign_p_Int_i32(_5p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _3 = Gt(move _4, move _5)
+  var _tmp0: s_i32
+  _tmp0 := p_Int_i32_snap(_4p)
+  exhale p_Int_i32(_4p)
+  var _tmp1: s_i32
+  _tmp1 := p_Int_i32_snap(_5p)
+  exhale p_Int_i32(_5p)
+  assign_p_Bool(_3p, mir_binop_Gt_i32_i32(_tmp0, _tmp1))
+  // switchInt(move _3) -> [0: bb2, otherwise: bb1]
+  var _tmp2: s_Bool
+  _tmp2 := p_Bool_snap(_3p)
+  exhale p_Bool(_3p)
+  if (s_Bool_read(_tmp2) == false) { goto bb_2 }
+  else { goto bb_1 }
+label bb_1
+  // _6 = FallibleI32::Err
+  assign_p_FallibleI32(_6p, s_FallibleI32_Err_cons())
+  // _7 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp3: s_ClampTransform
+  _tmp3 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_7p, _tmp3)
+  // _0 = (move _6, move _7)
+  var _tmp4: s_FallibleI32
+  _tmp4 := p_FallibleI32_snap(_6p)
+  exhale p_FallibleI32(_6p)
+  var _tmp5: s_ClampTransform
+  _tmp5 := p_ClampTransform_snap(_7p)
+  exhale p_ClampTransform(_7p)
+  assign_p_2_Tuple_$_FallibleI32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp4, _tmp5))
+  // goto -> bb9
+  goto bb_9
+label bb_2
+  // _9 = _2
+  assign_p_Int_i32(_9p, p_Int_i32_snap(_2p))
+  // _10 = ((_1.0: Bounds).0: i32)
+  assign_p_Int_i32(_10p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _8 = Lt(move _9, move _10)
+  var _tmp6: s_i32
+  _tmp6 := p_Int_i32_snap(_9p)
+  exhale p_Int_i32(_9p)
+  var _tmp7: s_i32
+  _tmp7 := p_Int_i32_snap(_10p)
+  exhale p_Int_i32(_10p)
+  assign_p_Bool(_8p, mir_binop_Lt_i32_i32(_tmp6, _tmp7))
+  // switchInt(move _8) -> [0: bb4, otherwise: bb3]
+  var _tmp8: s_Bool
+  _tmp8 := p_Bool_snap(_8p)
+  exhale p_Bool(_8p)
+  if (s_Bool_read(_tmp8) == false) { goto bb_4 }
+  else { goto bb_3 }
+label bb_3
+  // _12 = ((_1.0: Bounds).0: i32)
+  assign_p_Int_i32(_12p, p_Int_i32_snap(p_Bounds_field_0(p_ClampTransform_field_0(_1p))))
+  // _11 = FallibleI32::Ok(move _12)
+  var _tmp9: s_i32
+  _tmp9 := p_Int_i32_snap(_12p)
+  exhale p_Int_i32(_12p)
+  assign_p_FallibleI32(_11p, s_FallibleI32_Ok_cons(_tmp9))
+  // _13 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp10: s_ClampTransform
+  _tmp10 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_13p, _tmp10)
+  // _0 = (move _11, move _13)
+  var _tmp11: s_FallibleI32
+  _tmp11 := p_FallibleI32_snap(_11p)
+  exhale p_FallibleI32(_11p)
+  var _tmp12: s_ClampTransform
+  _tmp12 := p_ClampTransform_snap(_13p)
+  exhale p_ClampTransform(_13p)
+  assign_p_2_Tuple_$_FallibleI32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp11, _tmp12))
+  // goto -> bb8
+  goto bb_8
+label bb_4
+  // _15 = _2
+  assign_p_Int_i32(_15p, p_Int_i32_snap(_2p))
+  // _16 = ((_1.0: Bounds).1: i32)
+  assign_p_Int_i32(_16p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _14 = Gt(move _15, move _16)
+  var _tmp13: s_i32
+  _tmp13 := p_Int_i32_snap(_15p)
+  exhale p_Int_i32(_15p)
+  var _tmp14: s_i32
+  _tmp14 := p_Int_i32_snap(_16p)
+  exhale p_Int_i32(_16p)
+  assign_p_Bool(_14p, mir_binop_Gt_i32_i32(_tmp13, _tmp14))
+  // switchInt(move _14) -> [0: bb6, otherwise: bb5]
+  var _tmp15: s_Bool
+  _tmp15 := p_Bool_snap(_14p)
+  exhale p_Bool(_14p)
+  if (s_Bool_read(_tmp15) == false) { goto bb_6 }
+  else { goto bb_5 }
+label bb_5
+  // _18 = ((_1.0: Bounds).1: i32)
+  assign_p_Int_i32(_18p, p_Int_i32_snap(p_Bounds_field_1(p_ClampTransform_field_0(_1p))))
+  // _17 = FallibleI32::Ok(move _18)
+  var _tmp16: s_i32
+  _tmp16 := p_Int_i32_snap(_18p)
+  exhale p_Int_i32(_18p)
+  assign_p_FallibleI32(_17p, s_FallibleI32_Ok_cons(_tmp16))
+  // _19 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp17: s_ClampTransform
+  _tmp17 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_19p, _tmp17)
+  // _0 = (move _17, move _19)
+  var _tmp18: s_FallibleI32
+  _tmp18 := p_FallibleI32_snap(_17p)
+  exhale p_FallibleI32(_17p)
+  var _tmp19: s_ClampTransform
+  _tmp19 := p_ClampTransform_snap(_19p)
+  exhale p_ClampTransform(_19p)
+  assign_p_2_Tuple_$_FallibleI32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp18, _tmp19))
+  // goto -> bb7
+  goto bb_7
+label bb_6
+  // _21 = _2
+  assign_p_Int_i32(_21p, p_Int_i32_snap(_2p))
+  // _20 = FallibleI32::Ok(move _21)
+  var _tmp20: s_i32
+  _tmp20 := p_Int_i32_snap(_21p)
+  exhale p_Int_i32(_21p)
+  assign_p_FallibleI32(_20p, s_FallibleI32_Ok_cons(_tmp20))
+  // _22 = move _1
+  fold p_Bounds(p_ClampTransform_field_0(_1p))
+  fold p_ClampTransform(_1p)
+  var _tmp21: s_ClampTransform
+  _tmp21 := p_ClampTransform_snap(_1p)
+  exhale p_ClampTransform(_1p)
+  assign_p_ClampTransform(_22p, _tmp21)
+  // _0 = (move _20, move _22)
+  var _tmp22: s_FallibleI32
+  _tmp22 := p_FallibleI32_snap(_20p)
+  exhale p_FallibleI32(_20p)
+  var _tmp23: s_ClampTransform
+  _tmp23 := p_ClampTransform_snap(_22p)
+  exhale p_ClampTransform(_22p)
+  assign_p_2_Tuple_$_FallibleI32_$_ClampTransform(_0p, s_2_Tuple_cons(_tmp22, _tmp23))
+  // goto -> bb7
+  goto bb_7
+label bb_7
+  // goto -> bb8
+  goto bb_8
+label bb_8
+  // goto -> bb9
+  goto bb_9
+label bb_9
+  // return
+  exhale p_Int_i32(_2p)
+  goto end
+label end
+  // return
+}
+
+method m_main_CALLER_(
+  _0p: Ref
+)
+  ensures p_0_Tuple(_0p)
+{
+label start
+  goto bb_0
+label bb_0
+  // _0 = const ()
+  assign_p_0_Tuple(_0p, s_0_Tuple_cons())
+  // return
+  goto end
+label end
+  // return
+}
+
+// -----------------------------
+// functions
+// -----------------------------
+function f_unreachable_i32(
+): s_i32
+  requires false
+
+function f_unwrap_i32(
+  _1p: s_FallibleI32
+): s_i32
+  requires (s_Int_isize_read_0(s_FallibleI32_discr(_1p))) == (0)
+{
+  (s_Int_isize_read_0(s_FallibleI32_discr(_1p))) == (1)
+? f_unreachable_i32()
+: (s_Int_isize_read_0(s_FallibleI32_discr(_1p))) == (0)
+  ? s_FallibleI32_Ok_read_0(_1p)
+  : p_Int_i32_unreachable()
+}
+
+
+function f_clamp(self: s_ClampTransform, value: s_i32): s_i32
+  requires s_i32_read(s_Bounds_field_min(s_ClampTransform_field_bounds(self)))
+    <= s_i32_read(s_Bounds_field_max(s_ClampTransform_field_bounds(self)))
+{
+  s_i32_read(value) < s_i32_read(s_Bounds_field_min(s_ClampTransform_field_bounds(self)))
+? s_Bounds_field_min(s_ClampTransform_field_bounds(self))
+: s_i32_read(value) > s_i32_read(s_Bounds_field_max(s_ClampTransform_field_bounds(self)))
+? s_Bounds_field_max(s_ClampTransform_field_bounds(self))
+: value
+}
+
+// -----------------------------
+// MIR builtins
+// -----------------------------
+function mir_binop_Lt_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) < (s_i32_read(arg2)))
+}
+
+function mir_binop_Gt_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) > (s_i32_read(arg2)))
+}
+
+function mir_binop_Le_i32_i32(
+  arg1: s_i32,
+  arg2: s_i32
+): s_Bool
+{
+  s_Bool_cons((s_i32_read(arg1)) <= (s_i32_read(arg2)))
+}
+
+function mir_binop_Eq_bool_bool(
+  arg1: s_Bool,
+  arg2: s_Bool
+): s_Bool
+{
+  s_Bool_cons((s_Bool_read(arg1)) == (s_Bool_read(arg2)))
+}
+
+// -----------------------------
+// generics
+// -----------------------------
+// -----------------------------
+// snapshots
+// -----------------------------
+
+domain s_Int_isize {
+  axiom ax_s_Int_isize_cons_read_0 {
+    forall f0: Int :: {s_Int_isize_cons(f0)} (s_Int_isize_read_0(s_Int_isize_cons(f0))) == (f0)
+  }
+  axiom ax_s_Int_isize_cons {
+    forall self: s_Int_isize :: {s_Int_isize_read_0(self)} (s_Int_isize_cons(s_Int_isize_read_0(self))) == (self)
+  }
+  axiom ax_s_Int_isize_write_0_read_0 {
+    forall self: s_Int_isize, val: Int :: {s_Int_isize_read_0(s_Int_isize_write_0(self, val))} (s_Int_isize_read_0(s_Int_isize_write_0(self, val))) == (val)
+  }
+  axiom s_Int_isize_bounds {
+    forall self: s_Int_isize :: {s_Int_isize_read_0(self)} ((-(9223372036854775808)) <= (s_Int_isize_read_0(self))) && ((s_Int_isize_read_0(self)) <= (9223372036854775807))
+  }
+  function s_Int_isize_cons(Int): s_Int_isize
+  function s_Int_isize_read_0(s_Int_isize): Int
+  function s_Int_isize_write_0(s_Int_isize, Int): s_Int_isize
+}
+
+domain s_FallibleI32 {
+  axiom ax_s_FallibleI32_Ok_cons_discr {
+    forall f0: s_i32 :: {s_FallibleI32_discr(s_FallibleI32_Ok_cons(f0))} (s_FallibleI32_discr(s_FallibleI32_Ok_cons(f0))) == (s_Int_isize_cons(0))
+  }
+  axiom ax_s_FallibleI32_Ok_cons_read_0 {
+    forall f0: s_i32 :: {s_FallibleI32_Ok_cons(f0)} (s_FallibleI32_Ok_read_0(s_FallibleI32_Ok_cons(f0))) == (f0)
+  }
+  axiom ax_s_FallibleI32_Ok_cons {
+    forall self: s_FallibleI32 :: {s_FallibleI32_Ok_cons(s_FallibleI32_Ok_read_0(self))} (s_FallibleI32_Ok_cons(s_FallibleI32_Ok_read_0(self))) == (self)
+  }
+  axiom ax_s_FallibleI32_Ok_write_0_read_0 {
+    forall self: s_FallibleI32, val: s_i32 :: {s_FallibleI32_Ok_read_0(s_FallibleI32_Ok_write_0(self, val))} (s_FallibleI32_Ok_read_0(s_FallibleI32_Ok_write_0(self, val))) == (val)
+  }
+  axiom ax_s_FallibleI32_Err_cons_discr {
+    (s_FallibleI32_discr((s_FallibleI32_Err_cons(): s_FallibleI32))) == (s_Int_isize_cons(1))
+  }
+  axiom s_FallibleI32_discr_bounds {
+    forall self: s_FallibleI32 :: {s_Int_isize_read_0(s_FallibleI32_discr(self))} ((0) <= (s_Int_isize_read_0(s_FallibleI32_discr(self)))) && ((s_Int_isize_read_0(s_FallibleI32_discr(self))) <= (1))
+  }
+  function s_FallibleI32_discr(s_FallibleI32): s_Int_isize
+  function s_FallibleI32_Ok_cons(s_i32): s_FallibleI32
+  function s_FallibleI32_Ok_read_0(s_FallibleI32): s_i32
+  function s_FallibleI32_Ok_write_0(s_FallibleI32, s_i32): s_FallibleI32
+  function s_FallibleI32_Err_cons(): s_FallibleI32
+}
+
+domain s_Never {
+}
+
+domain s_Bool {
+  axiom ax_s_Bool_cons_read_0 {
+    forall f0: Bool :: {s_Bool_cons(f0)} (s_Bool_read(s_Bool_cons(f0))) == (f0)
+  }
+  axiom ax_s_Bool_cons {
+    forall self: s_Bool :: {s_Bool_cons(s_Bool_read(self))} (s_Bool_cons(s_Bool_read(self))) == (self)
+  }
+  axiom ax_s_Bool_write_0_read_0 {
+    forall self: s_Bool, val: Bool :: {s_Bool_read(s_Bool_write_0(self, val))} (s_Bool_read(s_Bool_write_0(self, val))) == (val)
+  }
+  function s_Bool_cons(Bool): s_Bool
+  function s_Bool_read(s_Bool): Bool
+  function s_Bool_write_0(s_Bool, Bool): s_Bool
+}
+
+
+domain s_i32 {
+  axiom { forall value: Int :: s_i32_read(s_i32_cons(value)) == value }
+  axiom { forall self: s_i32 :: s_i32_cons(s_i32_read(self)) == self }
+  axiom { forall self: s_i32 :: -2147483648 <= s_i32_read(self) <= 2147483647 }
+  function s_i32_cons(Int): s_i32
+  function s_i32_read(s_i32): Int
+}
+
+
+domain s_Bounds {
+  axiom {
+    forall min: s_i32, max: s_i32 ::  s_Bounds_field_min(s_Bounds_cons(min, max)) == min
+  }
+  axiom {
+    forall min: s_i32, max: s_i32 ::  s_Bounds_field_max(s_Bounds_cons(min, max)) == max
+  }
+  axiom {
+    forall self: s_Bounds :: s_Bounds_cons(s_Bounds_field_min(self), s_Bounds_field_max(self)) == self
+  }
+
+  function s_Bounds_cons(s_i32, s_i32): s_Bounds
+  function s_Bounds_field_min(s_Bounds): s_i32
+  function s_Bounds_field_max(s_Bounds): s_i32
+}
+
+domain s_ClampTransform {
+  axiom {
+    forall bounds: s_Bounds :: s_ClampTransform_field_bounds(s_ClampTransform_cons(bounds)) == bounds
+  }
+  axiom {
+    forall self: s_ClampTransform :: s_ClampTransform_cons(s_ClampTransform_field_bounds(self)) == self
+  }
+  function s_ClampTransform_cons(s_Bounds): s_ClampTransform
+  function s_ClampTransform_field_bounds(s_ClampTransform): s_Bounds
+}
+
+domain s_2_Tuple[T0, T1] {
+  axiom ax_s_2_Tuple_cons_read_0 {
+    forall f0: T0, f1: T1 :: {s_2_Tuple_cons(f0, f1)} (s_2_Tuple_read_0(s_2_Tuple_cons(f0, f1))) == (f0)
+  }
+  axiom ax_s_2_Tuple_cons_read_1 {
+    forall f0: T0, f1: T1 :: {s_2_Tuple_cons(f0, f1)} (s_2_Tuple_read_1(s_2_Tuple_cons(f0, f1))) == (f1)
+  }
+  axiom ax_s_2_Tuple_cons {
+    forall self: s_2_Tuple[T0, T1] :: {s_2_Tuple_cons(s_2_Tuple_read_0(self), s_2_Tuple_read_1(self))} (s_2_Tuple_cons(s_2_Tuple_read_0(self), s_2_Tuple_read_1(self))) == (self)
+  }
+  axiom ax_s_2_Tuple_write_0_read_0 {
+    forall self: s_2_Tuple[T0, T1], val: T0 :: {s_2_Tuple_read_0(s_2_Tuple_write_0(self, val))} (s_2_Tuple_read_0(s_2_Tuple_write_0(self, val))) == (val)
+  }
+  axiom ax_s_2_Tuple_write_0_read_1 {
+    forall self: s_2_Tuple[T0, T1], val: T0 :: {s_2_Tuple_read_1(s_2_Tuple_write_0(self, val))} (s_2_Tuple_read_1(s_2_Tuple_write_0(self, val))) == (s_2_Tuple_read_1(self))
+  }
+  axiom ax_s_2_Tuple_write_1_read_0 {
+    forall self: s_2_Tuple[T0, T1], val: T1 :: {s_2_Tuple_read_0(s_2_Tuple_write_1(self, val))} (s_2_Tuple_read_0(s_2_Tuple_write_1(self, val))) == (s_2_Tuple_read_0(self))
+  }
+  axiom ax_s_2_Tuple_write_1_read_1 {
+    forall self: s_2_Tuple[T0, T1], val: T1 :: {s_2_Tuple_read_1(s_2_Tuple_write_1(self, val))} (s_2_Tuple_read_1(s_2_Tuple_write_1(self, val))) == (val)
+  }
+  function s_2_Tuple_cons(T0, T1): s_2_Tuple[T0, T1]
+  function s_2_Tuple_read_0(s_2_Tuple[T0, T1]): T0
+  function s_2_Tuple_write_0(s_2_Tuple[T0, T1], T0): s_2_Tuple[T0, T1]
+  function s_2_Tuple_read_1(s_2_Tuple[T0, T1]): T1
+  function s_2_Tuple_write_1(s_2_Tuple[T0, T1], T1): s_2_Tuple[T0, T1]
+}
+
+domain s_Ref_Not[T] {
+  axiom ax_s_Ref_Not_cons_read_0 {
+    forall f0: T :: {s_Ref_Not_cons(f0)} (s_Ref_Not_read_0(s_Ref_Not_cons(f0))) == (f0)
+  }
+  axiom ax_s_Ref_Not_cons {
+    forall self: s_Ref_Not[T] :: {s_Ref_Not_cons(s_Ref_Not_read_0(self))} (s_Ref_Not_cons(s_Ref_Not_read_0(self))) == (self)
+  }
+  axiom ax_s_Ref_Not_write_0_read_0 {
+    forall self: s_Ref_Not[T], val: T :: {s_Ref_Not_read_0(s_Ref_Not_write_0(self, val))} (s_Ref_Not_read_0(s_Ref_Not_write_0(self, val))) == (val)
+  }
+  function s_Ref_Not_cons(T): s_Ref_Not[T]
+  function s_Ref_Not_read_0(s_Ref_Not[T]): T
+  function s_Ref_Not_write_0(s_Ref_Not[T], T): s_Ref_Not[T]
+}
+
+domain s_0_Tuple {
+  function s_0_Tuple_cons(): s_0_Tuple
+}
+
+// -----------------------------
+// types
+// -----------------------------
+field f_Int_i32: s_i32
+function p_Int_i32_unreachable(
+): s_i32
+  requires false
+  ensures false
+
+function p_Int_i32_snap(
+  self: Ref
+): s_i32
+  requires acc(p_Int_i32(self), wildcard)
+{
+  unfolding acc(p_Int_i32(self), wildcard) in (self.f_Int_i32)
+}
+
+predicate p_Int_i32(self: Ref) {
+  acc(self.f_Int_i32)
+}
+
+method assign_p_Int_i32(
+  self: Ref,
+  self_new: s_i32
+)
+  ensures p_Int_i32(self)
+  ensures (p_Int_i32_snap(self)) == (self_new)
+
+field p_FallibleI32_discr: s_Int_isize
+function p_FallibleI32_Ok_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_FallibleI32_unreachable(
+): s_FallibleI32
+  requires false
+  ensures false
+
+function p_FallibleI32_snap(
+  self: Ref
+): s_FallibleI32
+  requires acc(p_FallibleI32(self), wildcard)
+{
+  unfolding acc(p_FallibleI32(self), wildcard) in ((s_Int_isize_read_0(self.p_FallibleI32_discr)) == (0)
+? unfolding acc(p_FallibleI32_Ok(self), wildcard) in (s_FallibleI32_Ok_cons(p_Int_i32_snap(p_FallibleI32_Ok_field_0(self))))
+: unfolding acc(p_FallibleI32_Err(self), wildcard) in (s_FallibleI32_Err_cons()))
+}
+
+predicate p_FallibleI32_Ok(self: Ref) {
+  p_Int_i32(p_FallibleI32_Ok_field_0(self))
+}
+
+predicate p_FallibleI32_Err(self: Ref) {
+  true
+}
+
+predicate p_FallibleI32(self: Ref) {
+  (acc(self.p_FallibleI32_discr)) && ((((0) <= (s_Int_isize_read_0(self.p_FallibleI32_discr))) && ((s_Int_isize_read_0(self.p_FallibleI32_discr)) <= (1))) && ((s_Int_isize_read_0(self.p_FallibleI32_discr)) == (1)
+? p_FallibleI32_Err(self)
+: (s_Int_isize_read_0(self.p_FallibleI32_discr)) == (0)
+  ? p_FallibleI32_Ok(self)
+  : false))
+}
+
+method assign_p_FallibleI32(
+  self: Ref,
+  self_new: s_FallibleI32
+)
+  ensures p_FallibleI32(self)
+  ensures (p_FallibleI32_snap(self)) == (self_new)
+
+field f_Int_isize: s_Int_isize
+function p_Int_isize_unreachable(
+): s_Int_isize
+  requires false
+  ensures false
+
+function p_Int_isize_snap(
+  self: Ref
+): s_Int_isize
+  requires acc(p_Int_isize(self), wildcard)
+{
+  unfolding acc(p_Int_isize(self), wildcard) in (self.f_Int_isize)
+}
+
+predicate p_Int_isize(self: Ref) {
+  acc(self.f_Int_isize)
+}
+
+method assign_p_Int_isize(
+  self: Ref,
+  self_new: s_Int_isize
+)
+  ensures p_Int_isize(self)
+  ensures (p_Int_isize_snap(self)) == (self_new)
+
+function p_Never_unreachable(
+): s_Never
+  requires false
+  ensures false
+
+function p_Never_snap(
+  self: Ref
+): s_Never
+  requires acc(p_Never(self), wildcard)
+
+predicate p_Never(self: Ref) {
+  false
+}
+
+method assign_p_Never(
+  self: Ref,
+  self_new: s_Never
+)
+  ensures p_Never(self)
+  ensures (p_Never_snap(self)) == (self_new)
+
+field f_Bool: s_Bool
+function p_Bool_unreachable(
+): s_Bool
+  requires false
+  ensures false
+
+function p_Bool_snap(
+  self: Ref
+): s_Bool
+  requires acc(p_Bool(self), wildcard)
+{
+  unfolding acc(p_Bool(self), wildcard) in (self.f_Bool)
+}
+
+predicate p_Bool(self: Ref) {
+  acc(self.f_Bool)
+}
+
+method assign_p_Bool(
+  self: Ref,
+  self_new: s_Bool
+)
+  ensures p_Bool(self)
+  ensures (p_Bool_snap(self)) == (self_new)
+
+function p_Bounds_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Bounds_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_Bounds_unreachable(
+): s_Bounds
+  requires false
+  ensures false
+
+function p_Bounds_snap(
+  self: Ref
+): s_Bounds
+  requires acc(p_Bounds(self), wildcard)
+{
+  unfolding acc(p_Bounds(self), wildcard) in (s_Bounds_cons(p_Int_i32_snap(p_Bounds_field_0(self)), p_Int_i32_snap(p_Bounds_field_1(self))))
+}
+
+predicate p_Bounds(self: Ref) {
+  (p_Int_i32(p_Bounds_field_0(self))) && (p_Int_i32(p_Bounds_field_1(self)))
+}
+
+method assign_p_Bounds(
+  self: Ref,
+  self_new: s_Bounds
+)
+  ensures p_Bounds(self)
+  ensures (p_Bounds_snap(self)) == (self_new)
+
+function p_ClampTransform_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_ClampTransform_unreachable(
+): s_ClampTransform
+  requires false
+  ensures false
+
+function p_ClampTransform_snap(
+  self: Ref
+): s_ClampTransform
+  requires acc(p_ClampTransform(self), wildcard)
+{
+  unfolding acc(p_ClampTransform(self), wildcard) in (s_ClampTransform_cons(p_Bounds_snap(p_ClampTransform_field_0(self))))
+}
+
+predicate p_ClampTransform(self: Ref) {
+  p_Bounds(p_ClampTransform_field_0(self))
+}
+
+method assign_p_ClampTransform(
+  self: Ref,
+  self_new: s_ClampTransform
+)
+  ensures p_ClampTransform(self)
+  ensures (p_ClampTransform_snap(self)) == (self_new)
+
+function p_2_Tuple_$_FallibleI32_$_ClampTransform_field_0(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_FallibleI32_$_ClampTransform_field_1(
+  self: Ref
+): Ref
+  ensures ((self) == (null)) == ((result) == (null))
+function p_2_Tuple_$_FallibleI32_$_ClampTransform_unreachable(
+): s_2_Tuple[s_FallibleI32, s_ClampTransform]
+  requires false
+  ensures false
+
+function p_2_Tuple_$_FallibleI32_$_ClampTransform_snap(
+  self: Ref
+): s_2_Tuple[s_FallibleI32, s_ClampTransform]
+  requires acc(p_2_Tuple_$_FallibleI32_$_ClampTransform(self), wildcard)
+{
+  unfolding acc(p_2_Tuple_$_FallibleI32_$_ClampTransform(self), wildcard) in (s_2_Tuple_cons(p_FallibleI32_snap(p_2_Tuple_$_FallibleI32_$_ClampTransform_field_0(self)), p_ClampTransform_snap(p_2_Tuple_$_FallibleI32_$_ClampTransform_field_1(self))))
+}
+
+predicate p_2_Tuple_$_FallibleI32_$_ClampTransform(self: Ref) {
+  (p_FallibleI32(p_2_Tuple_$_FallibleI32_$_ClampTransform_field_0(self))) && (p_ClampTransform(p_2_Tuple_$_FallibleI32_$_ClampTransform_field_1(self)))
+}
+
+method assign_p_2_Tuple_$_FallibleI32_$_ClampTransform(
+  self: Ref,
+  self_new: s_2_Tuple[s_FallibleI32, s_ClampTransform]
+)
+  ensures p_2_Tuple_$_FallibleI32_$_ClampTransform(self)
+  ensures (p_2_Tuple_$_FallibleI32_$_ClampTransform_snap(self)) == (self_new)
+
+function p_0_Tuple_unreachable(
+): s_0_Tuple
+  requires false
+  ensures false
+
+function p_0_Tuple_snap(
+  self: Ref
+): s_0_Tuple
+  requires acc(p_0_Tuple(self), wildcard)
+{
+  unfolding acc(p_0_Tuple(self), wildcard) in (s_0_Tuple_cons())
+}
+
+predicate p_0_Tuple(self: Ref) {
+  true
+}
+
+method assign_p_0_Tuple(
+  self: Ref,
+  self_new: s_0_Tuple
+)
+  ensures p_0_Tuple(self)
+  ensures (p_0_Tuple_snap(self)) == (self_new)
+

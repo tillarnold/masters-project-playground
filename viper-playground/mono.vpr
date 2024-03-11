@@ -1,0 +1,108 @@
+
+
+// function f(a: Int): Int
+// ensures rel(a,0) > rel(a,1) ==> rel(result, 0) > rel(result, 1)
+// {
+//     a + 1
+// }
+
+
+
+method linear(a: Int) returns (res: Int)
+  ensures rel(a,0) < rel(a,1) ==> rel(res, 0) < rel(res, 1)
+  ensures rel(a,0) == rel(a,1) ==> rel(res, 0) == rel(res, 1)
+{
+  res := 2 * a - 8;
+}
+
+// method quadratic(a: Int) returns (res: Int)
+//   ensures rel(a,0) > rel(a,1) ==> rel(res, 0) > rel(res, 1)
+// {
+//   res := a * a;
+// }
+
+method qubic(a: Int) returns (res: Int)
+  ensures rel(a,0) < rel(a,1) ==> rel(res, 0) < rel(res, 1)
+{
+  res := a * a * a;
+}
+
+method qubic2(a: Int) returns (res: Int)
+  ensures rel(a,0) < rel(a,1) ==> rel(res, 0) < rel(res, 1)
+{
+  var sub : Int := qubic(a);
+  res := 2 * sub; 
+}
+
+
+method sum(a: Int) returns (res: Int)
+  ensures rel(a,0) < rel(a,1) ==> rel(res, 0) < rel(res, 1)
+{
+  var res1 : Int := linear(a);
+  var res2 : Int := qubic(a);
+  res := res1 + res2;
+}
+
+method neg(a: Int) returns (res: Int)
+  ensures rel(a,0) > rel(a,1) ==> rel(res, 0) < rel(res, 1)
+{
+  res := -a;
+}
+
+method deterministic(a: Int) returns (res: Int)
+  ensures rel(a,0) == rel(a,1) ==> rel(res, 0) == rel(res, 1)
+{
+  res := a
+}
+
+
+// method linear_c(a: Int, b: Int)
+// requires a < b
+// //  ensures rel(a,1) == rel(res, 0) ==> rel(res, 1) == rel(res, 0) 
+// {
+//    var ares: Int := linear(a);
+//       var bres: Int := linear(b);
+//       assert ares < bres;
+
+// }
+
+// method idemp_c(a: Int) returns (res: Int)
+// //  ensures rel(a,1) == rel(res, 0) ==> rel(res, 1) == rel(res, 0) 
+// {
+//     var r: Int := idemp(a);
+//     res := idemp(r);
+//     // assert res == r
+// }
+
+method idemp(a: Int) returns (res: Int)
+    ensures rel(a,1) == rel(res, 0) ==> rel(res, 1) == rel(res, 0) 
+    ensures rel(a,0) == rel(res, 1) ==> rel(res, 1) == rel(res, 0)
+    ensures rel(a,1) == rel(res, 0) ==> rel(res, 1) == rel(a,1)
+    ensures rel(a,0) == rel(res, 1) ==> rel(a,0) == rel(res, 0)
+    ensures rel(a,0) == rel(a,1) ==> rel(res, 0) == rel(res, 1)
+{
+
+    res := a;
+    if( a > 3) {
+        res := 3
+    }
+}
+
+field f: Int;
+
+predicate p_f(self: Ref) {
+    acc(self.f)
+}
+
+
+method new_ref() returns (r: Ref)
+
+method noc(a: Ref)
+    requires acc(a.f)
+    ensures acc(a.f)
+    ensures  old(a.f) == a.f
+{
+    a.f := a.f;
+
+}
+
