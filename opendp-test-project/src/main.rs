@@ -120,6 +120,21 @@ fn example_vec() -> Fallible<()> {
     Ok(())
 }
 
+fn example_vec_0() -> Fallible<()> {
+    let count = opendp::transformations::make_clamp(
+        VectorDomain::new(AtomDomain::new(None, None)),
+        SymmetricDistance,
+        (20, 10),
+    )?;
+
+
+    let res: Vec<i32> = count.invoke(&vec![])?;
+
+    println!("{:?}", res);
+
+    Ok(())
+}
+
 fn main() {
-    println!("{:?}", multiple_releases().unwrap());
+    println!("{:?}", example_vec_0().unwrap());
 }

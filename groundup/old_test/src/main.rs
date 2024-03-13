@@ -169,6 +169,17 @@ fn id_2_ind(a: i32, b: i32) -> i32 {
 }
 
 
+#[pure]
+fn id(x: i32) -> i32{
+    x
+}
+
+#[ensures(rel0(id(x)) < rel1(x) ==> rel0(result) < rel1(result))]
+fn cubic(x: i32) -> i32 {
+    x
+}
+
+
 fn main() {
 
 }

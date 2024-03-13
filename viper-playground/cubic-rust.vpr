@@ -1,0 +1,74 @@
+
+
+
+function f_id(x: s_Int_i32): s_Int_i32
+{x}
+
+method m_linear(return_value: Ref, x: Ref)
+  requires p_i32(x)
+  ensures p_i32(return_value)
+  ensures s_i32_read((rel(old(p_i32_snap(x)), 0))) < s_i32_read((rel(old(p_i32_snap(x)), 1)))
+? s_i32_read((rel(p_i32_snap(return_value), 0))) < s_i32_read((rel(p_i32_snap(return_value), 1)))
+: true
+{
+  assign_p_i32(return_value, s_i32_cons(2 * s_i32_read(p_i32_snap(x)) + 42))
+}
+
+
+method m_qubic(return_value: Ref, x: Ref)
+  requires p_i32(x)
+  ensures p_i32(return_value)
+  ensures s_i32_read((rel(old(p_i32_snap(x)), 0))) <= s_i32_read((rel(old(p_i32_snap(x)), 1)))
+? ((let n == (f_id((p_i32_snap(return_value)))) in (s_i32_read((rel(n, 0))))) <= (let n == (f_id((p_i32_snap(return_value)))) in (s_i32_read((rel(n, 1))))))
+: true
+{
+  assign_p_i32(return_value, s_i32_cons(s_i32_read(p_i32_snap(x))  * s_i32_read(p_i32_snap(x)) ))
+}
+
+
+
+domain s_Int_i32 {
+  axiom ax_s_i32_cons_read_0 {
+    forall f0: Int :: {s_i32_cons(f0)} (s_i32_read(s_i32_cons(f0))) == (f0)
+  }
+  axiom ax_s_i32_cons {
+    forall self: s_Int_i32 :: {s_i32_read(self)} (s_i32_cons(s_i32_read(self))) == (self)
+  }
+  axiom s_Int_i32_bounds {
+    forall self: s_Int_i32 :: {s_i32_read(self)} ((-(2147483648)) <= (s_i32_read(self))) && ((s_i32_read(self)) <= (2147483647))
+  }
+  function s_i32_cons(Int): s_Int_i32
+  function s_i32_read(s_Int_i32): Int
+}
+
+
+
+
+
+
+field f_Int_i32: s_Int_i32
+function p_i32_unreachable(
+): s_Int_i32
+  requires false
+  ensures false
+
+function p_i32_snap(
+  self: Ref
+): s_Int_i32
+  requires acc(p_i32(self), wildcard)
+{
+  unfolding acc(p_i32(self), wildcard) in (self.f_Int_i32)
+}
+
+predicate p_i32(self: Ref) {
+  acc(self.f_Int_i32)
+}
+
+method assign_p_i32(
+  self: Ref,
+  self_new: s_Int_i32
+)
+  ensures p_i32(self)
+  ensures (p_i32_snap(self)) == (self_new)
+
+

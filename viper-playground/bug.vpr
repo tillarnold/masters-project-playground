@@ -1,0 +1,30 @@
+field f_i32: s_i32
+predicate p_i32(self: Ref) { acc(self.f_i32) }
+function p_i32_snap(self: Ref): s_i32 requires p_i32(self)
+{ unfolding acc(p_i32(self)) in self.f_i32 }
+
+
+
+method assign_p_i32(self: Ref, self_new: s_i32)
+ensures p_i32(self) && p_i32_snap(self) == self_new
+
+
+domain s_i32 {
+function s_i32_cons(Int): s_i32
+function s_i32_read(s_i32): Int
+
+axiom ax_i32_cons_read {
+forall val: Int :: {s_i32_cons(val)}
+s_i32_read(s_i32_cons(val)) == val
+}
+
+axiom ax_i32_cons {
+forall self: s_i32 :: {s_i32_read(self)}
+s_i32_cons(s_i32_read(self)) == self
+}
+
+axiom s_i32_bounds {
+forall self: s_i32 :: {s_i32_read(self)}
+-2147483648 <= s_i32_read(self) <= 2147483647
+}
+}
